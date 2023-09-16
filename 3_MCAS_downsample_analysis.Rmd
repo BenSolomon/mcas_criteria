@@ -1,0 +1,248 @@
+---
+title: "Controlling for size of diagnostic criteria"
+output: html_notebook
+---
+
+# Rationale
+
+- Consensus 1 has significantly few symptoms listed as compatible with its criteria compared to consensus 2
+- It is possible that simply having fewer possible symptoms in the criteria would result in a more limited output of possible diagnoses from chatGPT
+- To test this, can downsample consensus 2 symptoms to be equivalent to the length of consensus 1 symptoms and see if the difference in diversity of output diagnoses is no longer significant
+
+# Set up
+
+```{r}
+library(tidyverse)
+setwd("/labs/khatrilab/solomonb/mcas/chatgpt_sim/data/name/")
+```
+
+```{r}
+clean_diagnosis <- function(diagnosis){
+  diagnosis <- str_extract(diagnosis, "[a-zA-Z].*") # Remove all non-characters from begining (e.g. "1)", " - ")
+  # diagnosis <- str_to_sentence(diagnosis) # Capitalize only the first letter 
+  diagnosis <- tolower(diagnosis) 
+  diagnosis <- gsub("\\([a-z]*\\)","", diagnosis)
+  diagnosis <- gsub("\\.","", diagnosis)
+  diagnosis <- trimws(diagnosis)
+  return(diagnosis)
+}
+
+process_diagnoses <- function(resp){
+  diagnoses <- str_split(resp, "\n") %>% 
+    unlist() %>% 
+    clean_diagnosis()
+  return(diagnoses)
+}
+
+parse_diagnoses <- function(sim_results){
+    c1 <- do.call(rbind, sim_results["consensus1", ])
+    c2 <- do.call(rbind, sim_results["consensus2", ])
+
+    c1 <- map(c1$diagnoses, process_diagnoses) %>% unlist()
+    c2 <- map(c2$diagnoses, process_diagnoses) %>% unlist()
+
+    bind_rows(
+      tibble(consensus = 1, diagnosis = c1),
+      tibble(consensus = 2, diagnosis = c2),
+    ) 
+}
+
+plot_diagnosis <- function(df, c) {
+  df %>% 
+    filter(consensus == c) %>% 
+    count(diagnosis, sort = T) %>% 
+    mutate(freq = n/sum(n)) %>% 
+    top_n(25, n) %>%
+    mutate(diagnosis = fct_reorder(diagnosis, n)) %>% 
+    ggplot(aes(x = diagnosis, y = freq))+
+    geom_bar(stat = "identity")+
+    theme_bw() +
+    coord_flip() +
+    labs(x="", y="Frequency") +
+    theme(axis.text.x = element_text(angle = 90))
+}
+```
+
+# Determining subsampling depth
+
+- Original chatgpt simulation included 20,000 iterations
+- However, to perform 20,000 iterations for many different sets of subsampled criteria would result in excessive number of chatGPT API queries 
+  - E.g. If diagnostic criteria randomly downsampled 50 times, generating a 20,000-iteration diagnosis distribution would require 1 million chatGPT queries. 
+  - 20,000 queries takes about 1 hour and costs about $2, so important to optimize number of queries
+
+### Effect of subsampling depth on output diagnosis diversity
+
+```{r}
+df_original <- read_csv("mcas_criteria_chatgpt_diagnoses.csv")
+```
+
+
+```{r}
+resample_consensus1_diversity <- function(n_diagnoses){
+  df_original %>% 
+  filter(consensus == "1") %>% 
+  slice_sample(n = n_diagnoses, replace = T) %>% 
+  {table(.$consensus, .$diagnosis)} %>% vegan::diversity()
+}
+
+df_resamp <- tibble(n_resamp = seq(from = 10, to = 20000, by = 100)) %>% 
+  mutate(shannon = map_dbl(n_resamp, resample_consensus1_diversity))
+
+df_resamp %>% 
+  ggplot(aes(x = n_resamp, y = shannon))+
+  geom_path()+
+  theme_classic()+
+  geom_smooth()
+
+```
+- Diversity values appear to plateau at about ~5,000 iterations 
+- Conservatively decided to set subsequent iterations to 10,000 
+
+```{r}
+df_original %>% 
+  filter(consensus == "1") %>% 
+  slice_sample(n = 10000, replace = T) %>% 
+  {table(.$consensus, .$diagnosis)} %>% vegan::diversity()
+```
+# ChatGPT query
+
+# Parse ChatGPT outputs
+
+```{r}
+df <- tibble(file = list.files("/labs/khatrilab/solomonb/mcas/chatgpt_sim/data/control/")) %>% 
+  filter(grepl("RDS$", file)) %>% 
+  mutate(file = sprintf("/labs/khatrilab/solomonb/mcas/chatgpt_sim/data/control/%s",file)) %>% 
+  mutate(data = map(file, readRDS)) %>% 
+  mutate(hash = map_chr(data, ~.[["criteria_hash"]])) %>% 
+  mutate(data = map(data, ~.[["resampled_diagnoses"]])) %>% 
+  unnest(data) %>% 
+  select(-file, -symptoms) %>% 
+  mutate(diagnosis = map(diagnoses, process_diagnoses)) %>% 
+  select(-diagnoses) %>% 
+  unnest(diagnosis)
+
+df
+```
+
+# Diversity of downsampled consensus 2 diagnoses
+
+#### Distribution of diagnosis diversity from downsampled criteria
+
+```{r}
+diagnosis_table <- table(df$hash, df$diagnosis)
+div_diag  <- vegan::diversity(diagnosis_table)
+enframe(div_diag, name = "hash", value = "shannon") %>% 
+  {print(.);.} %>% 
+  ggplot(aes(x = shannon, y = ..density..))+
+  geom_histogram() +
+  geom_density()+
+  theme_classic()
+```
+
+#### Counts of total diagnoses for each set of downsampled criteria 
+```{r}
+df %>% count(hash)
+```
+
+#### Mean and sd of diagnosis diversity distribution
+
+```{r}
+enframe(div_diag, name = "hash", value = "shannon") %>% 
+  pull(shannon) %>% 
+  {print(mean(.));print(sd(.))}
+```
+
+#### Lowest percentile of diagnosis diversity distribution
+
+```{r}
+enframe(div_diag) %>% 
+  pull(value) %>% 
+  quantile(c(0.01, 0.025, 0.05))
+```
+
+# Comparing consenses 1 to downsampled consensus 2
+
+- Since diversity is somewhat affected by total number of diagnoses, important to downsample consensus 1 diagnoses to match number of diagnoses resulting from each downsampled consensus 2 criteria iteration
+
+```{r}
+df_comp <- df %>% 
+  count(hash) %>% 
+  left_join(enframe(div_diag, name = "hash", value = "consensus_2")) %>% 
+  mutate(consensus_1 = map_dbl(n, resample_consensus1_diversity))
+df_comp
+```
+```{r}
+df_comp %>% 
+summarise_if(is.double, c("mean" = mean, "sd" = sd))
+```
+
+### Visual representation of consensus diversity distributions
+
+```{r}
+df_comp %>% 
+  select(-n) %>% 
+  pivot_longer(-hash, names_to = "consensus", values_to = "shannon") %>% 
+  ggplot(aes(x = shannon, y = ..density.., fill = consensus, group = consensus))+
+  geom_histogram(color = "black", binwidth = 0.025)+
+  geom_density(fill = NA, color = "black")+
+  theme_classic()+
+  scale_color_brewer(palette = "Set1")+
+  scale_fill_brewer(palette = "Set1") +
+  facet_grid(consensus~., scales = "free_y")
+```
+
+### Statistical signfiicance of diversity distribution differences
+
+#### T-test
+```{r}
+df_comp %>% 
+  select(-n) %>% 
+  pivot_longer(-hash, names_to = "consensus", values_to = "shannon") %>% 
+  t.test(shannon ~ factor(consensus), data = ., alternative = "less") %>% 
+  broom::tidy()
+```
+
+#### Wilcox test
+```{r}
+df_comp %>% 
+  select(-n) %>% 
+  pivot_longer(-hash, names_to = "consensus", values_to = "shannon") %>% 
+  wilcox.test(shannon ~ factor(consensus), data = ., alternative = "less") %>% 
+  broom::tidy()
+```
+
+#### Permutation test
+```{r}
+df_comp %>% 
+  mutate(diff = consensus_1 - consensus_2) %>% 
+  pull(diff) %>% 
+  mean()
+```
+```{r}
+all_divs <- c(df_comp$consensus_1, df_comp$consensus_2)
+
+permuted_div_means <- replicate(100, {
+sample(all_divs, length(all_divs)) %>% 
+  matrix(ncol = 2) %>% 
+  as.tibble() %>% 
+  mutate(diff = V1 - V2) %>% 
+  pull(diff) %>% 
+  mean()
+})
+
+quantile(permuted_div_means, c(0.0001, 0.001, 0.01, 0.025, 0.05))
+```
+```{r}
+ggplot(tibble("means" = permuted_div_means), aes(x = means))+
+  geom_histogram(binwidth = 0.01)+
+  geom_vline(aes(xintercept = -0.4152252), color = "red") +
+  theme_classic()
+```
+
+
+### Original non-downsampled diversity differences as a reminder
+```{r}
+table(df_original$consensus, df_original$diagnosis) %>% 
+  vegan::diversity()
+```
+

@@ -1,0 +1,260 @@
+---
+title: "Comparing MCAS criteria to other conditions"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(vegan)
+library(RColorBrewer)
+library(broom)
+source(here("util_functions.R"))
+```
+
+## Read data
+
+```{r}
+criteria_path <- here("data/disease_criteria")
+```
+
+```{r}
+parse_diagnoses <- function(sim_results){
+  
+  tibble(criteria = rownames(sim_results)) %>% 
+    mutate(data = map(criteria, function(c){
+      do.call(rbind, sim_results[c,]) %>% 
+        mutate(diagnosis = map(diagnoses, process_diagnoses)) %>% 
+        unnest(diagnosis) %>% 
+        select(diagnosis)
+      })) %>% 
+    unnest(data)
+         
+}
+```
+
+```{r}
+# Read in ChatGPT output data for additional conditions and parse
+df <- tibble(file = list.files(here("data/chatgpt_output/other_conditions"), full.names = T))%>% 
+  mutate(data = map(file, readRDS)) %>% 
+  mutate(data = map(data, parse_diagnoses)) %>% 
+  unnest(data) %>% 
+  select(-file)
+
+# Read in original MCAS chatGPT output and append to data from additional conditions
+df <- read_csv(here("data/compiled_mcas_chatgpt_diagnoses.csv")) %>% 
+  mutate(criteria = gsub("consensus", "mcas_", consensus)) %>% 
+  select(criteria, diagnosis) %>% 
+  bind_rows(df) 
+
+df
+```
+## Plot distributions 
+
+```{r}
+# Rank abundance plot
+custom_pal <- RColorBrewer::brewer.pal(7, "Set1")[-6]
+
+df %>% 
+  count(criteria, diagnosis, sort = T) %>% 
+  group_by(criteria) %>% 
+  mutate(freq = n/sum(n)) %>% 
+  arrange(desc(freq), .by_group = T) %>% 
+  mutate(rank = 1:n()) %>% 
+  select(criteria, freq, rank) %>% 
+  mutate(cs = cumsum(freq)) %>% 
+  filter(rank <= 50) %>% 
+  mutate(criteria = toupper(criteria)) %>% 
+  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
+    geom_line() +
+    theme_classic()+
+    scale_color_manual(values = custom_pal)+
+  scale_x_continuous(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
+```
+## Calculate and plot diversity
+
+```{r}
+# Calculate diversity values for diagnosis distributions
+diagnosis_table <- table(df$criteria, df$diagnosis)
+div_diag  <- vegan::diversity(diagnosis_table)
+div_diag  
+```
+
+```{r, fig.width = 5, fig.height=5}
+# Plot diversity values
+broom::tidy(div_diag) %>% 
+  mutate(names = toupper(names)) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Statistical testing
+
+### All group randomization
+
+```{r}
+pairwise_div_difference <- function(df){
+  df_div <- enframe(vegan::diversity(table(df$criteria, df$diagnosis)))
+  df_diff <- data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+    left_join(df_div, by = c("X1"="name")) %>% 
+    left_join(df_div, by = c("X2"="name")) %>% 
+    unite("pair", X1, X2, sep = ".") %>%
+    mutate(entropy_difference = value.x - value.y) %>% 
+    select(-contains("value"))
+  deframe(df_diff)
+}
+
+# pairwise_div_difference(df)
+enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference")
+```
+
+```{r}
+pairwise_div_iteration <- function(){
+  df %>% 
+    count(criteria) %>% 
+    mutate(diagnosis = map(n, function(x) sample(df$diagnosis, x, replace = T))) %>% 
+    select(-n) %>% 
+    unnest(diagnosis) %>% 
+    pairwise_div_difference(.)
+}
+
+pairwise_div_iteration()
+```
+
+```{r}
+set.seed(1234)
+pairs_permutation_distributions <- data.frame(t(replicate(10000, pairwise_div_iteration())))
+```
+```{r}
+sapply(combn(unique(sort(df$criteria)),2, simplify = F), paste, collapse = ".")
+names(pairs_permutation_distributions)
+```
+```{r}
+pairs_entropy_diff <- enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference") %>% 
+  mutate(entropy_difference = ifelse(entropy_difference >=0, 0-entropy_difference, entropy_difference))
+pairs_entropy_diff
+```
+
+```{r, fig.width=12, fig.height = 8}
+pairs_permutation_distributions %>% 
+  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+  ggplot(aes(x = entropy_difference)) +
+  geom_histogram(binwidth = 0.01)+
+  geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
+  facet_wrap(~pair, scales = "free")+
+  theme_classic()
+```
+
+```{r}
+# Calculate p-values for diversity differences based on the quantile of the 
+# diversity difference value compared to the null hypothesis diversity distribution values
+# Pairwise comparison adjusted
+entropy_diff_table <- data.frame(pairs_permutation_distributions) %>% 
+  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+  group_by(pair) %>% 
+  summarise(entropy_difference_distribution = list(entropy_difference)) %>% 
+  right_join(pairs_entropy_diff) %>% 
+  mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
+  mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
+entropy_diff_table
+```
+```{r, fig.width = 5, fig.height=5}
+# Plot diversity values
+broom::tidy(div_diag) %>% 
+  mutate(names = tolower(names)) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity") +
+  ggpubr::stat_pvalue_manual(
+    entropy_diff_table %>% separate(pair, into = c("group1", "group2"), sep = "\\."),
+    label= "p_adj",
+    y.position = 7, step.increase = 0.2
+  ) +
+  theme_bw() +
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+### Pairwise randomization
+
+```{r}
+pairs_list <- as.list(as.data.frame(combn(unique(df$criteria),2)))
+names(pairs_list) <- sapply(pairs_list, paste, collapse = ".")
+pairs_list
+```
+
+
+
+```{r}
+# Create function that subsets df of all diagnoses for a criteria based on a pair of two criteria to compare
+# Then randomizes the diagnoses across the two criteria, 
+# measures the resulting diversity of each criteria's diagnoses
+# and calculates a difference in the diversity value
+# randomize can be set F to obtain original difference in diversity w/o randomization
+# To be used with replicate to generate a null hypothesis distribution 
+permutation_pair_iteration <- function(pair, randomize = T){
+  df <- df %>% 
+    filter(criteria %in% pair) 
+  if (randomize == T){
+    df <- df %>% mutate(diagnosis = sample(diagnosis, n()))
+  }
+  div <- vegan::diversity(table(df$criteria, df$diagnosis))
+  unname(div[1] - div[2])
+}
+
+replicate(10,permutation_pair_iteration(pairs_list[[1]], randomize = T))
+replicate(10,permutation_pair_iteration(pairs_list[[1]], randomize = F))
+```
+
+```{r}
+# # Create a null hypothesis distribution for the difference in diversity
+# # For all pairs of criteria
+
+# set.seed(1234)
+# pairs_permutation_distributions <- lapply(pairs_list, function(x) replicate(10000, permutation_pair_iteration(x)))
+# names(pairs_permutation_distributions) <- lapply(pairs_list, function(x) paste(x, collapse = "-"))
+# data.frame(pairs_permutation_distributions)
+# write_csv(data.frame(pairs_permutation_distributions), here("data/criteria_pairwise_null_difference_distributions.csv"))
+
+pairs_permutation_distributions <- read_csv(here("data/criteria_pairwise_null_difference_distributions.csv"))
+pairs_permutation_distributions
+```
+
+
+```{r}
+# Create a df of the actual difference in diversity between pairs of criteria
+pairs_entropy_diff <- lapply(pairs_list, permutation_pair_iteration, randomize = F)
+names(pairs_entropy_diff) <- lapply(pairs_list, function(x) paste(x, collapse = "-"))
+pairs_entropy_diff <- data.frame(pairs_entropy_diff) %>%  
+  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+  mutate(entropy_difference = ifelse(entropy_difference >=0, 0-entropy_difference, entropy_difference))
+pairs_entropy_diff
+```
+```{r, fig.width=12, fig.height = 8}
+# Create plots of null hypothesis distributions, overlaid with actual diversity difference
+pairs_permutation_distributions %>%
+  pivot_longer(cols = everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+  ggplot(aes(x = entropy_difference)) +
+  geom_histogram(binwidth = 0.01)+
+  geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
+  facet_wrap(~pair, scales = "free")+
+  theme_classic()
+```
+```{r}
+# Calculate p-values for diversity differences based on the quantile of the 
+# diversity difference value compared to the null hypothesis diversity distribution values
+# Pairwise comparison adjusted
+data.frame(pairs_permutation_distributions) %>% 
+  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+  group_by(pair) %>% 
+  summarise(entropy_difference_distribution = list(entropy_difference)) %>% 
+  right_join(pairs_entropy_diff) %>% 
+  mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
+  mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
+```

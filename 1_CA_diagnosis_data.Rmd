@@ -1,0 +1,151 @@
+---
+title: "California ICD hospital diagnosis data"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+```
+
+[Original CA state data available here](https://data.chhs.ca.gov/dataset/hospital-inpatient-diagnosis-procedure-and-external-cause-codes)
+
+```{r}
+data_path <- here("data/ca_icd")
+files <- list.files(data_path)
+```
+
+```{r}
+# Function to read CA ICD code excel data files
+read_icd <- function(path){
+  list_xl <- path %>% 
+      excel_sheets() %>% 
+      set_names() %>% 
+      map(read_excel, path = path)
+  list_xl <- list_xl[which(grepl("[0-9]", names(list_xl)))]
+  if (length(names(list_xl)) == 0){names(list_xl) <- "id"}
+  list_df <- bind_rows(list_xl, .id = "id") %>%
+    select(id, contains("ICD"), contains("Desc"), TotalDiag) 
+  
+  list_df <- list_df %>% 
+    mutate(icd = ifelse(grepl("ICD|icd", id), id, NA)) %>% 
+    mutate(icd = ifelse(is.na(icd), names(list_df)[which(grepl("ICD|icd", names(list_df)))[1]], icd)) %>%
+    unite("code", contains("Code"), sep = "") %>% 
+    mutate(icd = gsub("\\-","",icd)) %>% 
+    mutate(icd = str_extract(icd, "ICD9|ICD10"))
+  
+  list_df 
+}
+```
+
+```{r}
+# Compile ICD data from multiple years into single data set
+df <- tibble(file = files) %>% 
+  mutate(data = map(file, function(f){
+    path <- sprintf("%s/%s", data_path, f)
+    read_icd(path)
+  })) %>% 
+  unnest(data)
+df
+```
+```{r}
+# Create a key of all ICD codes in data
+# Many individual codes have slight variations in their description across years, 
+# so the descriptions for each code are collapsed into the most common one
+icd_key <- df %>% 
+  select(icd, code, diagnosis = contains("Desc")) %>% 
+  drop_na() %>% 
+  distinct() %>% 
+  group_by(icd, code) %>% 
+  mutate(n = n()) %>% 
+  arrange(desc(n), icd, code) %>% 
+  mutate(nc = nchar(diagnosis)) %>% 
+  arrange(desc(nc)) %>% 
+  slice(1) %>% 
+  select(icd, code, diagnosis)
+icd_key
+```
+
+```{r}
+# By joining the ICD key with collapsed descriptions with the original data,
+# this standardizes the descriptions in the data set
+df <- df %>% 
+  left_join(icd_key, by = c("icd", "code")) %>%
+  mutate(year = gsub("[a-zA-Z\\_\\.\\-]","",file)) %>% 
+  select(year, icd, code, diagnosis, count = TotalDiag)
+df
+```
+```{r}
+# Tally of total cases of "MAST" related diagnoses in entire dataset
+df %>% 
+  filter(grepl("MASTOCY|MAST CELL", diagnosis)) %>% 
+  group_by(diagnosis) %>% 
+  summarise(count = sum(count)) %>% 
+  arrange(desc(count))
+```
+
+
+```{r}
+# Function that returns plot of case counts per year for ICD codes matching
+# a description string
+disease_plot <- function(string){
+  df %>% 
+  group_by(year) %>% 
+  mutate(total = sum(count)) %>% 
+  mutate(freq = count/total) %>% 
+  filter(grepl(string, diagnosis)) %>% 
+  summarise(freq = sum(freq), count = sum(count)) %>% 
+  ggplot(aes(x = as.numeric(year), y = count))+
+  geom_path() +
+  theme_bw() +
+  scale_x_continuous(n.breaks = length(unique(df$year))) +
+  scale_y_continuous(limits = c(0,NA))+
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(x = "", y="Count")
+}
+```
+
+```{r}
+# Generating multiple disease plots
+mcas_plt <- disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome") + scale_x_continuous(limits = c(2005,2021), n.breaks = length(unique(df$year)))
+kawasaki_plt <- disease_plot("MUCOCUTANEOUS LYMPH") + ggtitle("Kawawsaki disease")
+eds_plt <- disease_plot("EHLERS") + ggtitle("Ehlers-Danlos syndrome")
+appy_plt <- disease_plot("APPENDICITIS") + ggtitle("Appendicitis")
+# disease_plot("PEANUT") + ggtitle("Peanut")
+```
+
+```{r, fig.width=10, fig.height=5}
+# Plot combined figure of disease plots
+cowplot::plot_grid(
+  mcas_plt,
+  appy_plt,
+  eds_plt,
+  kawasaki_plt,
+  ncol = 2, 
+  nrow = 2
+)
+```
+
+```{r}
+# Comparison of MCAS and mastocytosis
+cowplot::plot_grid(
+disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome"),
+disease_plot("MASTOCYTOSIS") + ggtitle("Mastocytosis")
+)
+```
+```{r}
+# Compiled plot of MCAS and mastocytosis
+df %>% 
+  filter(grepl("(MASTOCYTOSIS|MAST CELL ACTIVATION)", diagnosis)) %>% 
+  mutate(diagnosis = ifelse(grepl("MASTOCYTOSIS", diagnosis), "Mastocytosis", "Mast Cell Activation Syndrome")) %>% 
+  group_by(year, diagnosis) %>% 
+  summarise(count = sum(count)) %>% 
+  ggplot(aes(x = as.numeric(year), y = count, color = diagnosis))+
+  geom_path() +
+  theme_bw() +
+  scale_x_continuous(n.breaks = length(unique(df$year))/2) +
+  scale_y_continuous(limits = c(0,NA))+
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(x = "", y="Count", color = "")+
+  scale_color_brewer(palette = "Set1")
+```
