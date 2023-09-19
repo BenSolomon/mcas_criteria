@@ -134,8 +134,15 @@ disease_plot("MASTOCYTOSIS") + ggtitle("Mastocytosis")
 )
 ```
 ```{r}
+points_to_inches <- function(points){points/72}
+
+points_to_inches(255)
+```
+
+
+```{r, fig.height=3.5, fig.width=3.5}
 # Compiled plot of MCAS and mastocytosis
-df %>% 
+plt_icd_trend <- df %>% 
   filter(grepl("(MASTOCYTOSIS|MAST CELL ACTIVATION)", diagnosis)) %>% 
   mutate(diagnosis = ifelse(grepl("MASTOCYTOSIS", diagnosis), "Mastocytosis", "Mast Cell Activation Syndrome")) %>% 
   group_by(year, diagnosis) %>% 
@@ -145,7 +152,17 @@ df %>%
   theme_bw() +
   scale_x_continuous(n.breaks = length(unique(df$year))/2) +
   scale_y_continuous(limits = c(0,NA))+
-  theme(axis.text.x = element_text(angle = 90)) +
-  labs(x = "", y="Count", color = "")+
-  scale_color_brewer(palette = "Set1")
+  theme(
+    axis.text.x = element_text(angle = 90),
+    legend.position = c(0.71, 0.14),
+    legend.text = element_text(size = 10),
+    legend.background = element_rect(fill=alpha("white",0.5)),
+    legend.title = element_blank()) +
+  labs(x = "", y="ICD code count", color = "")+
+  scale_color_brewer(palette = "Set1", labels = c("Mast cell activation\nsyndrome", "Mastocytosis"))
+plt_icd_trend
 ```
+```{r}
+ggsave(here("figures/1_CA_ICD_code_by_year.pdf"), plot=plt_icd_trend, height = 3.5, width = 3.5)
+```
+

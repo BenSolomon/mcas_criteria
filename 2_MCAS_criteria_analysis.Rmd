@@ -64,13 +64,15 @@ df <- read_csv(here("data/compiled_mcas_chatgpt_diagnoses.csv"))
 
 ```{r}
 # Top n diagnoses plots
-cowplot::plot_grid(
-  plot_diagnosis(df, c="consensus1", n_diagnoses = 25)+ggtitle("Consensus-1"),
-  plot_diagnosis(df, c="consensus2", n_diagnoses = 25)+ggtitle("Consensus-2"),
+plot_top25 <- cowplot::plot_grid(
+  plot_diagnosis(df, c="consensus1", n_diagnoses = 25)+ggtitle("Consortium") + ylim(0,0.1),
+  plot_diagnosis(df, c="consensus2", n_diagnoses = 25)+ggtitle("Alternative") + ylim(0,0.1),
   nrow = 1,
   rel_widths = c(0.45,0.5)
 )
+plot_top25
 ```
+
 ```{r}
 # Get the individual proportions of top 5 diagnoses
 df %>% 
@@ -82,7 +84,7 @@ df %>%
 
 
 ```{r}
-# Get cumulative proportion of top 25 diagnoses
+# Get cumulative proportion of top 30 diagnoses
 df %>% 
   count(consensus, diagnosis) %>% 
   group_by(consensus) %>% 
@@ -160,12 +162,6 @@ consolidate_diagnoses <- function(df, pattern){
 consolidate_diagnoses(df, "mast cell")
 consolidate_diagnoses(df, "mastocytosis")
 ```
-```{r}
-df %>% 
-  left_join(enframe(x$pattern_freq, "consensus")) %>% 
-  filter(v)
-```
-
 
 # Diversity
 
@@ -191,6 +187,7 @@ vegan::renyi(table(df$consensus, df$diagnosis), scales = seq(from=0,to=2,by=0.1)
 ### iNEXT extrapolation
 
 ```{r, eval = F}
+# Contained in "/scripts/mcas_iNEXT_calculation.R"
 f_cs <- df %>% 
   count(consensus, diagnosis) %>% 
   pivot_wider(names_from = "consensus", values_from = n, values_fill = 0) %>% 
@@ -215,6 +212,11 @@ for (i in 1:3){
   print(plt)
 }
 ```
+```{r}
+mcas_iNEXT$iNextEst$coverage_based %>% 
+  filter(SC >=0.989 & SC <= 0.992) %>% 
+  filter(Order.q == 0) 
+```
 
 ### Permutation testing
 
@@ -233,12 +235,17 @@ permutation_pair_iteration()
 # Shannon entropy difference with original consensus-diagnosis associations
 permutation_pair_iteration(randomize = F)  
 ```
-
-```{r}
-# Generate null sampling distribution
+```{r, eval = F}
+# Contained in /scripts/generate_mcas_criteria_null_distribution.R
 set.seed(1234)
 div_rep <- replicate(10000, permutation_pair_iteration())
 ```
+
+
+```{r}
+div_rep <- readRDS(here("data/mcas_criteria_null_distribtion.RDS"))
+```
+
 
 ```{r}
 # Plot null sampling distribution with actual entropy difference in red
@@ -251,5 +258,63 @@ ggplot(data = data.frame(entropy_difference = div_rep), aes(x = entropy_differen
 
 ```
 
+# Figures
 
+```{r}
+points_to_inches <- function(points){
+  # Single column - 255 pts
+  # 1.5 column - 397 pts
+  # Two column - 539 pts
+  points/72
+}
+points_to_inches(255)
+points_to_inches(539)
+```
+
+```{r, fig.width=7.4, fig.height=4}
+plt_top_25 <- df %>%
+  mutate(consensus = factor(ifelse(consensus == "consensus1", "Consortium", "Alternative"), 
+                            levels=c("Consortium", "Alternative"))) %>% 
+  count(consensus, diagnosis, sort = T) %>%
+  group_by(consensus) %>% 
+  mutate(freq = n / sum(n)) %>% 
+  slice_max(n, n = 25) %>% 
+  mutate(grp_diagnosis = sprintf("%s_%s", consensus, diagnosis)) %>% 
+  mutate(grp_diagnosis = fct_reorder(grp_diagnosis, n)) %>% 
+  {
+  ggplot(data = ., aes(x = grp_diagnosis, y = freq)) +
+    geom_bar(stat = "identity", width=0.8) +
+    facet_wrap( ~ consensus, scales = "free_y") +
+    theme_bw() +
+    coord_flip() +
+    labs(x = "", y = "Frequency") +
+    theme(axis.text.x = element_text(angle = 90))+
+    ylim(0,0.1) +
+    scale_x_discrete(breaks = .$grp_diagnosis, labels = .$diagnosis)
+  }
+plt_top_25
+ggsave(here("figures/2_top_25_diagnoses.pdf"), plot=plt_top_25, width = 7.4, height = 4)
+```
+
+```{r, fig.width=3.5, fig.height=2.5}
+plt_rank_abundance <- df_cs %>% 
+  filter(rank <= 100) %>% 
+  mutate(consensus = factor(ifelse(consensus == "consensus1", "Consortium", "Alternative"), 
+                            levels=c("Consortium", "Alternative"))) %>% 
+  ggplot(aes(x = rank, y = freq, color = factor(consensus)))+
+    geom_line() +
+    theme_classic()+
+    scale_color_brewer(palette = "Set1") +
+  scale_x_continuous(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "") +
+  theme(
+  legend.position = c(0.8, 0.9),
+  legend.text = element_text(size = 10),
+  legend.background = element_rect(fill=alpha("white",0.5)),
+  legend.title = element_blank())
+
+plt_rank_abundance
+ggsave(here("figures/S_rank_abundance.pdf"), plot=plt_rank_abundance, width = 3.5, height = 2.5)
+```
 
