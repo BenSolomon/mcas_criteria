@@ -62,12 +62,12 @@ process_diagnoses <- function(resp){
   return(diagnoses)
 }
 
-# Takes dataframe of diagnoses and consolidates similar diagnosis names
-# based on clustering key generated from /scripts/consolidate_similar_diagnoses.R
-consolidate_diagnoses <- function(df){
-  df_key <- read_csv(here("data/diagnosis_consolidation_key.csv"))
-  df %>% 
-    left_join(df_key, by = "diagnosis") %>% 
-    mutate(diagnosis = ifelse(is.na(cluster_name), diagnosis, cluster_name)) %>% 
-    select(-cluster_name)
+# Calculate figure sizes
+points_to_inches <- function(points=NA){
+  if(is.na(points)){
+    cat("Single column - 255 pts\n1.5 column - 397 pts\nTwo column - 539 pts")
+  }
+  else {
+    points/72
+  }
 }

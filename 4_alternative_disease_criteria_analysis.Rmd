@@ -49,6 +49,13 @@ df <- read_csv(here("data/compiled_mcas_chatgpt_diagnoses.csv")) %>%
 
 df
 ```
+
+```{r}
+# write_csv(df, here("data/compiled_all_chatgpt_diagnoses.csv"))
+df <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv"))
+```
+
+
 ## Plot distributions 
 
 ```{r}
@@ -80,6 +87,44 @@ df %>%
 diagnosis_table <- table(df$criteria, df$diagnosis)
 div_diag  <- vegan::diversity(diagnosis_table)
 div_diag  
+```
+
+```{r}
+# Calculate similarity
+plot_similarity <- function(d_method){
+  broom::tidy(1-vegan::vegdist(diagnosis_table, method = d_method)) %>% 
+    mutate(item = sprintf("%s_%s", item1, item2)) %>% 
+    ggplot(aes(x = item, y = distance)) +
+    geom_bar(stat = "identity")+
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    coord_flip() +
+    labs(x="", y="Similarity")
+}
+
+plot_similarity("bray")
+```
+```{r}
+# Similarity heatmap
+(1-as.matrix(vegan::vegdist(diagnosis_table, method = "bray"))) %>%
+  ComplexHeatmap::Heatmap(.,
+                          name = "Similarity",
+                          col = viridis::viridis(100))
+```
+
+
+```{r}
+# Similarity PCA 
+diagnosis_pca <- as.data.frame(diagnosis_table) %>% 
+  pivot_wider(names_from = "Var2", values_from = "Freq", values_fill = 0) %>% 
+  column_to_rownames("Var1") %>% 
+  prcomp()
+
+as.data.frame(diagnosis_pca$x) %>% 
+  rownames_to_column("criteria") %>% 
+  ggplot(aes(x = PC1, y = PC2, label = criteria))+
+  geom_label() +
+  theme_bw()
 ```
 
 ```{r, fig.width = 5, fig.height=5}
@@ -140,9 +185,10 @@ pairs_entropy_diff <- enframe(pairwise_div_difference(df), name = "pair", value 
 pairs_entropy_diff
 ```
 
+
 ```{r, fig.width=12, fig.height = 8}
-pairs_permutation_distributions %>% 
-  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+read_csv(here("data/all_criteria_null_difference_distributions.csv")) %>% 
+  # pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
   ggplot(aes(x = entropy_difference)) +
   geom_histogram(binwidth = 0.01)+
   geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
@@ -154,8 +200,8 @@ pairs_permutation_distributions %>%
 # Calculate p-values for diversity differences based on the quantile of the 
 # diversity difference value compared to the null hypothesis diversity distribution values
 # Pairwise comparison adjusted
-entropy_diff_table <- data.frame(pairs_permutation_distributions) %>% 
-  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+entropy_diff_table <- read_csv(here("data/all_criteria_null_difference_distributions.csv"))  %>% 
+  # pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
   group_by(pair) %>% 
   summarise(entropy_difference_distribution = list(entropy_difference)) %>% 
   right_join(pairs_entropy_diff) %>% 
@@ -238,14 +284,21 @@ pairs_entropy_diff
 ```
 ```{r, fig.width=12, fig.height = 8}
 # Create plots of null hypothesis distributions, overlaid with actual diversity difference
-pairs_permutation_distributions %>%
-  pivot_longer(cols = everything(), names_to = "pair", values_to = "entropy_difference") %>% 
+read_csv(here("data/all_criteria_pairwise_null_difference_distributions.csv")) %>%
+  group_by(pair) %>% 
+  nest() %>% 
+  separate(pair, into = c("p1","p2"), sep = "\\.", remove = F) %>%
+  rowwise() %>% mutate(pair=paste(sort(c(p1,p2)), collapse = ".")) %>% 
+  select(!pair:p2) %>% 
+  unnest(data) %>% 
+  # pivot_longer(cols = everything(), names_to = "pair", values_to = "entropy_difference") %>% 
   ggplot(aes(x = entropy_difference)) +
   geom_histogram(binwidth = 0.01)+
   geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
   facet_wrap(~pair, scales = "free")+
   theme_classic()
 ```
+
 ```{r}
 # Calculate p-values for diversity differences based on the quantile of the 
 # diversity difference value compared to the null hypothesis diversity distribution values
@@ -258,3 +311,54 @@ data.frame(pairs_permutation_distributions) %>%
   mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
   mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
 ```
+
+# Plots
+
+```{r}
+points_to_inches()
+points_to_inches(255)
+```
+```{r, fig.width=3.5, fig.height=3}
+custom_pal <- RColorBrewer::brewer.pal(7, "Set1")[-6]
+
+plt_rank_abundance <- df %>% 
+  count(criteria, diagnosis, sort = T) %>% 
+  group_by(criteria) %>% 
+  mutate(freq = n/sum(n)) %>% 
+  arrange(desc(freq), .by_group = T) %>% 
+  mutate(rank = 1:n()) %>% 
+  select(criteria, freq, rank) %>% 
+  mutate(cs = cumsum(freq)) %>% 
+  filter(rank <= 50) %>% 
+  mutate(criteria = toupper(criteria)) %>% 
+  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
+    geom_line() +
+    theme_classic()+
+    scale_color_manual(values = custom_pal)+
+    scale_x_continuous(expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0)) +
+    labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "") +
+    theme(
+    legend.position = c(0.72, 0.65),
+    legend.text = element_text(size = 10),
+    legend.background = element_rect(fill=alpha("white",0.5)),
+    legend.title = element_blank())
+
+plt_rank_abundance
+ggsave(here("figures/S_rank_abundance_all.pdf"), plot=plt_rank_abundance, width = 3.5, height = 3)
+```
+
+```{r, fig.width=3.5, fig.height=3.5}
+plt_div <- broom::tidy(div_diag) %>% 
+  mutate(names = toupper(names)) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plt_div
+ggsave(here("figures/S_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
+```
+
+
