@@ -145,6 +145,56 @@ ggraph(g, layout = 'fr') +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
 ```
+### Replacing node colors in facets manually
+
+
+- Create data frame with diagnosis and rank for each criteria
+- Create a column for color based on rank
+
+```{r}
+df_diagnoses <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv"))
+df_diagnoses <- df_diagnoses %>% 
+  filter(criteria %in% c("mcas_1", "mcas_2", "slicc_sle", "eular_acr_sle")) %>% 
+  count(criteria, diagnosis, sort = T) %>% 
+  group_by(criteria) %>% 
+  mutate(rank = 1:n()) %>% 
+  mutate(criteria = case_when(criteria == "mcas_1" ~ "consensus1", criteria == "mcas_2" ~ "consensus2", .default = criteria)) %>% 
+  select(name = diagnosis, criteria, rank) %>% 
+  left_join(enframe(rev(viridis::viridis(100)), "rank", "color"), by = "rank") 
+df_diagnoses
+```
+
+```{r}
+# Create base plot
+plt <- g %>% activate(nodes) %>% 
+  ggraph(layout = 'fr') +
+  geom_edge_link(alpha = 0.5) +
+  geom_node_point(size = 0.5) +
+  geom_node_text(aes(label = name))+ # Creating a label layer creates a target to join df_diagnoses to. 
+  facet_wrap(~criteria) +
+  theme_void() +
+  theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
+```
+
+
+```{r}
+plt_build <- ggplot_build(plt)
+facet_key <- plt_build$layout$layout # Information as to which criteria maps to which panel
+
+# Using geom_text layer
+colors <- plt_build$data[[3]] %>% 
+  left_join(facet_key, by = "PANEL") %>% # Join facet criteria name
+  left_join(df_diagnoses, by = c("label" = "name", "criteria")) %>% # Join diagnosis info including colors
+  mutate(color = replace_na(color, "black")) %>% # Make all nodes not ranked in a criteria black (otherwise dropped)
+  pull(color)
+
+plt_build$data[[2]]$colour <- colors # Assign colors to a color column. The order of rows in each layer data frame is the same
+plt_build$data[[3]] <- NULL # Remove geom_text layer
+plt_new <- ggplotify::as.ggplot(ggplot_gtable(plt_build))
+plt_new
+```
+
+
 ### Network measures
 
 ```{r}
