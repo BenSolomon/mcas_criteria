@@ -71,3 +71,56 @@ points_to_inches <- function(points=NA){
     points/72
   }
 }
+
+
+
+### ggraph can facet network graphs and can apply edge aesthetics according to
+### facets, but can't apply node aesthetics according to facets (i.e. nodes
+### will always be indentical across facets). This function takes a faceted
+### ggraph plot and manually adjusts node colors according to a faceted variable
+#
+# data - datatable that will contain all node label : facet variable combinations 
+#        and columns for node label, facet label, and color for each row
+#
+ggraph_color_faceted_nodes <- function(plt, data, label_col, facet_col, color_col, na_color = "black"){
+  # Adding a label text will create a data table with labeled rows that can be 
+  # used for joining operations
+  plt <- plt + geom_node_text(aes(label = name))
+  
+  plt_build <- ggplot_build(plt)
+  plt_layers <- sapply(plt_build$plot$layers, function(x) class(x$geom)[[1]])
+  plt_text_index <- which(plt_layers == "GeomText")
+  
+  facet_key <- plt_build$layout$layout # Information as to which criteria maps to which panel
+  
+  # Using geom_text layer
+  colors <- plt_build$data[[plt_text_index]] %>% 
+    left_join(facet_key, by = "PANEL") %>% # Join facet criteria name
+    left_join(data, by = c("label" = label_col, facet_col)) %>% # Join diagnosis info including colors
+    mutate(color = replace_na(color, na_color)) %>% # Make all nodes not ranked in a criteria black (otherwise dropped)
+    pull(color)
+  
+  plt_build$data[[plt_text_index-1]]$colour <- colors # Assign colors to a color column. The order of rows in each layer data frame is the same
+  plt_build$data[[plt_text_index]] <- NULL # Remove geom_text layer
+  
+  plt_new <- ggplotify::as.ggplot(ggplot_gtable(plt_build))
+  plt_new
+}
+
+### While facet labels can be adjusted during creation of a ggplot object,
+### there is no function that allows labels to be adjusted after a plot is 
+### stored as an object. This function allows facet labels to be adjusted after
+### a plot is already created
+#
+# rename_key - a vector with entries "original label" = "new label"
+#
+ggplot_rename_facets <- function(plt, rename_key){
+  plt_build <- ggplot_build(plt)
+  facet_key <- plt_build$layout$layout
+  label_col_index <- which(!(names(facet_key) %in% c("PANEL", "ROW", "COL", "SCALE_X", "SCALE_Y")))
+  facet_key[[label_col_index]] <- rename_key[facet_key[[label_col_index]]]
+  plt_build$layout$layout <- facet_key
+  ggplotify::as.ggplot(ggplot_gtable(plt_build))
+}
+
+

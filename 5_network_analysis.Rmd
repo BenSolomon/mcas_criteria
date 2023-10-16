@@ -1,6 +1,10 @@
 ---
 title: "Diagnosis network analysis"
-output: html_notebook
+output: 
+  html_notebook:
+    toc: True
+    toc_depth: 3
+    toc_float: True
 ---
 
 # Setup
@@ -11,6 +15,29 @@ library(tidyverse)
 library(igraph)
 library(tidygraph)
 library(ggraph)
+
+source(here("util_functions.R"))
+```
+
+```{r}
+custom_heatmap <- function(data, title, metric, color_scale = hcl.colors(3, "Earth"), midpoint = NULL, symmetric = T){
+  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
+  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
+  scale_mid <- scale_min + (scale_max - scale_min)/2
+  
+  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
+  
+  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
+  
+  ComplexHeatmap::Heatmap(
+    data,
+    col = color_function,
+    rect_gp = grid::gpar(col = "black", lwd = 1),
+    column_title = title,
+    name = metric
+  )
+}
+# custom_heatmap(cor(t(df_count_top_codiag), method = "pearson"), title = "Count top codiag\nAbsolute count", metric = "Pearson\ncorrelation")
 ```
 
 ```{r}
@@ -106,7 +133,20 @@ df_codiag_sle
 df_codiag <- rbind(
   df_codiag_mcas %>% rename(criteria = consensus),
   df_codiag_sle
-)
+) %>% 
+  filter(V1 != V2) %>% 
+  # Ensure that same V1, V2, order is used
+  rowwise() %>% 
+  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
+  ungroup() %>% 
+  group_by(criteria, from, to) %>% 
+  summarise(n = sum(n)) %>% 
+  # Add some statistics
+  group_by(criteria) %>%
+  arrange(desc(n), .by_group = T) %>% 
+  mutate(rank = 1:n())  %>% 
+  mutate(freq = n/sum(n)) %>%
+  select(from, to, n, criteria, rank, freq)
 
 df_codiag
 ```
@@ -114,42 +154,26 @@ df_codiag
 
 ```{r}
 top_n <-  100
-top_f <- 0.15
 
-g <- df_codiag %>% 
-  filter(V1 != V2) %>% 
-  rowwise() %>% 
-  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
-  ungroup() %>% 
-  group_by(criteria, from, to) %>% 
-  summarise(n = sum(n)) %>% 
-  group_by(criteria) %>%
-  arrange(desc(n), .by_group = T) %>% 
-  mutate(rank = 1:n())  %>% 
-  mutate(freq = n/sum(n)) %>%
-  mutate(cum_freq = cumsum(freq)) %>% 
-  select(from, to, criteria, rank, freq, cum_freq) %>% 
+g_top_codiags <- df_codiag %>% 
   filter(rank <= top_n) %>%
-  # filter(cum_freq <= top_f) %>% 
   as_tbl_graph()
 
-g
+g_all_codiags <- df_codiag %>% 
+  as_tbl_graph()
 ```
 
 ```{r}
 set.seed(1)
-ggraph(g, layout = 'fr') + 
+ggraph(g_top_codiags, layout = 'fr') + 
     geom_edge_link(alpha = 0.5) +
-    geom_node_point(size = 0.5) +
+    geom_node_point(size = 1) +
   facet_wrap(~criteria) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1))
 ```
-### Replacing node colors in facets manually
 
-
-- Create data frame with diagnosis and rank for each criteria
-- Create a column for color based on rank
+### Color by rank
 
 ```{r}
 df_diagnoses <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv"))
@@ -165,53 +189,174 @@ df_diagnoses
 ```
 
 ```{r}
+point_size <- 2
+criteria_names <- c(
+  "consensus1" = "Consensus MCAS",
+  "consensus2" = "Alternative MCAS",
+  "eular_acr_sle" = "EULAR-ACR SLE",
+  "slicc_sle" = "SLICC SLE")
+
+g_top_codiags_rank <- g_top_codiags %>%
+  activate(nodes) %>% 
+  mutate(rank = 1:n()) # Will be replaced, but needed to create a legend
+
 # Create base plot
-plt <- g %>% activate(nodes) %>% 
-  ggraph(layout = 'fr') +
+set.seed(1) # Want seed to be called immediately prior to ggraph
+plt <- ggraph(g_top_codiags_rank, layout = 'fr') +
   geom_edge_link(alpha = 0.5) +
-  geom_node_point(size = 0.5) +
-  geom_node_text(aes(label = name))+ # Creating a label layer creates a target to join df_diagnoses to. 
-  facet_wrap(~criteria) +
+  geom_node_point(size = point_size*1.5) +
+  geom_node_point(size = point_size, aes(color = rank)) + # Will be replaced, but needed to create a legend
+  facet_wrap(~criteria, labeller = as_labeller(criteria_names)) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
+  scale_color_viridis_c(direction = -1, breaks = c(1,25,50,75,100)) +
+  guides(color = guide_colorbar(reverse = TRUE)) +
+  labs(color = "Rank")
 ```
 
+```{r, fig.width=8, fig.height=6}
+ggraph_color_faceted_nodes(plt, 
+                           df_diagnoses, 
+                           label_col = "name", 
+                           facet_col = "criteria",
+                           color_col = "color")
+```
+
+### Color by centrality
 
 ```{r}
-plt_build <- ggplot_build(plt)
-facet_key <- plt_build$layout$layout # Information as to which criteria maps to which panel
+point_size <- 2
+criteria_names <- c(
+  "consensus1" = "Consensus MCAS",
+  "consensus2" = "Alternative MCAS",
+  "eular_acr_sle" = "EULAR-ACR SLE",
+  "slicc_sle" = "SLICC SLE")
 
-# Using geom_text layer
-colors <- plt_build$data[[3]] %>% 
-  left_join(facet_key, by = "PANEL") %>% # Join facet criteria name
-  left_join(df_diagnoses, by = c("label" = "name", "criteria")) %>% # Join diagnosis info including colors
-  mutate(color = replace_na(color, "black")) %>% # Make all nodes not ranked in a criteria black (otherwise dropped)
-  pull(color)
+g_top_codiags_ce <- g_top_codiags %>%
+  activate(nodes) %>% 
+  mutate(ce = centrality_eigen()) # Will be replaced by needed to create a legend
 
-plt_build$data[[2]]$colour <- colors # Assign colors to a color column. The order of rows in each layer data frame is the same
-plt_build$data[[3]] <- NULL # Remove geom_text layer
-plt_new <- ggplotify::as.ggplot(ggplot_gtable(plt_build))
-plt_new
+# Create base plot
+set.seed(1)
+plt <- ggraph(g_top_codiags_ce, layout = 'fr', ) +
+  geom_edge_link(alpha = 0.5) +
+  geom_node_point(size = point_size*1.5) +
+  geom_node_point(size = point_size, aes(color = ce)) + # Will change, but need to create a legend
+  facet_wrap(~criteria, labeller = as_labeller(criteria_names)) +
+  theme_void() +
+  theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
+  scale_color_viridis_c(breaks = c(0.00,0.25,0.50,0.75,1.00), limits = c(0,1)) +
+  labs(color = "Centrality")
+```
+
+```{r}
+df_diagnoses_centrality <- data.frame(criteria = g_top_codiags_ce %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
+  mutate(sub_graphs = map(criteria, function(c){
+    g_top_codiags_ce %>% 
+      activate(edges) %>% 
+      filter(criteria == c) %>% 
+      activate(nodes) %>% 
+      mutate(ce = centrality_eigen()) %>% 
+      data.frame()
+  })) %>% 
+  unnest(sub_graphs) 
+
+
+df_diagnoses_centrality
+```
+
+```{r}
+map_color <- function(x, min, max, steps){
+  df <- data.frame(
+    value =  seq(from = min, to = max, length.out = steps)) %>% 
+    mutate(color = viridis::viridis(n())) 
+  color_index <- findInterval(x, df$value)
+  df$color[color_index]
+}
+
+df_diagnoses_centrality <- df_diagnoses_centrality %>% 
+  mutate(color = map_color(ce, 0,1,100))
+
+df_diagnoses_centrality
+```
+
+```{r, fig.width=8, fig.height=6}
+ggraph_color_faceted_nodes(plt, 
+                           df_diagnoses_centrality, 
+                           label_col = "name", 
+                           facet_col = "criteria",
+                           color_col = "color")
 ```
 
 
 ### Network measures
 
 ```{r}
-data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>%
-      filter(criteria == c) %>%
-      mean_distance()
-  })) %>% 
-  unnest(sub_graphs) 
+multiple_graph_metrics <- function(x){
+  list(
+    "total_edges" = gsize(x),
+    "total_nodes" = gorder(x),
+    "mean_distance" = mean_distance(x),
+    "edge_densitiy" = edge_density(x),
+    "transitivity" = transitivity(x),
+    "reciprocity" = reciprocity(x),
+    "edge_connectivity" = edge_connectivity(x),
+    "assortativity" = assortativity_degree(x),
+    "clique_number" = clique_num(x),
+    "clique_count" = count_max_cliques(x),
+    "motif_count" = count_motifs(x),
+    "diameter" = diameter(x),
+    "radius" = radius(x)
+  ) %>% 
+    enframe(name = "metric", value = "value") %>% 
+    unnest(value)
+}
+
+get_subgraph_metrics <- function(g){
+  data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
+    mutate(sub_graphs = map(criteria, function(c){
+      g %>% as_data_frame() %>% filter(criteria == c) %>% as_tbl_graph(directed = F) %>% multiple_graph_metrics() 
+      # g %>% activate(edges) %>% filter(criteria == c) %>% multiple_graph_metrics() 
+    })) %>% 
+    unnest(sub_graphs) %>% 
+    pivot_wider(names_from = "metric", values_from = "value")
+}
+
+get_subgraph_metrics(g_top_codiags)
+get_subgraph_metrics(g_all_codiags)
+
+
+# mean_distance - mean distance between all pairs of nodes
+# edge_density - ratio of actual number of edges relative to largest possible number of edges
+# transitivity - probability that adjacent vertices are connected (a.k.a. clustering coefficient). Ratio of observed closed triplets to maximum number of closed triplets. https://transportgeography.org/contents/methods/graph-theory-measures-indices/transitivity-graph/
+# reciprocity - proportion of mutual connections (i.e. connection in both directions). Requires graph be directed. 
+# edge_connectivity - for pair of nodes, number of edges needed to remove all connections, for graph, the lowest edge_connectivity of all node pairs in graph
+# assortativity - whether nodes tend to be connected to similar nodes, in this case based on node degree (i.e. are highly connected nodes connected to other highly connected nodes)
+# clique_number - size of largest clique
+# clique_count - number of cliques of any size (smallest size is of two nodes)
+# eccentricity - the distance between a given node and its furthest away node
+# diameter - the distance between the two furthest nodes (i.e. the eccentricity of the node with the highest eccentricity)
+# center node - nodes with the lowest eccentricity
+# radius - maximal distance from the central node(s) to the furthest node
+```
+```{r, fig.width=4, fig.height=4}
+metrics_std <- get_subgraph_metrics(g_top_codiags) %>% 
+  column_to_rownames("criteria") %>% 
+  vegan::decostand(method = "standardize", MARGIN = 2)
+metrics_std[,apply(metrics_std, 2, function(x) !all(is.na(x)))] %>% t() %>% 
+  custom_heatmap(title = "Top n co-diagnoses", metric = "Std score")
+
+metrics_std <- get_subgraph_metrics(g_all_codiags) %>% 
+  column_to_rownames("criteria") %>% 
+  vegan::decostand(method = "standardize", MARGIN = 2)
+metrics_std[,apply(metrics_std, 2, function(x) !all(is.na(x)))] %>% t() %>% 
+  custom_heatmap(title = "All co-diagnoses", metric = "Std score")
 ```
 
 
 # Subgraph similarity
 
-### Based on count of 
+### Count of co-diagnoses
 ```{r}
 # input_data <- "freq"
 input_data <- "rank"
@@ -223,222 +368,108 @@ pivot_function <- function(x, data_type, top_n = NA){
     }
 }
 
-df_connection <- g %>% 
-  activate(edges) %>% 
-  data.frame() %>% 
-  unite(connection, from, to, sep = "_") %>% 
-  select(criteria, c(input_data), connection) %>% 
-  pivot_wider(names_from = "connection", values_from = input_data, values_fn = function(x) pivot_function(x, data_type = input_data, top_n = top_n), values_fill = 0) %>% 
-  column_to_rownames("criteria")
-df_connection
+count_connections <- function(g){
+  g %>% 
+    activate(edges) %>% 
+    data.frame() %>% 
+    unite(connection, from, to, sep = "_") %>% 
+    select(criteria, c(input_data), connection) %>% 
+    pivot_wider(names_from = "connection", values_from = input_data, values_fn = function(x) pivot_function(x, data_type = input_data, top_n = top_n), values_fill = 0) %>% 
+    column_to_rownames("criteria")
+}
+
+df_count_top_codiag <- count_connections(g_top_codiags)
+df_count_all_codiag <- count_connections(g_all_codiags)
 ```
 
-```{r}
-ComplexHeatmap::Heatmap(df_connection, col = viridis::viridis(100))
+```{r, fig.height=3, fig.width=16}
+ComplexHeatmap::Heatmap(df_count_top_codiag, col = viridis::viridis(100))
+# ComplexHeatmap::Heatmap(df_count_all_codiag, col = viridis::viridis(100))
 ```
 
-```{r, fig.width=5, fig.height=4}
-ComplexHeatmap::Heatmap(cor(t(df_connection), method = "pearson"))
-ComplexHeatmap::Heatmap(cor(t(df_connection), method = "spearman"))
+```{r, fig.width=4, fig.height=3.5}
+custom_heatmap(cor(t(df_count_top_codiag), method = "pearson"), title = "Count top codiag\nAbsolute count", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(df_count_top_codiag), method = "spearman"), title = "Count top codiag\nAbsolute count", metric = "Spearman\ncorrelation")
+custom_heatmap(cor(t(df_count_all_codiag), method = "pearson"), title = "Count all codiag\nAbsolute count", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(df_count_all_codiag), method = "pearson"), title = "Count all codiag\nAbsolute count", metric = "Spearman\ncorrelation")
 ```
 
-```{r, fig.width=5, fig.height=4}
+```{r, fig.width=4, fig.height=3.5}
+convert_to_presence_absence <- function(df){
+  df %>% 
+    rownames_to_column("criteria") %>% 
+    pivot_longer(-criteria, names_to = "edge", values_to = "value") %>% 
+    drop_na() %>% 
+    mutate(value = ifelse(value > 0, 1, 0)) %>% 
+    pivot_wider(names_from = "edge", values_from = "value", values_fill = 0) %>% 
+    column_to_rownames("criteria")
+}
+
+
 # Removing scale of connections and just using presence or absence
-ComplexHeatmap::Heatmap(cor(t(df_connection %>% mutate_all(~ifelse(.>0,1,0))), method = "pearson"))
-ComplexHeatmap::Heatmap(cor(t(df_connection %>% mutate_all(~ifelse(.>0,1,0))), method = "spearman"))
+custom_heatmap(cor(t(convert_to_presence_absence(df_count_top_codiag)), method = "pearson"), title = "Count top codiag\nPresence/absence", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(convert_to_presence_absence(df_count_top_codiag)), method = "spearman"), title = "Count top codiag\nPresence/absence", metric = "Spearman\ncorrelation")
+custom_heatmap(cor(t(convert_to_presence_absence(df_count_all_codiag)), method = "pearson"), title = "Count all codiag\nPresence/absence", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(convert_to_presence_absence(df_count_all_codiag)), method = "pearson"), title = "Count all codiag\nPresence/absence", metric = "Spearman\ncorrelation")
+
+# Note that converting to presence/absence negates difference between pearson and spearman (because no more differences in rank)
 ```
 
 ### Based on centrality
 
 ```{r}
-df_centrality <- data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>% 
-      filter(criteria == c) %>% 
-      activate(nodes) %>% 
-      mutate(ce = centrality_eigen()) %>% 
-      data.frame()
-  })) %>% 
+calculate_subgraph_centrality <- function(g, centrality_fun = "centrality_eigen"){
+  data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
+    mutate(sub_graphs = map(criteria, function(c){
+      g %>% as_data_frame() %>% filter(criteria == c) %>% as_tbl_graph(directed = F) %>% 
+        activate(nodes) %>% mutate(centrality = get(centrality_fun)()) %>% data.frame()
+    })) %>% 
   unnest(sub_graphs) %>% 
-  pivot_wider(names_from = "name", values_from = "ce", values_fill = 0) %>% 
+  pivot_wider(names_from = "name", values_from = "centrality", values_fill = 0) %>% 
   column_to_rownames("criteria")
-df_centrality
+}
+
+df_centr_top_codiag <- calculate_subgraph_centrality(g_top_codiags)
+df_centr_all_codiag <- calculate_subgraph_centrality(g_all_codiags)
 ```
 
 ```{r, fig.width=16, fig.height=4}
-ComplexHeatmap::Heatmap(df_centrality, col = viridis::viridis(100))
+custom_heatmap(df_centr_top_codiag, color_scale = viridis::viridis(3), title = "Centrality of top n diagnoses", metric = "Eigenvalue\ncentrality", symmetric = F)
 ```
 
-```{r, fig.width=5, fig.height=4}
-ComplexHeatmap::Heatmap(cor(t(df_centrality), method = "pearson"))
-ComplexHeatmap::Heatmap(cor(t(df_centrality), method = "spearman"))
+```{r, fig.width=4, fig.height=3.5}
+custom_heatmap(cor(t(df_centr_top_codiag), method = "pearson"), title = "Top diagnosis centrality", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(df_centr_top_codiag), method = "spearman"), title = "Top diagnosis centrality", metric = "Spearman\ncorrelation")
+custom_heatmap(cor(t(df_centr_all_codiag), method = "pearson"), title = "All diagnosis centrality", metric = "Pearson\ncorrelation")
+custom_heatmap(cor(t(df_centr_all_codiag), method = "pearson"), title = "All diagnosis centrality", metric = "Spearman\ncorrelation")
 ```
-
-```{r}
-cos_sim <- function(x){
-  Matrix <- as.matrix(x)
-  sim <- Matrix / sqrt(rowSums(Matrix * Matrix))
-  sim <- sim %*% t(sim)
-  sim
-}
-
-```
-
-```{r, fig.width=5, fig.height=4}
-ComplexHeatmap::Heatmap(lsa::cosine(t(as.matrix(df_centrality))), col = viridis::viridis(100))
+```{r, fig.width=4, fig.height=3.5}
+custom_heatmap(lsa::cosine(t(as.matrix(df_centr_top_codiag))), color_scale = viridis::viridis(3), title = "Top diagnosis centrality", metric = "Cosine\nsimilarity", symmetric = F)
+custom_heatmap(lsa::cosine(t(as.matrix(df_centr_all_codiag))), color_scale = viridis::viridis(3), title = "All diagnosis centrality", metric = "Cosine\nsimilarity", symmetric = F)
 ```
 
 # Find mast cell activation in network
 
 ```{r}
-g <- df_codiag %>% 
-  filter(V1 != V2) %>% 
-  rowwise() %>% 
-  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
-  ungroup() %>% 
-  as_tbl_graph()
-```
-
-```{r}
-x <- g %>% activate(nodes) %>% as.data.frame()
-```
-
-```{r}
-df_centrality <- data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>% 
-      filter(criteria == c) %>% 
-      activate(nodes) %>% 
-      mutate(ce = centrality_eigen()) %>% 
-      data.frame()
-  })) %>% 
-  unnest(sub_graphs) %>% 
-  pivot_wider(names_from = "name", values_from = "ce", values_fill = 0) %>% 
-  column_to_rownames("criteria")
-df_centrality
-```
-
-```{r}
 mastocytosis_patterns <- c("mastocytosis", "systemic mastocytosis", "aerial mastocytosis", "cutaneous mastocytosis")
-mcas_patters <- c("mast cell activation syndrome", "mast cell activation disorder")
+mcas_patterns <- c("mast cell activation syndrome", "mast cell activation disorder")
 
 df_codiag %>% 
-  filter(V1 != V2) %>% 
-  mutate_at(vars(c(V1, V2)), ~ifelse(. %in% mastocytosis_patterns, "mastocytosis", .)) %>% 
-  mutate_at(vars(c(V1, V2)), ~ifelse(. %in% mcas_patters, "mast cell activation syndrome", .)) %>% 
-  rowwise() %>% 
-  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
-  ungroup() %>% 
+  mutate_at(vars(c(from, to)), ~ifelse(. %in% mastocytosis_patterns, "mastocytosis", .)) %>% 
+  mutate_at(vars(c(from, to)), ~ifelse(. %in% mcas_patterns, "mast cell activation syndrome", .)) %>% 
   group_by(criteria, from, to) %>% 
   summarise(n = sum(n)) %>% 
   group_by(criteria) %>% 
   nest() %>% 
-  mutate(data = map(data, function(d){
-    as_tbl_graph(d, directed = F) %>% 
-      activate(nodes) %>% 
-      mutate(ce = centrality_eigen()) %>% 
-      mutate(cd = centrality_degree()) %>% 
-      data.frame()
-  })) %>% 
+  mutate(data = map(data, function(df){
+      as_tbl_graph(df, directed = F) %>% 
+        activate(nodes) %>% mutate(centrality = centrality_eigen()) %>% data.frame()
+    })) %>% 
   unnest(data) %>% 
-  filter(name %in% c("mastocytosis", "mast cell activation syndrome"))
+  filter(name %in% c(mastocytosis_patterns, mcas_patterns)) %>% 
+  pivot_wider(names_from = "name", values_from = "centrality", values_fill = 0) 
 ```
+# References
 
-```{r}
-g <- df_codiag %>% 
-  filter(V1 != V2) %>% 
-  mutate_at(vars(c(V1, V2)), ~ifelse(. %in% mastocytosis_patterns, "mastocytosis", .)) %>% 
-  mutate_at(vars(c(V1, V2)), ~ifelse(. %in% mcas_patters, "mast cell activation syndrome", .)) %>% 
-  rowwise() %>% 
-  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
-  ungroup() %>% 
-  group_by(criteria, from, to) %>% 
-  summarise(n = sum(n)) %>% 
-  group_by(criteria) %>% 
-  ungroup() %>% 
-  as_tbl_graph()
-```
-```{r}
-df_ce <- data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>% 
-      filter(criteria == c) %>% 
-      activate(nodes) %>% 
-      mutate(c_degree = centrality_degree()) %>% 
-      mutate(c_eigen = centrality_eigen()) %>% 
-      mutate(c_between = centrality_betweenness(normalized = T)) %>% 
-      mutate(c_close = centrality_closeness(normalized = T)) %>% 
-      data.frame()
-  })) %>% 
-  unnest(sub_graphs) 
-```
-
-```{r}
-df_ce %>% 
-  {. %>% filter(grepl("mast cell activation", name)) %>% return();.} %>%  
-  filter(grepl("mastocytosis", name)) 
-```
-
-# Comparison of metrics with full vs. filtered graph
-
-### Full graph
-
-```{r}
-g <- df_codiag %>% 
-  filter(V1 != V2) %>% 
-  rowwise() %>% 
-  mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
-  ungroup() %>% 
-  as_tbl_graph()
-```
-
-```{r}
-Compactness <- function(g) {
-        gra.geo <- distances(g) ## get geodesics
-        gra.rdist <- 1/gra.geo  ## get reciprocal of geodesics
-        diag(gra.rdist) <- NA   ## assign NA to diagonal
-        gra.rdist[gra.rdist == Inf] <- 0 ## replace infinity with 0
-          # Compactness = mean of reciprocal distances
-        comp.igph <- mean(gra.rdist, na.rm=TRUE) 
-        return(comp.igph)
-        }
-```
-
-```{r}
-data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>%
-      filter(criteria == c) %>%
-      Compactness()
-      # edge_density()
-      # mean_distance()
-  })) %>% 
-  unnest(sub_graphs) 
-```
 https://rpubs.com/pjmurphy/308024
-
-```{r}
-df_centrality <- data.frame(criteria = g %>% activate(edges) %>% pull(criteria) %>% unique()) %>% 
-  mutate(sub_graphs = map(criteria, function(c){
-    g %>% 
-      activate(edges) %>% 
-      filter(criteria == c) %>% 
-      activate(nodes) %>% 
-      mutate(ce = centrality_eigen()) %>% 
-      data.frame()
-  })) %>% 
-  unnest(sub_graphs) %>% 
-  pivot_wider(names_from = "name", values_from = "ce", values_fill = 0) %>% 
-  column_to_rownames("criteria")
-df_centrality
-```
-```{r, fig.width=5, fig.height=4}
-ComplexHeatmap::Heatmap(lsa::cosine(t(as.matrix(df_centrality))), col = viridis::viridis(100))
-```
-
-
 
