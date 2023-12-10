@@ -1,0 +1,71 @@
+---
+title: "Parse ChatGPT output"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(here)
+source(here("util_functions.R"))
+```
+
+```{r}
+parse_mcas_diagnoses <- function(sim_results, consensus){
+  sim_results <- do.call(rbind, sim_results[consensus, ])
+  map(sim_results$diagnoses, process_diagnoses) %>% 
+    enframe(name = "iteration", value = "diagnosis") %>% 
+    unnest(diagnosis) %>% 
+    mutate(criteria = consensus)
+}
+
+parse_mcas_rds <- function(sim_results){
+  bind_rows(
+    parse_mcas_diagnoses(sim_results, "consensus1") %>% 
+      mutate(criteria = "mcas_consortium"),
+    parse_mcas_diagnoses(sim_results, "consensus2") %>% 
+      mutate(criteria = "mcas_alternative")
+  )
+}
+  
+parse_alternative_diagnoses <- function(sim_results){
+  tibble(criteria = rownames(sim_results)) %>% 
+    mutate(data = map(criteria, function(c){
+      do.call(rbind, sim_results[c,]) %>% 
+        mutate(iteration = 1:n()) %>% 
+        mutate(diagnosis = map(diagnoses, process_diagnoses)) %>% 
+        unnest(diagnosis) %>% 
+        select(iteration, diagnosis)
+      })) %>% 
+    unnest(data)
+}
+```
+
+```{r}
+df_mcas <- tibble(file = list.files(here("data/chatgpt_output/name_n20000"), full.names = T)) %>% 
+  filter(grepl("RDS$", file)) %>% 
+  mutate(data = map(file, readRDS)) %>% 
+  mutate(data = map(data, parse_mcas_rds)) %>% 
+  unnest(data) %>% 
+  mutate(file = basename(file))
+```
+
+```{r}
+df_alternative <- tibble(file = list.files(here("data/chatgpt_output/other_conditions"), full.names = T))%>% 
+  mutate(data = map(file, readRDS)) %>% 
+  mutate(data = map(data, parse_alternative_diagnoses)) %>% 
+  unnest(data) 
+```
+
+
+
+```{r}
+df <- bind_rows(df_mcas, df_alternative)
+df
+```
+```{r}
+df %>% count(criteria)
+```
+```{r}
+write_csv(df, here("data/compiled_all_chatgpt_diagnoses.csv"))
+```
+

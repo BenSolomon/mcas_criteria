@@ -14,28 +14,13 @@ source(here("util_functions.R"))
 # Reading data
 
 ```{r}
-parse_diagnoses <- function(sim_results, consensus){
-  sim_results <- do.call(rbind, sim_results[consensus, ])
-  map(sim_results$diagnoses, process_diagnoses) %>% 
-    enframe(name = "iteration", value = "diagnosis") %>% 
-    unnest(diagnosis) %>% 
-    mutate(consensus = consensus)
-}
-
-parse_rds <- function(sim_results){
-  bind_rows(
-    parse_diagnoses(sim_results, "consensus1"),
-    parse_diagnoses(sim_results, "consensus2")
-  )
-}
-  
 plot_diagnosis <- function(df, c, n_diagnoses=25) {
-  df %>% 
-    filter(consensus == c) %>% 
-    count(diagnosis, sort = T) %>% 
-    mutate(freq = n/sum(n)) %>% 
+  df %>%
+    filter(criteria == c) %>%
+    count(diagnosis, sort = T) %>%
+    mutate(freq = n/sum(n)) %>%
     top_n(n_diagnoses, n) %>%
-    mutate(diagnosis = fct_reorder(diagnosis, n)) %>% 
+    mutate(diagnosis = fct_reorder(diagnosis, n)) %>%
     ggplot(aes(x = diagnosis, y = freq))+
     geom_bar(stat = "identity")+
     theme_bw() +
@@ -46,28 +31,18 @@ plot_diagnosis <- function(df, c, n_diagnoses=25) {
 ```
 
 ```{r}
-# Read in chatGPT output
-# n2000 directory contains data from 20,000 chatGPT iterations
-df <- tibble(file = list.files(here("data/chatgpt_output/name_n20000"), full.names = T)) %>% 
-  filter(grepl("RDS$", file)) %>% 
-  mutate(data = map(file, readRDS)) %>% 
-  mutate(data = map(data, parse_rds)) %>% 
-  unnest(data) %>% 
-  select(-file, -iteration)
+# Read in chatGPT output, processed by parse_chatgpt_output.Rmd
+df <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv")) %>% 
+  filter(grepl("mcas", criteria))
 df
 ```
-```{r, message=F}
-# write_csv(df, here("data/compiled_mcas_chatgpt_diagnoses.csv"))
-df <- read_csv(here("data/compiled_mcas_chatgpt_diagnoses.csv"))
-```
-
 # Top diagnoses
 
 ```{r}
 # Top n diagnoses plots
 plot_top25 <- cowplot::plot_grid(
-  plot_diagnosis(df, c="consensus1", n_diagnoses = 25)+ggtitle("Consortium") + ylim(0,0.1),
-  plot_diagnosis(df, c="consensus2", n_diagnoses = 25)+ggtitle("Alternative") + ylim(0,0.1),
+  plot_diagnosis(df, c="mcas_consortium", n_diagnoses = 25)+ggtitle("Consortium") + ylim(0,0.1),
+  plot_diagnosis(df, c="mcas_alternative", n_diagnoses = 25)+ggtitle("Alternative") + ylim(0,0.1),
   nrow = 1,
   rel_widths = c(0.45,0.5)
 )
@@ -77,8 +52,8 @@ plot_top25
 ```{r}
 # Get the individual proportions of top 5 diagnoses
 df %>% 
-  count(consensus, diagnosis) %>% 
-  group_by(consensus) %>% 
+  count(criteria, diagnosis) %>% 
+  group_by(criteria) %>% 
   mutate(freq = n/sum(n)) %>% 
   slice_max(order_by = n, n = 5)
 ```
@@ -87,8 +62,8 @@ df %>%
 ```{r}
 # Get cumulative proportion of top 30 diagnoses
 df %>% 
-  count(consensus, diagnosis) %>% 
-  group_by(consensus) %>% 
+  count(criteria, diagnosis) %>% 
+  group_by(criteria) %>% 
   mutate(freq = n/sum(n)) %>% 
   slice_max(order_by = n, n = 25) %>% 
   summarise(top_f = sum(freq), top_n = sum(n))
@@ -99,19 +74,19 @@ df %>%
 ```{r}
 # Rank abundance plot
 df_cs <- df %>% 
-  count(consensus, diagnosis) %>% 
-  group_by(consensus) %>% 
+  count(criteria, diagnosis) %>% 
+  group_by(criteria) %>% 
   mutate(freq = n/sum(n)) %>% 
   arrange(desc(freq), .by_group = T) %>% 
   mutate(rank = 1:n()) %>% 
-  select(consensus, freq, rank) %>% 
+  select(criteria, freq, rank) %>% 
   # filter(rank <= 500) %>% 
   mutate(cs = cumsum(freq))
 
 df_cs %>% 
   filter(rank <= 100) %>% 
-  mutate(consensus = ifelse(consensus == "consensus1", "Consensus-1", "Consensus-2")) %>% 
-  ggplot(aes(x = rank, y = freq, color = factor(consensus)))+
+  mutate(criteria = ifelse(criteria == "mcas_consortium", "Consortium", "Alternative")) %>% 
+  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
     geom_line() +
     theme_classic()+
     scale_color_brewer(palette = "Set1") +
@@ -120,13 +95,14 @@ df_cs %>%
   labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
 ```
 ```{r}
+# Finding relative ranks and frequencies of different diagnoses
 consolidate_diagnoses <- function(df, pattern){
   df <- df %>% 
-    group_by(consensus, diagnosis) %>% 
+    group_by(criteria, diagnosis) %>% 
     tally() %>% 
-    arrange(consensus, desc(n)) %>% 
+    arrange(criteria, desc(n)) %>% 
     mutate(rank = 1:n()) %>% 
-    group_by(consensus) %>% 
+    group_by(criteria) %>% 
     mutate(freq = n/sum(n)) 
     
   df_filter <- df %>% 
@@ -135,19 +111,19 @@ consolidate_diagnoses <- function(df, pattern){
   pattern_match <- paste(df_filter$diagnosis, collapse = ", ")
   
   pattern_ranks <- df_filter %>% 
-    group_by(consensus) %>% 
+    group_by(criteria) %>% 
     summarise(rank = paste(rank, collapse = ", ")) %>% 
     deframe()
   
   pattern_freq <- df_filter %>% 
-    group_by(consensus) %>% 
+    group_by(criteria) %>% 
     summarise(freq = sum(freq)) %>% 
     deframe()
   
   adjusted_rank <- df %>% 
-    left_join(enframe(pattern_freq, "consensus"), by = "consensus") %>% 
+    left_join(enframe(pattern_freq, "criteria"), by = "criteria") %>% 
     filter(freq >= value) %>% 
-    group_by(consensus) %>% 
+    group_by(criteria) %>% 
     summarize(rank = max(rank)) %>% 
     deframe()
   
@@ -160,7 +136,9 @@ consolidate_diagnoses <- function(df, pattern){
   )
 }
 
+cat("### Mast cell\n")
 consolidate_diagnoses(df, "mast cell")
+cat("\n\n\n### Mastocytosis\n")
 consolidate_diagnoses(df, "mastocytosis")
 ```
 
@@ -168,7 +146,7 @@ consolidate_diagnoses(df, "mastocytosis")
 
 ### Shannon entropy
 ```{r}
-diagnosis_table <- table(df$consensus, df$diagnosis)
+diagnosis_table <- table(df$criteria, df$diagnosis)
 div_diag  <- vegan::diversity(diagnosis_table)
 div_diag  
 ```
@@ -176,10 +154,10 @@ div_diag
 ### Renyi entropy curves
 
 ```{r}
-vegan::renyi(table(df$consensus, df$diagnosis), scales = seq(from=0,to=2,by=0.1)) %>%
-  rownames_to_column("consensus") %>% 
-  pivot_longer(-consensus, names_to = "order", values_to = "renyi") %>% 
-  ggplot(aes(x=as.numeric(order), y=renyi, color = consensus))+
+vegan::renyi(table(df$criteria, df$diagnosis), scales = seq(from=0,to=2,by=0.1)) %>%
+  rownames_to_column("criteria") %>% 
+  pivot_longer(-criteria, names_to = "order", values_to = "renyi") %>% 
+  ggplot(aes(x=as.numeric(order), y=renyi, color = criteria))+
   geom_line() +
   theme_classic()+
   scale_color_brewer(palette = "Set1")
@@ -189,9 +167,9 @@ vegan::renyi(table(df$consensus, df$diagnosis), scales = seq(from=0,to=2,by=0.1)
 
 ```{r, eval = F}
 # Contained in "/scripts/mcas_iNEXT_calculation.R"
-f_cs <- df %>% 
-  count(consensus, diagnosis) %>% 
-  pivot_wider(names_from = "consensus", values_from = n, values_fill = 0) %>% 
+df_cs <- df %>% 
+  count(criteria, diagnosis) %>% 
+  pivot_wider(names_from = "criteria", values_from = n, values_fill = 0) %>% 
   column_to_rownames("diagnosis")
 
 e <- 500000 # Sets how many diagnoses to sample to
@@ -202,7 +180,7 @@ iNEXT_out <- iNEXT(df_cs, q=c(0, 1, 2), datatype="abundance", endpoint = e)
 
 
 ```{r}
-mcas_iNEXT <- readRDS(here("data/mcas_iNEXT_e500000.RDS"))
+mcas_iNEXT <- readRDS(here("data/mcas_iNEXT_e250000.RDS"))
 ```
 
 ```{r, fig.width = 8, fig.height = 4}
@@ -213,11 +191,6 @@ for (i in 1:3){
   print(plt)
 }
 ```
-```{r}
-mcas_iNEXT$iNextEst$coverage_based %>% 
-  filter(SC >=0.989 & SC <= 0.992) %>% 
-  filter(Order.q == 0) 
-```
 
 ### Permutation testing
 
@@ -226,7 +199,7 @@ permutation_pair_iteration <- function(randomize = T){
   if (randomize == T){
     df <- df %>% mutate(diagnosis = sample(diagnosis, n()))
   }
-  div <- vegan::diversity(table(df$consensus, df$diagnosis))
+  div <- vegan::diversity(table(df$criteria, df$diagnosis))
   unname(div[1] - div[2])
 }
 
@@ -274,18 +247,18 @@ points_to_inches(539)
 
 ```{r, fig.width=7.4, fig.height=4}
 plt_top_25 <- df %>%
-  mutate(consensus = factor(ifelse(consensus == "consensus1", "Consortium", "Alternative"), 
+  mutate(criteria = factor(ifelse(criteria == "mcas_consortium", "Consortium", "Alternative"), 
                             levels=c("Consortium", "Alternative"))) %>% 
-  count(consensus, diagnosis, sort = T) %>%
-  group_by(consensus) %>% 
+  count(criteria, diagnosis, sort = T) %>%
+  group_by(criteria) %>% 
   mutate(freq = n / sum(n)) %>% 
   slice_max(n, n = 25) %>% 
-  mutate(grp_diagnosis = sprintf("%s_%s", consensus, diagnosis)) %>% 
+  mutate(grp_diagnosis = sprintf("%s_%s", criteria, diagnosis)) %>% 
   mutate(grp_diagnosis = fct_reorder(grp_diagnosis, n)) %>% 
   {
   ggplot(data = ., aes(x = grp_diagnosis, y = freq)) +
     geom_bar(stat = "identity", width=0.8) +
-    facet_wrap( ~ consensus, scales = "free_y") +
+    facet_wrap( ~ criteria, scales = "free_y") +
     theme_bw() +
     coord_flip() +
     labs(x = "", y = "Frequency") +
@@ -300,9 +273,9 @@ ggsave(here("figures/2_top_25_diagnoses.pdf"), plot=plt_top_25, width = 7.4, hei
 ```{r, fig.width=3.5, fig.height=2.5}
 plt_rank_abundance <- df_cs %>% 
   filter(rank <= 100) %>% 
-  mutate(consensus = factor(ifelse(consensus == "consensus1", "Consortium", "Alternative"), 
+  mutate(criteria = factor(ifelse(criteria == "mcas_consortium", "Consortium", "Alternative"), 
                             levels=c("Consortium", "Alternative"))) %>% 
-  ggplot(aes(x = rank, y = freq, color = factor(consensus)))+
+  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
     geom_line() +
     theme_classic()+
     scale_color_brewer(palette = "Set1") +
