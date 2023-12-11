@@ -12,51 +12,13 @@ library(broom)
 source(here("util_functions.R"))
 ```
 
-## Read data
-
 ```{r}
-criteria_path <- here("data/disease_criteria")
-```
-
-```{r}
-parse_diagnoses <- function(sim_results){
-  
-  tibble(criteria = rownames(sim_results)) %>% 
-    mutate(data = map(criteria, function(c){
-      do.call(rbind, sim_results[c,]) %>% 
-        mutate(diagnosis = map(diagnoses, process_diagnoses)) %>% 
-        unnest(diagnosis) %>% 
-        select(diagnosis)
-      })) %>% 
-    unnest(data)
-         
-}
-```
-
-```{r}
-# Read in ChatGPT output data for additional conditions and parse
-df <- tibble(file = list.files(here("data/chatgpt_output/other_conditions"), full.names = T))%>% 
-  mutate(data = map(file, readRDS)) %>% 
-  mutate(data = map(data, parse_diagnoses)) %>% 
-  unnest(data) %>% 
-  select(-file)
-
-# Read in original MCAS chatGPT output and append to data from additional conditions
-df <- read_csv(here("data/compiled_mcas_chatgpt_diagnoses.csv")) %>% 
-  mutate(criteria = gsub("consensus", "mcas_", consensus)) %>% 
-  select(criteria, diagnosis) %>% 
-  bind_rows(df) 
-
+df <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv"))
 df
 ```
 
-```{r}
-# write_csv(df, here("data/compiled_all_chatgpt_diagnoses.csv"))
-df <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv"))
-```
 
-
-## Plot distributions 
+## Rank abundance 
 
 ```{r}
 # Rank abundance plot
@@ -73,14 +35,14 @@ df %>%
   filter(rank <= 50) %>% 
   mutate(criteria = toupper(criteria)) %>% 
   ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
-    geom_line() +
+    geom_line(size=1) +
     theme_classic()+
     scale_color_manual(values = custom_pal)+
   scale_x_continuous(expand = c(0,0))+
   scale_y_continuous(expand = c(0,0)) +
   labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
 ```
-## Calculate and plot diversity
+## Diversity and similarity
 
 ```{r}
 # Calculate diversity values for diagnosis distributions
@@ -104,7 +66,7 @@ plot_similarity <- function(d_method){
 
 plot_similarity("bray")
 ```
-```{r}
+```{r, fig.height=3.2, fig.width=4}
 # Similarity heatmap
 (1-as.matrix(vegan::vegdist(diagnosis_table, method = "bray"))) %>%
   ComplexHeatmap::Heatmap(.,
@@ -137,6 +99,186 @@ broom::tidy(div_diag) %>%
   labs(x = "", y = "Shannon diversity") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+# Precision
+
+- Have already quantified total diversity and know that alternative MCAS criteria result in more possible output diagnoses. However, these outputs could still results in relatively consistent sets of diagnoses with only a few diagnoses varying in each set, or completely dissimilar sets in each iteration.  
+- A precise set of criteria would be more likely to generate a similar set of 10 diagnoses for each iteration, while a less precise set of criteria would have very different sets for each iteration
+  - E.g. precise: Iteration 1 = [A,B,C,D,E,F], Iteration 2 = [A,B,C,D,X,Y]
+  - E.g. not precise = Iteration 1 = [A,B,C,D,E,F], Iteration 2 = [Z,Y,X,W,V,U]
+- Similarity between different iterations of diagnoses resulting from a single set of criteria can be quantified with the similarity indices like Jaccard Index
+  - Chosen of Bray-Curtis, which factors in count of each diagnosis in the list, because for almost all iterations of top 10 diagnoses, no diagnosis should appear more than once. 
+
+```{r}
+df_precision <- df %>%  
+  unite("sample", file, iteration, sep = "__") %>% 
+  group_by(criteria) %>% 
+  nest() %>% 
+  mutate(data = map(data, function(df){
+    df %>% 
+    mutate(count = 1) %>% 
+    pivot_wider(names_from = "diagnosis", values_from = "count", values_fill = 0, values_fn = sum) %>% 
+    column_to_rownames("sample") %>% 
+    vegan::vegdist(method = "jaccard") %>% 
+    broom::tidy()
+  })) %>% 
+  unnest(data)
+df_precision
+```
+
+```{r}
+df_precision %>% 
+  ggplot(aes(x = criteria, y = 1-distance))+
+  geom_violin(adjust = 10)+
+  geom_boxplot(width = 0.1, outlier.shape = NA)+
+  stat_summary(fun.y = mean, geom = "point", color = "red")+
+  theme_bw()+
+  labs(y = "Jaccard similarity", x = "")
+```
+```{r}
+df_precision_summary <- df_precision %>% 
+  group_by(criteria) %>% 
+  summarise(mean = mean(1-distance), median = median(1-distance))
+df_precision_summary
+```
+- Precision between iterations of alternative MCAS criteria is much lower than all other criteria
+
+## Permutation testing
+
+- How to answer the question of: "is the similarity between different iterations of output diagnoses more precise than random?"
+- Can use permutation testing to generate a sampling distribution around the null hypothesis. i.e. that each iteration has a completely random assortment of a criteria's total list of possible output diagnoses.
+- Steps
+  1. Randomize the diagnoses in each iteration
+  2. Calculate Jaccard similarity between each randomized list of diagnoses 
+  3. Calculate the mean and median of these similarity values
+  4. Repeat many times to generate null sampling distribution of mean/median Jaccard similarity
+  5. Determine percentile of actual Jaccard mean/median relative to this sampling distribution and see if it satisfies alternative hypothesis
+- Alternative hypothesis: Mean/median Jaccard similarity is significantly higher than random at 95% confidence (i.e. one sided permutation test)
+- Median is likely a better indication of central tendency given right skewed distributions
+
+```{r}
+df_permute_null_precision <- read_csv("data/null_permute_precision_slurm_231210_160913.csv") # Parallel
+# df_permute_null_precision  <- read_csv("data/null_permute_precision_slurm_231208_224801.csv") # Sequential
+df_permute_null_precision 
+```
+```{r}
+df_permute_mean_percentiles <- df_permute_null_precision %>% 
+  group_by(criteria) %>% 
+  summarise(data = list(quantile(mean, c(0.025, 0.5, 0.95, 0.975)))) %>% 
+  unnest_wider(data)
+df_permute_mean_percentiles
+```
+```{r}
+df_permute_median_percentiles <- df_permute_null_precision %>% 
+  group_by(criteria) %>% 
+  summarise(data = list(quantile(median, c(0.025, 0.5, 0.95, 0.975)))) %>% 
+  unnest_wider(data)
+df_permute_median_percentiles
+```
+```{r}
+df_precision_pvales <- df_permute_null_precision %>% 
+  group_by(criteria) %>% 
+  nest() %>%
+  mutate(ecdf_mean = map(data, ~ecdf(.$mean))) %>% 
+  mutate(ecdf_median = map(data, ~ecdf(.$median))) %>% 
+  left_join(df_precision_summary) %>% 
+  mutate(mean_p_value = map2_dbl(ecdf_mean, mean, function(e,m){1-e(m)})) %>% 
+  mutate(median_p_value = map2_dbl(ecdf_median, median, function(e,m){1-e(m)})) %>% 
+  select(criteria, contains("p_value"))
+df_precision_pvales
+```
+
+
+```{r}
+df_permute_null_precision %>% 
+  ggplot(aes(x = mean)) +
+  geom_histogram() +
+  geom_vline(data = df_precision_summary, aes(xintercept = mean), color = "red")+
+  geom_vline(data = df_permute_mean_percentiles, aes(xintercept = `95%`), color = "blue")+
+  facet_wrap(~criteria)+
+  theme_bw()
+```
+
+```{r}
+df_permute_null_precision %>% 
+  ggplot(aes(x = median)) +
+  geom_histogram() +
+  geom_vline(data = df_precision_summary, aes(xintercept = median), color = "red")+
+  geom_vline(data = df_permute_median_percentiles, aes(xintercept = `95%`), color = "blue")+
+  facet_wrap(~criteria)+
+  theme_bw()
+```
+- In these plots, the blue line represents the 95%tile for the permuted null sampling distribution and the red line represents the value of the actual data. If the red line is greater than the blue line it indicates that the actual value is > 95%tile of the null distribution and a p-value of < 0.05 for the 1-sided permutation test. 
+
+# Plots
+
+```{r}
+points_to_inches()
+points_to_inches(255)
+```
+```{r, fig.width=3.5, fig.height=3}
+custom_pal <- RColorBrewer::brewer.pal(7, "Set1")[-6]
+
+plt_rank_abundance <- df %>% 
+  count(criteria, diagnosis, sort = T) %>% 
+  group_by(criteria) %>% 
+  mutate(freq = n/sum(n)) %>% 
+  arrange(desc(freq), .by_group = T) %>% 
+  mutate(rank = 1:n()) %>% 
+  select(criteria, freq, rank) %>% 
+  mutate(cs = cumsum(freq)) %>% 
+  filter(rank <= 50) %>% 
+  mutate(criteria = toupper(criteria)) %>% 
+  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
+    geom_line(size=1) +
+    theme_classic()+
+    scale_color_manual(values = custom_pal)+
+    scale_x_continuous(expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0)) +
+    labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "") +
+    theme(
+    legend.position = c(0.72, 0.65),
+    legend.text = element_text(size = 10),
+    legend.background = element_rect(fill=alpha("white",0.5)),
+    legend.title = element_blank())
+
+plt_rank_abundance
+ggsave(here("figures/S_rank_abundance_all.pdf"), plot=plt_rank_abundance, width = 3.5, height = 3)
+```
+
+```{r, fig.width=3.5, fig.height=3.5}
+plt_div <- broom::tidy(div_diag) %>% 
+  mutate(names = toupper(names)) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plt_div
+ggsave(here("figures/4_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
+```
+
+```{r, fig.width=3.5, fig.height=3.5}
+plt_precision <- df_precision %>% 
+  slice_sample(prop = 0.01) %>% 
+  ggplot(aes(x = criteria, y = 1-distance))+
+  geom_boxplot(width = 0.5, outlier.shape = NA)+
+  # Add p-value asterix
+  ## If p-value < 0.05, add asterix above at y=0.75
+  geom_point(data = df_precision_pvales, 
+             aes(y = ifelse(median_p_value < 0.05, 0.75, NA)),
+             shape = 8)+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(y = "Jaccard similarity", x = "")
+
+plt_precision
+ggsave(here("figures/3_precision.pdf"), plot=plt_precision, width = 3.5, height = 3.5)
+```
+
+# Work
+
 
 ## Statistical testing
 
@@ -172,13 +314,14 @@ pairwise_div_iteration()
 ```
 
 ```{r}
-set.seed(1234)
-pairs_permutation_distributions <- data.frame(t(replicate(10000, pairwise_div_iteration())))
+# set.seed(1234)
+# pairs_permutation_distributions <- data.frame(t(replicate(10000, pairwise_div_iteration())))
 ```
 ```{r}
-sapply(combn(unique(sort(df$criteria)),2, simplify = F), paste, collapse = ".")
-names(pairs_permutation_distributions)
+# sapply(combn(unique(sort(df$criteria)),2, simplify = F), paste, collapse = ".")
+# names(pairs_permutation_distributions)
 ```
+
 ```{r}
 pairs_entropy_diff <- enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference") %>% 
   mutate(entropy_difference = ifelse(entropy_difference >=0, 0-entropy_difference, entropy_difference))
@@ -311,54 +454,3 @@ data.frame(pairs_permutation_distributions) %>%
   mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
   mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
 ```
-
-# Plots
-
-```{r}
-points_to_inches()
-points_to_inches(255)
-```
-```{r, fig.width=3.5, fig.height=3}
-custom_pal <- RColorBrewer::brewer.pal(7, "Set1")[-6]
-
-plt_rank_abundance <- df %>% 
-  count(criteria, diagnosis, sort = T) %>% 
-  group_by(criteria) %>% 
-  mutate(freq = n/sum(n)) %>% 
-  arrange(desc(freq), .by_group = T) %>% 
-  mutate(rank = 1:n()) %>% 
-  select(criteria, freq, rank) %>% 
-  mutate(cs = cumsum(freq)) %>% 
-  filter(rank <= 50) %>% 
-  mutate(criteria = toupper(criteria)) %>% 
-  ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
-    geom_line() +
-    theme_classic()+
-    scale_color_manual(values = custom_pal)+
-    scale_x_continuous(expand = c(0,0))+
-    scale_y_continuous(expand = c(0,0)) +
-    labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "") +
-    theme(
-    legend.position = c(0.72, 0.65),
-    legend.text = element_text(size = 10),
-    legend.background = element_rect(fill=alpha("white",0.5)),
-    legend.title = element_blank())
-
-plt_rank_abundance
-ggsave(here("figures/S_rank_abundance_all.pdf"), plot=plt_rank_abundance, width = 3.5, height = 3)
-```
-
-```{r, fig.width=3.5, fig.height=3.5}
-plt_div <- broom::tidy(div_diag) %>% 
-  mutate(names = toupper(names)) %>% 
-  ggplot(aes(x=names, y = x))+
-  geom_bar(stat = "identity") +
-  theme_bw() +
-  labs(x = "", y = "Shannon diversity") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-plt_div
-ggsave(here("figures/S_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
-```
-
-

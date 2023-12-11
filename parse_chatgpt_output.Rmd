@@ -53,7 +53,8 @@ df_mcas <- tibble(file = list.files(here("data/chatgpt_output/name_n20000"), ful
 df_alternative <- tibble(file = list.files(here("data/chatgpt_output/other_conditions"), full.names = T))%>% 
   mutate(data = map(file, readRDS)) %>% 
   mutate(data = map(data, parse_alternative_diagnoses)) %>% 
-  unnest(data) 
+  unnest(data) %>% 
+  mutate(file = basename(file))
 ```
 
 
