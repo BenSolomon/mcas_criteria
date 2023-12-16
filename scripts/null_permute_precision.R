@@ -139,7 +139,8 @@ df <- read_csv(here("data/compiled_all_chatgpt_diagnoses.csv")) %>%
 # x <- future_replicate(5000, null_permute(), future.seed = 1234)
 # saveRDS(x, here(path))
 
-path <- here(sprintf("data/null_permute_precision_slurm_%s.csv",
+# path <- here(sprintf("data/null_permute_precision_slurm_%s.csv",
+path <- here(sprintf("data/null_permute_precision_bray_slurm_%s.csv",
                 format(Sys.time(), "%y%m%d_%H%M%S")))
 
 null_permute <- function(){
@@ -149,13 +150,14 @@ null_permute <- function(){
     nest() %>%
     mutate(data = map(data, function(df){
       df %>%
-        head(100) %>%
+        # head(100) %>%
         mutate(sample = sample(sample)) %>%
         mutate(count = 1) %>%
         pivot_wider(names_from = "diagnosis", values_from = "count", values_fill = 0, values_fn = sum) %>%
         # head(100) %>%
         column_to_rownames("sample") %>%
-        vegan::vegdist(method = "jaccard") %>%
+        # vegan::vegdist(method = "jaccard") %>%
+        vegan::vegdist(method = "bray") %>%
         broom::tidy()
     })) %>%
     unnest(data) %>%

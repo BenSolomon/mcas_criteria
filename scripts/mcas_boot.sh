@@ -2,7 +2,7 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=solomonb@stanford.edu
 #SBATCH --time=13-23:05 # Runtime in D-HH:MM
-#SBATCH --job-name=mcas_boot
+#SBATCH --job-name=mcas_boot_bray
 #SBATCH --nodes=1 # Ensure that all cores are reserved on one machine
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48

@@ -42,15 +42,132 @@ df %>%
   scale_y_continuous(expand = c(0,0)) +
   labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
 ```
-## Diversity and similarity
+- The lower frequency of top diagnoses for the alternative MCAS criteria indicate that these criteria are less likely to result in a consistent set of possible outcomes than other diagnostic criteria. 
+- Similarly, there is a wider range of alternative diagnoses that could commonly and erroneously be captured by the alternative MCAS criteria. 
 
+# Diversity and similarity
+
+## Shannon diversity
 ```{r}
 # Calculate diversity values for diagnosis distributions
 diagnosis_table <- table(df$criteria, df$diagnosis)
 div_diag  <- vegan::diversity(diagnosis_table)
 div_diag  
 ```
+- As above, alternative MCAS criteria can be associated with a wider range of alternative diagnoses 
 
+```{r, fig.width = 5, fig.height=5}
+# Plot diversity values
+broom::tidy(div_diag) %>% 
+  mutate(names = toupper(names)) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+df_entropy_difference <- as.tibble(t(combn(names(div_diag),2))) %>% 
+  left_join(broom::tidy(div_diag), by = c("V1" = "names")) %>% 
+  left_join(broom::tidy(div_diag), by = c("V2" = "names")) %>% 
+  mutate(entropy_difference = x.x - x.y) %>% 
+  unite(comp, V1, V2, sep= ".") %>% 
+  select(comp, entropy_difference)
+df_entropy_difference
+```
+### Permutation testing
+
+```{r}
+# Function to calculate entropy for different criteria and find 
+# difference between entropy values between all unique pairs
+pairwise_div_difference <- function(df){
+  df_div <- enframe(vegan::diversity(table(df$criteria, df$diagnosis)))
+  df_diff <- data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+    left_join(df_div, by = c("X1"="name")) %>% 
+    left_join(df_div, by = c("X2"="name")) %>% 
+    unite("pair", X1, X2, sep = ".") %>%
+    mutate(entropy_difference = value.x - value.y) %>% 
+    select(-contains("value"))
+  deframe(df_diff)
+}
+
+# pairwise_div_difference(df)
+enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference")
+```
+
+```{r}
+# Randomize diagnoses 
+null_pairwise_div_permute <- function(resample_scope = "all"){
+  # Resample diagnoses across all groups
+  if (resample_scope == "all"){
+    out <- df %>% 
+      mutate(diagnosis = sample(diagnosis, replace = F)) %>% 
+      pairwise_div_difference()
+    return(out)
+  }
+  
+  # Resample diagnosis only for a given pair of criteria
+  if (resample_scope == "pair"){
+    out <- as.data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+      mutate(data = map2(V1, V2, function(v1,v2){
+        df %>% 
+          ungroup() %>% 
+          filter(criteria == v1 | criteria == v2) %>% 
+          mutate(diagnosis = sample(diagnosis, replace = F))})) %>% 
+      select(-contains("V")) %>% 
+      unnest(data) %>% 
+      pairwise_div_difference()
+    return(out)
+  }
+}
+
+null_pairwise_div_permute(resample_scope = "all")
+null_pairwise_div_permute(resample_scope = "pair")
+```
+
+```{r}
+# set.seed(1234)
+# df_permute_null_div_difference_pair <- as.data.frame(t(replicate(5000, null_pairwise_div_permute(resample_scope = "pair")))) %>% 
+#   pivot_longer(everything(), names_to = "comp", values_to = "entropy")
+# write_csv(df_permute_null_div_difference_pair, here("data/null_permute_diversity_comparison.csv"))
+
+
+df_permute_null_div_difference_pair <- read_csv(here("data/null_permute_diversity_comparison.csv"))
+df_permute_null_div_difference_pair
+```
+
+```{r}
+df_entropy_diff_pvales <- df_permute_null_div_difference_pair %>% 
+  group_by(comp) %>% 
+  nest() %>%
+  mutate(ecdf_entropy_diff = map(data, ~ecdf(abs(.$entropy)))) %>%
+  mutate(null_mean = map_dbl(data, ~mean(abs(.$entropy)))) %>% 
+  left_join(df_entropy_difference) %>% 
+  mutate(entropy_difference = abs(entropy_difference)) %>% 
+  mutate(p_value = map2_dbl(ecdf_entropy_diff, entropy_difference, function(e,m){1-e(abs(m))})) %>% 
+  select(comp, null_mean, entropy_difference, contains("p_value")) 
+df_entropy_diff_pvales
+```
+
+```{r, fig.width=3.5, fig.height=3.5}
+broom::tidy(div_diag) %>% 
+  ggplot(aes(x=names, y = x))+
+  geom_bar(stat = "identity", color = "black") +
+  ggpubr::stat_pvalue_manual(
+    df_entropy_diff_pvales %>%
+      separate(comp, into = c("group1", "group2"), sep = "\\.") %>% 
+      filter(p_value > 0.05), 
+    label = "p={p_value}", y.position = 7, step.increase = 0.3, tip.length = 0.05, label.size = 3) +
+  theme_bw() +
+  ylim(0,9)+
+  labs(x = "", y = "Shannon diversity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+ - All comparisons other than those shown are significant. The increased diversity of alternative MCAS criteria associated diagnoses is significant relative to all other. 
+ 
+ 
+## Bray curtis similarity
 ```{r}
 # Calculate similarity
 plot_similarity <- function(d_method){
@@ -73,7 +190,8 @@ plot_similarity("bray")
                           name = "Similarity",
                           col = viridis::viridis(100))
 ```
-
+- Bray-Curtis similarity measures the similarity of a given diagnostic criteria's set of alternative diagnoses along with their frequencies. 
+- This demonstrates that SLE criteria results in a very similar set and frequency of diagnoses, while the diagnoses associated with two MCAS criteria are nearly as different from each other as they are from those generated by the criteria of other conditions.
 
 ```{r}
 # Similarity PCA 
@@ -88,17 +206,8 @@ as.data.frame(diagnosis_pca$x) %>%
   geom_label() +
   theme_bw()
 ```
+- PCA of diagnosis frequencies is another way to group criteria by similarity. 
 
-```{r, fig.width = 5, fig.height=5}
-# Plot diversity values
-broom::tidy(div_diag) %>% 
-  mutate(names = toupper(names)) %>% 
-  ggplot(aes(x=names, y = x))+
-  geom_bar(stat = "identity") +
-  theme_bw() +
-  labs(x = "", y = "Shannon diversity") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
 
 # Precision
 
@@ -119,7 +228,8 @@ df_precision <- df %>%
     mutate(count = 1) %>% 
     pivot_wider(names_from = "diagnosis", values_from = "count", values_fill = 0, values_fn = sum) %>% 
     column_to_rownames("sample") %>% 
-    vegan::vegdist(method = "jaccard") %>% 
+    vegan::vegdist(method = "jaccard") %>%
+    # vegan::vegdist(method = "bray") %>% 
     broom::tidy()
   })) %>% 
   unnest(data)
@@ -143,7 +253,7 @@ df_precision_summary
 ```
 - Precision between iterations of alternative MCAS criteria is much lower than all other criteria
 
-## Permutation testing
+### Permuting within criteria
 
 - How to answer the question of: "is the similarity between different iterations of output diagnoses more precise than random?"
 - Can use permutation testing to generate a sampling distribution around the null hypothesis. i.e. that each iteration has a completely random assortment of a criteria's total list of possible output diagnoses.
@@ -156,23 +266,31 @@ df_precision_summary
 - Alternative hypothesis: Mean/median Jaccard similarity is significantly higher than random at 95% confidence (i.e. one sided permutation test)
 - Median is likely a better indication of central tendency given right skewed distributions
 
+
 ```{r}
-df_permute_null_precision <- read_csv("data/null_permute_precision_slurm_231210_160913.csv") # Parallel
-# df_permute_null_precision  <- read_csv("data/null_permute_precision_slurm_231208_224801.csv") # Sequential
+# df_permute_null_precision <- read_csv("data/null_permute_precision_slurm_231210_160913.csv") # Parallel, head(100)
+df_permute_null_precision <- read_csv("data/null_permute_precision_slurm_231211_135321.csv") # Parallel, all data
+# df_permute_null_precision <- read_csv("data/null_permute_precision_bray_slurm_231211_180758.csv") # Parallel, bray instead of jaccard
+# df_permute_null_precision  <- read_csv("data/null_permute_precision_231208_222102") %>% # Sequential
+#   rename(criteria = consensus) %>%
+#   mutate(criteria = ifelse(criteria == "consensus1", "mcas_consortium", criteria),
+#          criteria = ifelse(criteria == "consensus2", "mcas_alternative", criteria))
 df_permute_null_precision 
 ```
 ```{r}
 df_permute_mean_percentiles <- df_permute_null_precision %>% 
   group_by(criteria) %>% 
-  summarise(data = list(quantile(mean, c(0.025, 0.5, 0.95, 0.975)))) %>% 
-  unnest_wider(data)
+  summarise(data = list(quantile(mean, c(0.025, 0.5, 0.95, 0.975, 1.0)))) %>% 
+  unnest_wider(data) %>% 
+  left_join(df_precision_summary %>% select(-median), by = "criteria")
 df_permute_mean_percentiles
 ```
 ```{r}
 df_permute_median_percentiles <- df_permute_null_precision %>% 
   group_by(criteria) %>% 
-  summarise(data = list(quantile(median, c(0.025, 0.5, 0.95, 0.975)))) %>% 
-  unnest_wider(data)
+  summarise(data = list(quantile(median, c(0.025, 0.5, 0.95, 0.975, 1.0)))) %>% 
+  unnest_wider(data) %>% 
+  left_join(df_precision_summary %>% select(-mean), by = "criteria")
 df_permute_median_percentiles
 ```
 ```{r}
@@ -187,7 +305,7 @@ df_precision_pvales <- df_permute_null_precision %>%
   select(criteria, contains("p_value"))
 df_precision_pvales
 ```
-
+- All criteria have outputs that are significantly more organized than randomized distributions of their possible diagnoses. 
 
 ```{r}
 df_permute_null_precision %>% 
@@ -210,12 +328,101 @@ df_permute_null_precision %>%
 ```
 - In these plots, the blue line represents the 95%tile for the permuted null sampling distribution and the red line represents the value of the actual data. If the red line is greater than the blue line it indicates that the actual value is > 95%tile of the null distribution and a p-value of < 0.05 for the 1-sided permutation test. 
 
+
+
+```{r, fig.width=3.5, fig.height=3.5}
+df_precision %>%
+  ungroup() %>% 
+  mutate(similarity = 1-distance) %>% 
+  # slice_sample(prop = 0.01) %>%
+  ggplot(aes(x = criteria, y = similarity))+
+  geom_boxplot(width = 0.5, outlier.shape = NA)+
+  # # Add p-value asterix 
+  # ggpubr::stat_pvalue_manual(
+  #   df_precision_pvales %>% ungroup() %>% 
+  #     mutate(group1 = NA, group2 = NA, p_sig = ifelse(mean_p_value < 0.05, "*","ns")),
+  #   label = "p_sig",
+  #   x="criteria",
+  #   y.position = 0.65
+  # ) +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(y = "Jaccard similarity", x = "")
+```
+
+
+
+
+### Permuting across criteria
+
+```{r}
+df_precision_comparison <- as.data.frame(t(combn(sort(unique(df_precision$criteria)), 2))) %>% 
+  left_join(df_precision_summary, by = c("V1" = "criteria")) %>% 
+  left_join(df_precision_summary, by = c("V2" = "criteria")) %>% 
+  mutate(mean_diff = abs(mean.x - mean.y),
+         median_diff = abs(median.x - median.y)) %>% 
+  select(V1, V2, contains("diff")) %>% 
+  unite(comp, V1, V2)
+df_precision_comparison
+```
+```{r}
+# Pairwise permutation
+df_permute_null_precision_comparison <- read_csv(here("data/null_permute_precision_comparison_slurm_231211_142641.csv"))
+# Simultaneously permute all groups
+# df_permute_null_precision_comparison <- read_csv(here("data/null_permute_precision_comparison_slurm_231211_173937.csv"))
+df_permute_null_precision_comparison
+```
+
+```{r}
+df_permute_null_precision_comparison %>% 
+  mutate_at(vars(contains("diff")), ~abs(.)) %>% 
+  unite(comp, V1, V2) %>% 
+  group_by(comp) %>% 
+  nest() %>% 
+  mutate(ecdf_mean_diff = map(data, ~ecdf(.$mean_diff))) %>% 
+  mutate(ecdf_median_diff = map(data, ~ecdf(.$median_diff))) %>%
+  left_join(df_precision_comparison) %>% 
+  mutate(mean_p_value = map2_dbl(ecdf_mean_diff, mean_diff, function(e,m){1-e(m)})) %>% 
+  mutate(median_p_value = map2_dbl(ecdf_median_diff, median_diff, function(e,m){1-e(m)})) %>%
+  select(comp, contains("p_value"))
+```
+```{r}
+df_permute_null_precision_comparison %>% 
+ unite(comp, V1, V2) %>% 
+  ggplot(aes(x = mean_diff)) +
+  geom_histogram() +
+  geom_vline(data = df_precision_comparison, aes(xintercept = mean_diff), color = "red")+
+  # geom_vline(data = df_permute_mean_percentiles, aes(xintercept = `95%`), color = "blue")+
+  facet_wrap(~comp)+
+  theme_bw()
+```
+```{r}
+df_permute_null_precision_comparison %>% 
+  mutate_at(vars(contains("diff")), ~abs(.)) %>% 
+  unite(comp, V1, V2) %>% 
+  ggplot(aes(x = mean_diff)) +
+  geom_histogram() +
+  geom_vline(data = df_precision_comparison, aes(xintercept = mean_diff), color = "red")+
+  # geom_vline(data = df_permute_mean_percentiles, aes(xintercept = `95%`), color = "blue")+
+  facet_wrap(~comp, scales = "free_x")+
+  theme_bw()
+```
+
+- Precision values are significantly different across all comparisons
+  - Kawasaki, EULAR SLE, MCAS consortium all result in a single median, so no distribution.
+
 # Plots
 
 ```{r}
 points_to_inches()
 points_to_inches(255)
 ```
+```{r}
+criteria_order <- c("aha_kawasaki", "migraine", "mcas_alternative", 
+                    "mcas_consortium", "eular_acr_sle", "slicc_sle")
+```
+
+
 ```{r, fig.width=3.5, fig.height=3}
 custom_pal <- RColorBrewer::brewer.pal(7, "Set1")[-6]
 
@@ -228,7 +435,7 @@ plt_rank_abundance <- df %>%
   select(criteria, freq, rank) %>% 
   mutate(cs = cumsum(freq)) %>% 
   filter(rank <= 50) %>% 
-  mutate(criteria = toupper(criteria)) %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
   ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
     geom_line(size=1) +
     theme_classic()+
@@ -243,32 +450,44 @@ plt_rank_abundance <- df %>%
     legend.title = element_blank())
 
 plt_rank_abundance
-ggsave(here("figures/S_rank_abundance_all.pdf"), plot=plt_rank_abundance, width = 3.5, height = 3)
+ggsave(here("figures/3_rank_abundance_all.pdf"), plot=plt_rank_abundance, width = 3.5, height = 3)
 ```
 
 ```{r, fig.width=3.5, fig.height=3.5}
 plt_div <- broom::tidy(div_diag) %>% 
-  mutate(names = toupper(names)) %>% 
+  mutate(names = factor(names, levels = criteria_order)) %>% 
   ggplot(aes(x=names, y = x))+
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", color = "black") +
+  ggpubr::stat_pvalue_manual(
+    df_entropy_diff_pvales %>%
+      separate(comp, into = c("group1", "group2"), sep = "\\.") %>% 
+      filter(p_value > 0.05), 
+    label = "p={p_value}", y.position = 7, step.increase = 0.3, tip.length = 0.05, label.size = 3) +
   theme_bw() +
+  ylim(0,9)+
   labs(x = "", y = "Shannon diversity") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 plt_div
-ggsave(here("figures/4_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
+ggsave(here("figures/3_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
 ```
-
 ```{r, fig.width=3.5, fig.height=3.5}
-plt_precision <- df_precision %>% 
-  slice_sample(prop = 0.01) %>% 
-  ggplot(aes(x = criteria, y = 1-distance))+
+plt_precision <- df_precision %>%
+  ungroup() %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  mutate(similarity = 1-distance) %>% 
+  # slice_sample(prop = 0.01) %>%
+  ggplot(aes(x = criteria, y = similarity))+
   geom_boxplot(width = 0.5, outlier.shape = NA)+
-  # Add p-value asterix
-  ## If p-value < 0.05, add asterix above at y=0.75
-  geom_point(data = df_precision_pvales, 
-             aes(y = ifelse(median_p_value < 0.05, 0.75, NA)),
-             shape = 8)+
+  # # Add p-value asterix 
+  # ggpubr::stat_pvalue_manual(
+  #   df_precision_pvales %>% ungroup() %>% 
+  #     mutate(group1 = NA, group2 = NA, p_sig = ifelse(mean_p_value < 0.05, "*","ns")),
+  #   label = "p_sig",
+  #   x="criteria",
+  #   y.position = 0.65
+  # ) +
+  ylim(c(0,0.6))+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(y = "Jaccard similarity", x = "")
@@ -277,180 +496,3 @@ plt_precision
 ggsave(here("figures/3_precision.pdf"), plot=plt_precision, width = 3.5, height = 3.5)
 ```
 
-# Work
-
-
-## Statistical testing
-
-### All group randomization
-
-```{r}
-pairwise_div_difference <- function(df){
-  df_div <- enframe(vegan::diversity(table(df$criteria, df$diagnosis)))
-  df_diff <- data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
-    left_join(df_div, by = c("X1"="name")) %>% 
-    left_join(df_div, by = c("X2"="name")) %>% 
-    unite("pair", X1, X2, sep = ".") %>%
-    mutate(entropy_difference = value.x - value.y) %>% 
-    select(-contains("value"))
-  deframe(df_diff)
-}
-
-# pairwise_div_difference(df)
-enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference")
-```
-
-```{r}
-pairwise_div_iteration <- function(){
-  df %>% 
-    count(criteria) %>% 
-    mutate(diagnosis = map(n, function(x) sample(df$diagnosis, x, replace = T))) %>% 
-    select(-n) %>% 
-    unnest(diagnosis) %>% 
-    pairwise_div_difference(.)
-}
-
-pairwise_div_iteration()
-```
-
-```{r}
-# set.seed(1234)
-# pairs_permutation_distributions <- data.frame(t(replicate(10000, pairwise_div_iteration())))
-```
-```{r}
-# sapply(combn(unique(sort(df$criteria)),2, simplify = F), paste, collapse = ".")
-# names(pairs_permutation_distributions)
-```
-
-```{r}
-pairs_entropy_diff <- enframe(pairwise_div_difference(df), name = "pair", value = "entropy_difference") %>% 
-  mutate(entropy_difference = ifelse(entropy_difference >=0, 0-entropy_difference, entropy_difference))
-pairs_entropy_diff
-```
-
-
-```{r, fig.width=12, fig.height = 8}
-read_csv(here("data/all_criteria_null_difference_distributions.csv")) %>% 
-  # pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
-  ggplot(aes(x = entropy_difference)) +
-  geom_histogram(binwidth = 0.01)+
-  geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
-  facet_wrap(~pair, scales = "free")+
-  theme_classic()
-```
-
-```{r}
-# Calculate p-values for diversity differences based on the quantile of the 
-# diversity difference value compared to the null hypothesis diversity distribution values
-# Pairwise comparison adjusted
-entropy_diff_table <- read_csv(here("data/all_criteria_null_difference_distributions.csv"))  %>% 
-  # pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
-  group_by(pair) %>% 
-  summarise(entropy_difference_distribution = list(entropy_difference)) %>% 
-  right_join(pairs_entropy_diff) %>% 
-  mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
-  mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
-entropy_diff_table
-```
-```{r, fig.width = 5, fig.height=5}
-# Plot diversity values
-broom::tidy(div_diag) %>% 
-  mutate(names = tolower(names)) %>% 
-  ggplot(aes(x=names, y = x))+
-  geom_bar(stat = "identity") +
-  ggpubr::stat_pvalue_manual(
-    entropy_diff_table %>% separate(pair, into = c("group1", "group2"), sep = "\\."),
-    label= "p_adj",
-    y.position = 7, step.increase = 0.2
-  ) +
-  theme_bw() +
-  labs(x = "", y = "Shannon diversity") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-
-
-### Pairwise randomization
-
-```{r}
-pairs_list <- as.list(as.data.frame(combn(unique(df$criteria),2)))
-names(pairs_list) <- sapply(pairs_list, paste, collapse = ".")
-pairs_list
-```
-
-
-
-```{r}
-# Create function that subsets df of all diagnoses for a criteria based on a pair of two criteria to compare
-# Then randomizes the diagnoses across the two criteria, 
-# measures the resulting diversity of each criteria's diagnoses
-# and calculates a difference in the diversity value
-# randomize can be set F to obtain original difference in diversity w/o randomization
-# To be used with replicate to generate a null hypothesis distribution 
-permutation_pair_iteration <- function(pair, randomize = T){
-  df <- df %>% 
-    filter(criteria %in% pair) 
-  if (randomize == T){
-    df <- df %>% mutate(diagnosis = sample(diagnosis, n()))
-  }
-  div <- vegan::diversity(table(df$criteria, df$diagnosis))
-  unname(div[1] - div[2])
-}
-
-replicate(10,permutation_pair_iteration(pairs_list[[1]], randomize = T))
-replicate(10,permutation_pair_iteration(pairs_list[[1]], randomize = F))
-```
-
-```{r}
-# # Create a null hypothesis distribution for the difference in diversity
-# # For all pairs of criteria
-
-# set.seed(1234)
-# pairs_permutation_distributions <- lapply(pairs_list, function(x) replicate(10000, permutation_pair_iteration(x)))
-# names(pairs_permutation_distributions) <- lapply(pairs_list, function(x) paste(x, collapse = "-"))
-# data.frame(pairs_permutation_distributions)
-# write_csv(data.frame(pairs_permutation_distributions), here("data/criteria_pairwise_null_difference_distributions.csv"))
-
-pairs_permutation_distributions <- read_csv(here("data/criteria_pairwise_null_difference_distributions.csv"))
-pairs_permutation_distributions
-```
-
-
-```{r}
-# Create a df of the actual difference in diversity between pairs of criteria
-pairs_entropy_diff <- lapply(pairs_list, permutation_pair_iteration, randomize = F)
-names(pairs_entropy_diff) <- lapply(pairs_list, function(x) paste(x, collapse = "-"))
-pairs_entropy_diff <- data.frame(pairs_entropy_diff) %>%  
-  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
-  mutate(entropy_difference = ifelse(entropy_difference >=0, 0-entropy_difference, entropy_difference))
-pairs_entropy_diff
-```
-```{r, fig.width=12, fig.height = 8}
-# Create plots of null hypothesis distributions, overlaid with actual diversity difference
-read_csv(here("data/all_criteria_pairwise_null_difference_distributions.csv")) %>%
-  group_by(pair) %>% 
-  nest() %>% 
-  separate(pair, into = c("p1","p2"), sep = "\\.", remove = F) %>%
-  rowwise() %>% mutate(pair=paste(sort(c(p1,p2)), collapse = ".")) %>% 
-  select(!pair:p2) %>% 
-  unnest(data) %>% 
-  # pivot_longer(cols = everything(), names_to = "pair", values_to = "entropy_difference") %>% 
-  ggplot(aes(x = entropy_difference)) +
-  geom_histogram(binwidth = 0.01)+
-  geom_vline(data = pairs_entropy_diff, aes(xintercept = entropy_difference), color = "red")+
-  facet_wrap(~pair, scales = "free")+
-  theme_classic()
-```
-
-```{r}
-# Calculate p-values for diversity differences based on the quantile of the 
-# diversity difference value compared to the null hypothesis diversity distribution values
-# Pairwise comparison adjusted
-data.frame(pairs_permutation_distributions) %>% 
-  pivot_longer(everything(), names_to = "pair", values_to = "entropy_difference") %>% 
-  group_by(pair) %>% 
-  summarise(entropy_difference_distribution = list(entropy_difference)) %>% 
-  right_join(pairs_entropy_diff) %>% 
-  mutate(p_value = map2_dbl(entropy_difference, entropy_difference_distribution, ~ecdf(.y)(.x))) %>% 
-  mutate(p_adj = p.adjust(p_value, method = "bonferroni", n = n()))
-```
