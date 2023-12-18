@@ -166,7 +166,69 @@ broom::tidy(div_diag) %>%
 ```
  - All comparisons other than those shown are significant. The increased diversity of alternative MCAS criteria associated diagnoses is significant relative to all other. 
  
- 
+### Bootstrap CIs
+
+```{r, fig.width=4, fig.height=4}
+df_entropy_bootstrap <- df %>% 
+  count(criteria, diagnosis, sort = T) %>% 
+  group_by(criteria) %>% 
+  nest() %>% 
+  mutate(boot = map(data, function(x){
+    x <- deframe(x)
+    x <- entropart::EntropyCI(Shannon, Simulations=5000, Ns = x, q=1, Correction = "None")
+    x
+  })) %>% 
+  # mutate(shannon = map_dbl(data, ~vegan::diversity(deframe(.)))) %>% # Calculate shannon with vegan
+  mutate(shannon = map_dbl(data, ~log(entropart::Diversity(deframe(.), q=1, Correction="None")))) %>% # Calculate shannon with entropart
+  mutate(boot = map(boot, ~quantile(., c(0.025,0.975)))) %>% 
+  unnest_wider(boot)
+df_entropy_bootstrap
+```
+
+```{r, fig.width=3.5, fig.height=3.5}
+criteria_order <- c("aha_kawasaki", "migraine", "mcas_alternative", 
+                    "mcas_consortium", "eular_acr_sle", "slicc_sle")
+
+df_entropy_bootstrap %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  ggplot(aes(x = criteria, y = shannon))+
+  geom_point(size = 0.5)+
+  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4, stat = "identity")+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x="", y = "Shannon diversity")
+```
+
+### Hutcheson T-test
+
+```{r}
+df %>% 
+  count(criteria, diagnosis) %>% 
+  pivot_wider(names_from = "criteria", values_from = "n", values_fill = 0) %>% 
+  column_to_rownames("diagnosis") %>% 
+  ecolTest::multiple_Hutcheson_t_test()
+```
+### Asymptotic CIs for diversity difference
+
+```{r}
+set.seed(1234)
+df_boot_CI_diff <- df %>% 
+  count(criteria, diagnosis) %>% 
+  pivot_wider(names_from = "diagnosis", values_from = "n", values_fill = 0) %>% 
+  column_to_rownames("criteria") %>% 
+  sbdiv(
+    X = .,
+    f = rownames(.),
+    theta = "Shannon",
+    type = "Tukey",
+    R = 5000,
+    method = "asht"
+  )
+
+as.data.frame(df_boot_CI_diff$conf.int)  %>% 
+  mutate(sig = ifelse(lower <=0 & upper >= 0, "ns", "*"))
+```
+
 ## Bray curtis similarity
 ```{r}
 # Calculate similarity
