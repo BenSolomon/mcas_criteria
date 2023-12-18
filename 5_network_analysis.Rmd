@@ -83,12 +83,19 @@ df_codiag
 ```{r}
 top_n <-  100
 
+make_mcas_graph <- function(df){
+  df %>% 
+    as_tbl_graph() %>% 
+    activate(edges) %>% 
+    mutate(criteria = factor(criteria, levels = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle")))
+}
+
 g_top_codiags <- df_codiag %>% 
   filter(rank <= top_n) %>%
-  as_tbl_graph()
+  make_mcas_graph()
 
 g_all_codiags <- df_codiag %>% 
-  as_tbl_graph()
+  make_mcas_graph()
 ```
 
 ```{r}
@@ -116,20 +123,18 @@ df_diagnoses <- df_diagnoses %>%
 df_diagnoses
 ```
 ```{r}
-labeller_fun <- function(x){
-  list(criteria = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle")) 
-}
-
-labeller_fun()
-```
-
-```{r}
-point_size <- 2
 criteria_names <- c(
   "mcas_consortium" = "MCAS Consensus",
   "mcas_alternative" = "MCAS Alternative",
   "eular_acr_sle" = "SLE EULAR-ACR",
   "slicc_sle" = "SLE SLICC")
+
+mcas_labeller <- as_labeller(criteria_names)
+```
+
+
+```{r}
+point_size <- 2
 
 g_top_codiags_rank <- g_top_codiags %>%
   activate(nodes) %>% 
@@ -141,10 +146,7 @@ plt <- ggraph(g_top_codiags_rank, layout = 'fr') +
   geom_edge_link(alpha = 0.5) +
   geom_node_point(size = point_size*1.5) +
   geom_node_point(size = point_size, aes(color = rank)) + # Will be replaced, but needed to create a legend
-  # facet_wrap(~criteria) +
-  # facet_wrap(~criteria, labeller = as_labeller(criteria_names)) +
-  facet_wrap(~criteria, labeller = function(x) list(criteria = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle"))) +
-  facet_wrap(~criteria, labeller = labeller_fun) +
+  facet_wrap(~criteria, labeller = mcas_labeller) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
   scale_color_viridis_c(direction = -1, breaks = c(1,25,50,75,100)) +
@@ -162,13 +164,9 @@ ggraph_color_faceted_nodes(plt,
 
 ### Color by centrality
 
+
 ```{r}
 point_size <- 2
-criteria_names <- c(
-  "consensus1" = "Consensus MCAS",
-  "consensus2" = "Alternative MCAS",
-  "eular_acr_sle" = "EULAR-ACR SLE",
-  "slicc_sle" = "SLICC SLE")
 
 g_top_codiags_ce <- g_top_codiags %>%
   activate(nodes) %>% 
@@ -180,8 +178,7 @@ plt <- ggraph(g_top_codiags_ce, layout = 'fr', ) +
   geom_edge_link(alpha = 0.5) +
   geom_node_point(size = point_size*1.5) +
   geom_node_point(size = point_size, aes(color = ce)) + # Will change, but need to create a legend
-  # facet_wrap(~criteria, labeller = as_labeller(criteria_names)) +
-    facet_wrap(~criteria, labeller = function(x) list(criteria = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle"))) +
+  facet_wrap(~criteria, labeller = mcas_labeller) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
   scale_color_viridis_c(breaks = c(0.00,0.25,0.50,0.75,1.00), limits = c(0,1)) +
@@ -263,7 +260,6 @@ get_subgraph_metrics <- function(g){
 
 df_graph_density <- get_subgraph_metrics(g_all_codiags) 
 df_graph_density
-
 
 # **mean_distance - mean distance between all pairs of nodes
 # **edge_density - ratio of actual number of edges relative to largest possible number of edges
@@ -519,8 +515,7 @@ plt_network <- ggraph(g_top_codiags_ce, layout = 'fr', ) +
   geom_edge_link(alpha = 1, width = 0.25) +
   geom_node_point(size = point_size*1.5) +
   geom_node_point(size = point_size, aes(color = ce)) + # Will change, but need to create a legend
-  # facet_wrap(~criteria, labeller = as_labeller(criteria_names)) +
-    facet_wrap(~criteria, labeller = function(x) list(criteria = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle"))) +
+    facet_wrap(~criteria, labeller = mcas_labeller) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
   scale_color_viridis_c(breaks = c(0.00,0.25,0.50,0.75,1.00), limits = c(0,1)) +
@@ -569,7 +564,7 @@ plt_figure <- cowplot::plot_grid(
 plt_figure
 ```
 ```{r}
-ggsave(here("figures/3_network.pdf"), plot=plt_figure, width = 3.5, height = 6)
+ggsave(here("figures/4_network.pdf"), plot=plt_figure, width = 3.5, height = 8)
 ```
 
 
