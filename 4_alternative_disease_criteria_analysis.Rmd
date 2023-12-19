@@ -168,6 +168,7 @@ broom::tidy(div_diag) %>%
  
 ### Bootstrap CIs
 
+
 ```{r, fig.width=4, fig.height=4}
 df_entropy_bootstrap <- df %>% 
   count(criteria, diagnosis, sort = T) %>% 
@@ -175,7 +176,7 @@ df_entropy_bootstrap <- df %>%
   nest() %>% 
   mutate(boot = map(data, function(x){
     x <- deframe(x)
-    x <- entropart::EntropyCI(Shannon, Simulations=5000, Ns = x, q=1, Correction = "None")
+    x <- entropart::EntropyCI(entropart::Shannon, Simulations=5000, Ns = x, q=1, Correction = "None")
     x
   })) %>% 
   # mutate(shannon = map_dbl(data, ~vegan::diversity(deframe(.)))) %>% # Calculate shannon with vegan
@@ -184,30 +185,79 @@ df_entropy_bootstrap <- df %>%
   unnest_wider(boot)
 df_entropy_bootstrap
 ```
-
 ```{r, fig.width=3.5, fig.height=3.5}
 criteria_order <- c("aha_kawasaki", "migraine", "mcas_alternative", 
                     "mcas_consortium", "eular_acr_sle", "slicc_sle")
 
+criteria_names <- c(
+  "mcas_consortium" = "MCAS - Consensus",
+  "mcas_alternative" = "MCAS - Alternative",
+  "eular_acr_sle" = "SLE - EULAR-ACR",
+  "slicc_sle" = "SLE - SLICC",
+  "aha_kawasaki" = "Kawasaki - AHA",
+  "migraine" = "Migraine - ICHD3")
+
 df_entropy_bootstrap %>% 
-  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>%
+  mutate(criteria = fct_recode(criteria, !!!setNames(names(criteria_names), criteria_names))) %>% 
   ggplot(aes(x = criteria, y = shannon))+
   geom_point(size = 0.5)+
-  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4, stat = "identity")+
+  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4)+
+  ggpubr::stat_pvalue_manual(
+    df_entropy_diff_pvales %>%
+      separate(comp, into = c("group1", "group2"), sep = "\\.") %>% 
+      mutate_at(vars(contains("group")), ~factor(., levels = criteria_order)) %>% 
+      mutate_at(vars(contains("group")), ~fct_recode(., !!!setNames(names(criteria_names), criteria_names))) %>% 
+      filter(p_value > 0.05), 
+    label = "p={p_value}", y.position = 6.5, step.increase = 0.1, tip.length = 0.05, label.size = 3) +
+  geom_violin()+
   theme_bw() +
+  ylim(c(NA, 7.05))+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x="", y = "Shannon diversity")
+  labs(x = "", y = "Shannon diversity") 
 ```
+
+
 
 ### Hutcheson T-test
 
 ```{r}
-df %>% 
+mcas_hutch <- df %>% 
   count(criteria, diagnosis) %>% 
   pivot_wider(names_from = "criteria", values_from = "n", values_fill = 0) %>% 
   column_to_rownames("diagnosis") %>% 
-  ecolTest::multiple_Hutcheson_t_test()
+  ecolTest::multiple_Hutcheson_t_test() 
+mcas_hutch
 ```
+```{r}
+df_hutch <- mcas_hutch$p.values %>% 
+  as.dist() %>% 
+  broom::tidy() %>% 
+  rename(group1 = item1, group2 = item2, p_value = distance) %>% 
+  mutate_all(~sub(" H.*","",.)) %>% 
+  mutate_at(vars(contains("group")), ~factor(., levels = criteria_order)) %>% 
+  mutate_at(vars(contains("group")), ~fct_recode(., !!!setNames(names(criteria_names), criteria_names))) %>% 
+  filter(p_value >= 0.05)
+df_hutch
+```
+
+
+```{r, fig.width=3.5, fig.height=3.5}
+df_entropy_bootstrap %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>%
+  mutate(criteria = fct_recode(criteria, !!!setNames(names(criteria_names), criteria_names))) %>% 
+  ggplot(aes(x = criteria, y = shannon))+
+  geom_point(size = 0.5)+
+  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4)+
+  ggpubr::stat_pvalue_manual(
+    df_hutch, label = "p={p_value}", y.position = 6.5, step.increase = 0., tip.length = 0.05, label.size = 3) +
+  geom_violin()+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "", y = "Shannon diversity") 
+```
+
+
 ### Asymptotic CIs for diversity difference
 
 ```{r}
@@ -216,7 +266,7 @@ df_boot_CI_diff <- df %>%
   count(criteria, diagnosis) %>% 
   pivot_wider(names_from = "diagnosis", values_from = "n", values_fill = 0) %>% 
   column_to_rownames("criteria") %>% 
-  sbdiv(
+  simboot::sbdiv(
     X = .,
     f = rownames(.),
     theta = "Shannon",
@@ -482,6 +532,14 @@ points_to_inches(255)
 ```{r}
 criteria_order <- c("aha_kawasaki", "migraine", "mcas_alternative", 
                     "mcas_consortium", "eular_acr_sle", "slicc_sle")
+
+criteria_names <- c(
+  "mcas_consortium" = "MCAS - Consensus",
+  "mcas_alternative" = "MCAS - Alternative",
+  "eular_acr_sle" = "SLE - EULAR-ACR",
+  "slicc_sle" = "SLE - SLICC",
+  "aha_kawasaki" = "Kawasaki - AHA",
+  "migraine" = "Migraine - ICHD3")
 ```
 
 
@@ -497,7 +555,8 @@ plt_rank_abundance <- df %>%
   select(criteria, freq, rank) %>% 
   mutate(cs = cumsum(freq)) %>% 
   filter(rank <= 50) %>% 
-  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  mutate_at(vars(contains("criteria")), ~factor(., levels = criteria_order)) %>% 
+  mutate_at(vars(contains("criteria")), ~fct_recode(., !!!setNames(names(criteria_names), criteria_names))) %>% 
   ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
     geom_line(size=1) +
     theme_classic()+
@@ -516,39 +575,37 @@ ggsave(here("figures/3_rank_abundance_all.pdf"), plot=plt_rank_abundance, width 
 ```
 
 ```{r, fig.width=3.5, fig.height=3.5}
-plt_div <- broom::tidy(div_diag) %>% 
-  mutate(names = factor(names, levels = criteria_order)) %>% 
-  ggplot(aes(x=names, y = x))+
-  geom_bar(stat = "identity", color = "black") +
+plt_div <- df_entropy_bootstrap %>% 
+  mutate(criteria = factor(criteria, levels = criteria_order)) %>%
+  mutate(criteria = fct_recode(criteria, !!!setNames(names(criteria_names), criteria_names))) %>% 
+  ggplot(aes(x = criteria, y = shannon))+
+  geom_point(size = 0.5)+
+  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4)+
   ggpubr::stat_pvalue_manual(
     df_entropy_diff_pvales %>%
       separate(comp, into = c("group1", "group2"), sep = "\\.") %>% 
+      mutate_at(vars(contains("group")), ~factor(., levels = criteria_order)) %>% 
+      mutate_at(vars(contains("group")), ~fct_recode(., !!!setNames(names(criteria_names), criteria_names))) %>% 
       filter(p_value > 0.05), 
-    label = "p={p_value}", y.position = 7, step.increase = 0.3, tip.length = 0.05, label.size = 3) +
+    label = "p={p_value}", y.position = 6.5, step.increase = 0.1, tip.length = 0.05, label.size = 3) +
+  geom_violin()+
   theme_bw() +
-  ylim(0,9)+
-  labs(x = "", y = "Shannon diversity") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ylim(c(NA, 7.05))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "", y = "Shannon diversity") 
 
 plt_div
+
 ggsave(here("figures/3_diversity.pdf"), plot=plt_div, width = 3.5, height = 3.5)
 ```
 ```{r, fig.width=3.5, fig.height=3.5}
 plt_precision <- df_precision %>%
   ungroup() %>% 
-  mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  mutate_at(vars(contains("criteria")), ~factor(., levels = criteria_order)) %>% 
+  mutate_at(vars(contains("criteria")), ~fct_recode(., !!!setNames(names(criteria_names), criteria_names))) %>% 
   mutate(similarity = 1-distance) %>% 
-  # slice_sample(prop = 0.01) %>%
   ggplot(aes(x = criteria, y = similarity))+
   geom_boxplot(width = 0.5, outlier.shape = NA)+
-  # # Add p-value asterix 
-  # ggpubr::stat_pvalue_manual(
-  #   df_precision_pvales %>% ungroup() %>% 
-  #     mutate(group1 = NA, group2 = NA, p_sig = ifelse(mean_p_value < 0.05, "*","ns")),
-  #   label = "p_sig",
-  #   x="criteria",
-  #   y.position = 0.65
-  # ) +
   ylim(c(0,0.6))+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
