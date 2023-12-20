@@ -107,7 +107,7 @@ disease_plot <- function(string){
 
 ```{r}
 # Generating multiple disease plots
-mcas_plt <- disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome") + scale_x_continuous(limits = c(2005,2021), n.breaks = length(unique(df$year)))
+mcas_plt <- disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome") + scale_x_continuous(limits = c(2005,2022), n.breaks = length(unique(df$year)))
 kawasaki_plt <- disease_plot("MUCOCUTANEOUS LYMPH") + ggtitle("Kawawsaki disease")
 eds_plt <- disease_plot("EHLERS") + ggtitle("Ehlers-Danlos syndrome")
 appy_plt <- disease_plot("APPENDICITIS") + ggtitle("Appendicitis")
@@ -165,4 +165,14 @@ plt_icd_trend
 ```{r}
 ggsave(here("figures/1_CA_ICD_code_by_year.pdf"), plot=plt_icd_trend, height = 3.5, width = 3.5)
 ```
+
+```{r}
+df %>% 
+  filter(grepl("(MASTOCYTOSIS|MAST CELL ACTIVATION)", diagnosis)) %>% 
+  mutate(diagnosis = ifelse(grepl("MASTOCYTOSIS", diagnosis), "Mastocytosis", "Mast Cell Activation Syndrome")) %>% 
+  select(year, diagnosis, count) %>% 
+  pivot_wider(names_from = "year", values_from = "count", values_fn = sum) %>% 
+  mutate(across(contains("20"), ~./`2016`))
+```
+
 
