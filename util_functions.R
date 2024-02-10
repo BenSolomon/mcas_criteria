@@ -2,14 +2,15 @@
 # removes non-specific strings,
 # removes white space, and converts to lower case to improve standardization
 clean_diagnosis <- function(diagnosis){
+  # browser()
   # Terms that modify many diagnosis that can be removed to consolidate variation
   patterns_to_remove <- c(
     "other unspecified",
     ", unspecified",
     "other specified",
-    "with.*",
+    # "with.*",
     ".*due to",
-    ".*secondary to",
+    ".*secondary to", #visual aura secondary to epilepsy -> epilepsy
     " not .*",
     "^a "
     # "with normal pulmonary function tests",
@@ -39,6 +40,7 @@ clean_diagnosis <- function(diagnosis){
   diagnosis <- tolower(diagnosis) 
   diagnosis <- gsub("\\([a-z]*\\)","", diagnosis) # Remove lettered bullet points
   diagnosis <- gsub("\\.","", diagnosis)
+  diagnosis <- gsub(" - .*", "", diagnosis) # Remove hyphenated descriptions or rationales (e.g. zinc deficiency - could lead to follicular hyperkeratosis)
   diagnosis <- gsub("\\-"," ", diagnosis) # ChatGPT inconsistently hyphenates
   diagnosis <- gsub("\\(.*\\)", "", diagnosis) # Remove any parenthetical like (e.g. x, y, z)
   diagnosis <- gsub(paste(patterns_to_remove, collapse = "|"),"",diagnosis)
@@ -50,7 +52,13 @@ clean_diagnosis <- function(diagnosis){
   diagnosis <- diagnosis[!grepl(paste(diagnoses_to_remove, collapse = "|"), diagnosis)] # Remove diagnoses_to_remove
   diagnosis <- diagnosis[!is.na(diagnosis)] # Remove NAs
   diagnosis <- diagnosis[nchar(diagnosis) != 0] # Remove ""
-  return(diagnosis)
+  
+  
+  if (length(diagnosis) == 0){
+    return(NA)
+  } else {
+    return(diagnosis)
+  }
 }
 
 # Takes the list of diagnoses from a single chatGPT query output,

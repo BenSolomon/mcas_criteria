@@ -146,6 +146,6 @@ def chatgpt_pipeline(iteration_path, output_dir, batch_size = 1000, gpt_version 
 chatgpt_pipeline(
         iteration_path="/labs/khatrilab/solomonb/mcas/data/criteria_query_iterations.csv",
         output_dir="/labs/khatrilab/solomonb/mcas/data/chatgpt_json_output",
-        batch_size = 200, 
+        batch_size = 500, 
         gpt_version = "gpt-4-turbo-preview"
 )
