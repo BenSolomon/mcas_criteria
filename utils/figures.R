@@ -8,6 +8,24 @@ require(ggplotify)
 require(viridis)
 require(vegan)
 
+################################################################################
+# Order levels for criteria for use in plots
+format_criteria <- function(df){
+  df %>% 
+    mutate(criteria = toupper(criteria)) %>% 
+    mutate(criteria = factor(criteria, levels = c(
+      "MIGRAINE",
+      "AHA_KAWASAKI",
+      "EULAR_ACR_SLE",
+      "SLICC_SLE",
+      "MCAS_CONSORTIUM",
+      "MCAS_ALTERNATIVE"
+    )))
+}
+
+################################################################################
+
+
 # Line graph of rank abundance by criteria. Will plot up to n_diagnoses number of top diagnoses
 rank_abundance_plot <- function(df, n_diagnoses = 50){
   custom_pal <- brewer.pal(7, "Set1")[-6]
@@ -21,9 +39,9 @@ rank_abundance_plot <- function(df, n_diagnoses = 50){
     select(criteria, freq, rank) %>% 
     mutate(cs = cumsum(freq)) %>% 
     filter(rank <= n_diagnoses) %>% 
-    mutate(criteria = toupper(criteria)) %>% 
+    format_criteria() %>% 
     ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
-    geom_line(size=1) +
+    geom_line(linewidth=1) +
     theme_classic()+
     scale_color_manual(values = custom_pal)+
     scale_x_continuous(expand = c(0,0))+
@@ -41,6 +59,7 @@ top_diagnosis_plot <- function(df, n_diagnoses=25){
     mutate(freq = n/sum(n), .by = criteria) %>% 
     slice_max(n=n_diagnoses, order_by = n, by = criteria) %>% 
     mutate(group = tidytext::reorder_within(diagnosis, freq, within = criteria)) %>% 
+    format_criteria() %>% 
     ggplot(aes(x = group, y = freq))+
     geom_bar(stat = "identity")+
     tidytext::scale_x_reordered()+
@@ -48,7 +67,8 @@ top_diagnosis_plot <- function(df, n_diagnoses=25){
     coord_flip() +
     labs(x="", y="Frequency") +
     theme(axis.text.x = element_text(angle = 90)) +
-    facet_wrap(~criteria, scales = "free_y")
+    ylim(c(0,0.1))+ # Since 10-item differential, max frequency is 0.1
+    facet_wrap(~criteria, scales = "free_y", dir = "v", nrow = 2)
 }
 
 ################################################################################
@@ -60,21 +80,22 @@ cumulative_frequency_plot <- function(df, n_diagnoses = 25){
     count(criteria, diagnosis, sort = T) %>% 
     mutate(freq = n/sum(n), .by = criteria) %>% 
     slice_max(n=n_diagnoses, order_by = n, by = criteria, with_ties = F) %>%
-    summarise(total_frequency = sum(freq), .by = criteria)
+    summarise(total_frequency = sum(freq), .by = criteria) %>% 
+    format_criteria() 
   print(df)
   
   ggplot(df, aes(x = criteria, y = total_frequency))+
-    geom_bar(stat = "identity") +
+    geom_bar(stat = "identity", color = "black") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(y = sprintf("Combined frequency of top %s diagnoses",n_diagnoses), x="")
+    labs(y = sprintf("Combined frequency of top\n%s diagnoses",n_diagnoses), x="")
 }
 
 ################################################################################
 
 # Based on a regex pattern, return a table with the rank of every match within 
 # all criteria
-disease_rank_table <- function(df, pattern){
+diagnosis_rank_table <- function(df, pattern){
   df %>% 
     count(criteria, diagnosis, sort = T) %>%
     mutate(rank = 1:n(), .by = criteria) %>% 
@@ -93,9 +114,10 @@ diversity_plot <- function(df){
   print(div_diag)
   
   broom::tidy(div_diag) %>% 
-    mutate(names = toupper(names)) %>% 
+    rename(criteria = names) %>% 
+    format_criteria() %>% 
     ggplot(aes(x=names, y = x))+
-    geom_bar(stat = "identity") +
+    geom_bar(stat = "identity", color = "black") +
     theme_bw() +
     labs(x = "", y = "Shannon diversity") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -152,9 +174,14 @@ map_color <- function(x, min, max, steps){
 
 # Pipeline for generating a centrality-colored network plot with facets
 centrality_graph <- function(graph, point_size=2.5){
-  
   # Calculate centrality for the graph
   graph_ce <- graph %>%
+    mutate(criteria = factor(criteria, levels = c(
+      "eular_acr_sle",
+      "slicc_sle",
+      "mcas_consortium",
+      "mcas_alternative"
+    ))) %>% 
     activate(nodes) %>% 
     mutate(ce = centrality_eigen())
   
@@ -185,10 +212,11 @@ centrality_graph <- function(graph, point_size=2.5){
   
   # Create a labeler to format the facet labels
   criteria_names <- c(
-    "mcas_consortium" = "MCAS Consensus",
-    "mcas_alternative" = "MCAS Alternative",
     "eular_acr_sle" = "SLE EULAR-ACR",
-    "slicc_sle" = "SLE SLICC")
+    "slicc_sle" = "SLE SLICC",
+    "mcas_consortium" = "MCAS Consortium",
+    "mcas_alternative" = "MCAS Alternative"
+    )
   mcas_labeller <- as_labeller(criteria_names)
   
   # Generate the base plot. Node colors will be identical across all facets at this point
@@ -200,7 +228,7 @@ centrality_graph <- function(graph, point_size=2.5){
     facet_wrap(~criteria, labeller = mcas_labeller) +
     theme_void() +
     theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
-    labs(color = "Centrality")
+    labs(fill = "Centrality")
 
   # Recolor nodes so that color is specific to the facet of interest
   ggraph_color_faceted_nodes(plt,

@@ -76,6 +76,10 @@ def count_diagnoses(x):
 # dataframe of all iterations, leaving only unprocessed iterations
 def remove_complete_iterations(iteration_path, json_dir, minimum_diagnoses = 5):
     iteration_df=pd.read_csv(iteration_path)
+    
+    ###### Limit to first 10,000 iterations due to GPT4 rates
+    iteration_df = iteration_df.query('i <= 10000')
+    
     print(f"Total iteration samples: {iteration_df.shape[0]}")
     # If there are no json files in the output path, return full iteration df
     if len(os.listdir(json_dir))==0:
@@ -146,6 +150,6 @@ def chatgpt_pipeline(iteration_path, output_dir, batch_size = 1000, gpt_version 
 chatgpt_pipeline(
         iteration_path="/labs/khatrilab/solomonb/mcas/data/criteria_query_iterations.csv",
         output_dir="/labs/khatrilab/solomonb/mcas/data/chatgpt_json_output",
-        batch_size = 500, 
+        batch_size = 200, 
         gpt_version = "gpt-4-turbo-preview"
 )

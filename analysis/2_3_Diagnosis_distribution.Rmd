@@ -1,0 +1,54 @@
+---
+title: "Diagnosis distribution analysis"
+output: html_notebook
+---
+
+```{r, message = F}
+source(here("utils/data_processing.R"))
+source(here("utils/figures.R"))
+```
+
+# Import data
+```{r}
+df_gpt3 <- process_json(here("data/chatgpt_json_output/gpt-3.5-turbo-1106/"))
+df_gpt4 <- process_json(here("data/chatgpt_json_output/gpt-4-turbo-preview/"))
+```
+# Rank abundance
+```{r}
+rank_abundance_plot(df_gpt3)+ggtitle("GPT3")
+rank_abundance_plot(df_gpt4)+ggtitle("GPT4")
+```
+
+# Top diagnoses
+```{r, fig.width = 12, fig.height = 8}
+top_diagnosis_plot(df_gpt3, n_diag = 25)+ggtitle("GPT3")
+top_diagnosis_plot(df_gpt4, n_diag = 25)+ggtitle("GPT4")
+```
+
+# Cumulative top frequency
+```{r, fig.width=4, fig.height=3.5}
+cumulative_frequency_plot(df_gpt3)
+cumulative_frequency_plot(df_gpt4)
+```
+
+# Diagnosis rank list
+```{r}
+diagnosis_rank_table(df_gpt3, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60))
+diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
+```
+
+```{r}
+diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) %>% 
+  select(contains(c("diagnosis","mcas"))) %>% 
+  head(6) %>% 
+  mutate(diagnosis = str_to_sentence(diagnosis)) %>% 
+  rename(Diagnosis = diagnosis, `MCAS consortium` = mcas_consortium, `MCAS alternative` = mcas_alternative) %>% 
+  flextable() %>% 
+  width(width = 2) %>% 
+  align(j = 2:3, align = "center", part = "all")
+  
+```
+
+
+
+

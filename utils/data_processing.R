@@ -1,5 +1,4 @@
 require(tidyverse)
-library(tidyverse)
 library(jsonlite)
 library(here)
 
@@ -31,6 +30,39 @@ fix_diagnoses_json <- function(json_input){
   } else if (class(json_input) == "data.frame"){
     return(json_input$name)
   }
+}
+
+################################################################################
+
+# Consolidate diagnoses the are similar except for a specific string
+# E.g. "DRESS syndrome" -> "DRESS" when "DRESS" also occurs in the data
+# but not "Turner syndrome" -/-> "Turner" since "Turner" doesn't occur in data
+consolidate_prefix <- function(df, string){
+  
+  # Find all diagnoses matching string and create key w_ and wo_ string removed
+  prefix_df <- df %>% 
+    count(w_suffix = diagnosis, sort = T) %>% 
+    filter(grepl(string, w_suffix)) %>% 
+    mutate(wo_suffix = trimws(gsub(string, "", w_suffix))) %>% 
+    select(-n)
+  
+  # Match key to df to find if diagnosis wo_ string exist in dataset
+  prefix_df <- df %>% 
+    count(diagnosis, sort = T) %>% 
+    left_join(prefix_df, by = c("diagnosis" = "wo_suffix")) %>% 
+    rename(wo_suffix = diagnosis) %>% 
+    drop_na() %>%
+    select(-n)
+  
+  # For any diagnoses where w_ and wo_ string exist, consolidate to wo_string
+  df %>% 
+    left_join(prefix_df, by = c("diagnosis" = "w_suffix")) %>% 
+    mutate(diagnosis = ifelse(
+      is.na(wo_suffix),
+      diagnosis,
+      wo_suffix
+    )) %>% 
+    select(-wo_suffix)
 }
 
 ################################################################################
@@ -74,19 +106,26 @@ test_clean <- function(df){
   df %>% 
     filter(!grepl(paste(diagnoses_to_remove, collapse = "|"), diagnosis)) %>% 
     filter(!nchar(diagnosis) == 0) %>% 
-    drop_na()
+    drop_na()  %>% 
+    consolidate_prefix(" syndrome$") %>% 
+    consolidate_prefix(" disease$")
+  
+  
 }
 
 ################################################################################
 
 # Pipeline for importing and processing all json data from files in a directory
 process_json <- function(json_dir){
+  # browser()
   # Read in all json containing files
   print("Reading data")
   df <- tibble(file = list.files(json_dir, full.names = T)) %>%
     mutate(data = map(file, fromJSON)) %>% 
     select(data) %>% 
-    unnest(data) %>% 
+    mutate(data = map(data, ~select(., i:diagnoses))) %>% 
+    unnest(data)
+  df <- df %>% 
     check_valid_json() %>% 
     select(-symptoms) 
   
