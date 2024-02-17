@@ -7,20 +7,31 @@ require(ggraph)
 require(ggplotify)
 require(viridis)
 require(vegan)
+require(flextable)
 
 ################################################################################
 # Order levels for criteria for use in plots
 format_criteria <- function(df){
+  criteria_order <- c(
+    "migraine", 
+    "aha_kawasaki", 
+    "eular_acr_sle", 
+    "slicc_sle",
+    "mcas_consortium", 
+    "mcas_alternative" 
+    )
+  
+  criteria_names <- c(
+    "mcas_consortium" = "MCAS - Consensus",
+    "mcas_alternative" = "MCAS - Alternative",
+    "eular_acr_sle" = "SLE - EULAR-ACR",
+    "slicc_sle" = "SLE - SLICC",
+    "aha_kawasaki" = "Kawasaki - AHA",
+    "migraine" = "Migraine - ICHD3")
+  
   df %>% 
-    mutate(criteria = toupper(criteria)) %>% 
-    mutate(criteria = factor(criteria, levels = c(
-      "MIGRAINE",
-      "AHA_KAWASAKI",
-      "EULAR_ACR_SLE",
-      "SLICC_SLE",
-      "MCAS_CONSORTIUM",
-      "MCAS_ALTERNATIVE"
-    )))
+    mutate(criteria = factor(criteria, levels = criteria_order)) %>%
+    mutate(criteria = fct_recode(criteria, !!!setNames(names(criteria_names), criteria_names)))
 }
 
 ################################################################################
@@ -50,6 +61,11 @@ rank_abundance_plot <- function(df, n_diagnoses = 50){
 }
 
 ################################################################################
+# custom_labeler <- function(x) {
+#   x %>%
+#     str_replace("___.+$", "") %>%
+#     str_wrap(width = 3)
+# }
 
 # Bar chart of top diagnoses for each criteria. Will plot up to n_diagnoses number of top diagnoses
 # TODO order and format facet bars
@@ -57,12 +73,14 @@ top_diagnosis_plot <- function(df, n_diagnoses=25){
   df %>% 
     count(criteria, diagnosis, sort = T) %>% 
     mutate(freq = n/sum(n), .by = criteria) %>% 
+    mutate(diagnosis = str_to_sentence(diagnosis)) %>% 
     slice_max(n=n_diagnoses, order_by = n, by = criteria) %>% 
     mutate(group = tidytext::reorder_within(diagnosis, freq, within = criteria)) %>% 
     format_criteria() %>% 
     ggplot(aes(x = group, y = freq))+
-    geom_bar(stat = "identity")+
+    geom_bar(stat = "identity", width = 0.8)+
     tidytext::scale_x_reordered()+
+    # tidytext::scale_x_reordered(labels = custom_labeler)+
     theme_bw() +
     coord_flip() +
     labs(x="", y="Frequency") +
@@ -120,6 +138,60 @@ diversity_plot <- function(df){
     geom_bar(stat = "identity", color = "black") +
     theme_bw() +
     labs(x = "", y = "Shannon diversity") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+################################################################################
+
+# Calculate bray-curtis or jaccard similarity of diagnoses counts
+# between criteria and plot similarity as a heatmap
+diagnosis_similarity_heatmap <- function(df, method = "jaccard"){
+  df <- format_criteria(df)
+  diagnosis_table <- table(df$criteria, df$diagnosis)
+  dist_mtx <- vegan::vegdist(diagnosis_table, method = method)
+  sim_mtx <- 1-as.matrix(dist_mtx)
+  plt_title <- sprintf("%s\nsimilarity", str_to_sentence(method))
+  ComplexHeatmap::Heatmap(sim_mtx,
+                          name = plt_title,
+                          col = viridis::viridis(100))
+}
+
+################################################################################
+
+# Calculate PCA loadings for each criteria based on diagnosis count
+# and plot criteria based on first two PCA loadings. 
+diagnosis_pca_plot <- function(df){
+  df <- format_criteria(df)
+  diagnosis_table <- table(df$criteria, df$diagnosis)
+  diagnosis_pca <- as.data.frame(diagnosis_table) %>% 
+    pivot_wider(names_from = "Var2", values_from = "Freq", values_fill = 0) %>% 
+    column_to_rownames("Var1") %>% 
+    prcomp()
+  
+  as.data.frame(diagnosis_pca$x) %>% 
+    rownames_to_column("criteria") %>% 
+    ggplot(aes(x = PC1, y = PC2, label = criteria))+
+    geom_point()+
+    ggrepel::geom_label_repel() +
+    theme_bw()
+}
+
+################################################################################
+# Plot a visualization of how observed diversity or precision value differences
+# between criteria compare to the null hypothesis permutation distribution of 
+# those differences. Based on output from `difference_permutation_test`
+permutation_test_plot <- function(df){
+  permutations <- nrow(df$data[[1]])
+  n_bins = ifelse(permutations > 100, floor(permutations/10), 10)
+  
+  df %>% 
+    select(pair, data) %>% 
+    unnest(data) %>% 
+    ggplot(aes(x = abs(difference)))+
+    geom_histogram(bins = n_bins) +
+    geom_vline(data = df, aes(xintercept = difference), color = "red")+
+    facet_wrap(~pair, scales = "free")+
+    theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
 

@@ -2,6 +2,8 @@ require(tidyverse)
 library(jsonlite)
 library(here)
 
+######################### READING AND CLAEANING DATA ###########################
+
 # Check if ChatGPT output was a valid JSON structure and remove if not
 # TODO Could be refined
 check_valid_json <- function(json) {
@@ -150,7 +152,7 @@ process_json <- function(json_dir){
   return(df)
 }
 
-################################################################################
+############################# DATA CALCULATIONS ################################
 
 # Creates a dataframe that tallies the number of times two diagnoses appear 
 # in the same differential diagnosis iteration
@@ -197,4 +199,142 @@ make_codiagnosis_graph <- function(df, n_diagnoses = NULL){
     as_tbl_graph() %>% 
     activate(edges) %>% 
     mutate(criteria = factor(criteria, levels = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle")))
+}
+
+################################################################################
+
+# Calculate diagnosis diversity for all criteria and then calculate 
+# difference in diversity between all pairs of categories
+pairwise_diversity_difference <- function(df){
+  df_div <- enframe(vegan::diversity(table(df$criteria, df$diagnosis)))
+  df_diff <- data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+    left_join(df_div, by = c("X1"="name")) %>% 
+    left_join(df_div, by = c("X2"="name")) %>% 
+    unite("pair", X1, X2, sep = ".") %>%
+    mutate(diversity_difference = value.x - value.y) %>% 
+    select(-contains("value"))
+  deframe(df_diff)
+}
+
+
+################################################################################
+
+# Important for precision because there will be choose(gpt_iterations, 2)
+# number of bray-curtis calculations
+limit_gpt_iterations <- function(df, gpt_iterations){
+  df %>%  
+    mutate(i = as.numeric(i)) %>% 
+    filter(i <= gpt_iterations)
+}
+
+################################################################################
+
+# Calculate bray-curtis distance between all gpt_iteration results of a given criteria 
+calculate_precision <- function(df, gpt_iterations = NULL){
+  # If not null, limit df to number of gpt_iterations specified
+  # There will be choose(gpt_iterations, 2) number of bray-curtis calculations
+  if (!is.null(gpt_iterations)){df <- limit_gpt_iterations(df, gpt_iterations)}
+  
+  df %>%  
+    nest(.by = criteria) %>% 
+    mutate(data = map(data, function(df){
+      diagnosis_table <- table(df$i, df$diagnosis)
+      # parDist will use maximum threads available on system
+      dist_mtx <- parallelDist::parDist(diagnosis_table, method = "bray")
+      broom::tidy(dist_mtx) %>% 
+        select(distance)
+    })) %>% 
+    unnest(data)
+}
+
+################################################################################
+
+# Calculate diagnosis metric for all criteria and then calculate
+# difference in that metric between all pairs of categories
+pairwise_distance_difference <- function(df, metric, gpt_iterations=NULL){
+  if (!is.null(gpt_iterations)){df <- limit_gpt_iterations(df, gpt_iterations)}
+  
+  if (metric == "diversity"){
+    df <- enframe(vegan::diversity(table(df$criteria, df$diagnosis)),
+                  "criteria", "distance")
+  }
+  if (metric == "precision"){
+    df <- calculate_precision(df) %>% 
+      summarise(distance = mean(distance), .by = criteria)
+  }
+  
+  data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+    left_join(df, by = c("X1"="criteria")) %>% 
+    left_join(df, by = c("X2"="criteria")) %>% 
+    unite("pair", X1, X2, sep = ".") %>% 
+    mutate(distance_difference = distance.x - distance.y) %>% 
+    select(pair, distance_difference) %>% 
+    deframe()
+}
+
+################################################################################
+
+# Perform a single data permutation for percision calculations 
+# and then calculate the precision difference between all categories
+permute_precision_iteration <- function(df){
+  df %>%
+    mutate(diagnosis = sample(diagnosis, size = n(), replace = F), .by = criteria) %>%
+    pairwise_distance_difference(metric = "precision")
+}
+
+################################################################################
+
+# Perform a single data permutation for diversity calculations 
+# and then calculate the diversity difference between all categories
+permute_diversity_iteration <- function(df){
+  out <- as.data.frame(t(combn(unique(sort(df$criteria)),2))) %>% 
+    mutate(data = map2(V1, V2, function(v1,v2){
+      df %>% 
+        ungroup() %>% 
+        filter(criteria == v1 | criteria == v2) %>% 
+        mutate(diagnosis = sample(diagnosis, replace = F))})) %>% 
+    select(-contains("V")) %>% 
+    unnest(data) %>% 
+    pairwise_distance_difference(metric = "diversity")
+  return(out)
+}
+
+################################################################################
+
+# Calculate the p-values for diversity or precision differences between criteria
+# based on their # percentile relative to the null hypothesis permutation 
+# distribution of those differences 
+difference_permutation_test <- function(df, metric, permutations = 10, gpt_iterations = NULL){
+  if (!is.null(gpt_iterations)){df <- limit_gpt_iterations(df, gpt_iterations)}
+  
+  
+  if (metric == "diversity"){
+    plan(multisession)
+    x <- future_replicate(n = permutations, permute_diversity_iteration(df), future.seed = 1234)
+  }
+  
+  if (metric == "precision"){
+    set.seed(1234)
+    x <- replicate(n = permutations, permute_precision_iteration(df))
+  }
+  
+  # Since order of criteria A vs. criteria B doesn't matter, positive vs. negative
+  # difference value don't matter and would cancel each other out, so statistics
+  # are based on the absolute values of the differences
+  as.data.frame(x) %>% 
+    rownames_to_column("pair") %>% 
+    pivot_longer(!pair, names_to = "replicate", values_to = "difference") %>% 
+    nest(.by = pair) %>% 
+    mutate(null_ecdf = map(data, ~ecdf(abs(.$difference)))) %>% 
+    mutate(null_mean = map_dbl(data, ~mean(abs(.$difference)))) %>% 
+    mutate(quant = map(data, ~quantile(abs(.$difference), c(0.025,0.5,0.975)))) %>% 
+    unnest_wider(quant) %>% 
+    left_join(
+      enframe(pairwise_distance_difference(df, metric = metric), 
+              "pair", "difference"), by = c("pair")
+    ) %>% 
+    mutate(difference = abs(difference)) %>% 
+    mutate(p_value = map2_dbl(null_ecdf, difference, function(e,m){1-e(m)})) %>% 
+    mutate(p_value_adj = p.adjust(p_value, method = "BH")) %>% 
+    select(-null_ecdf)
 }
