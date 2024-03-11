@@ -276,7 +276,9 @@ centrality_graph <- function(graph, point_size=2.5){
     mutate(
       highlight = case_when(
         name == "mastocytosis" ~ "red",
+        name == "D47.02 Systemic mastocytosis" ~ "red",
         name == "mast cell activation syndrome" ~ "orange",
+        name == "D89.41 Monoclonal mast cell activation syndrome" ~ "orange",
         .default = "black"
       )
     ) %>% 

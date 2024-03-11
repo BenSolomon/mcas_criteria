@@ -1,6 +1,11 @@
 require(tidyverse)
-library(jsonlite)
-library(here)
+require(jsonlite)
+require(here)
+require(future)
+require(future.apply)
+require(parallelDist)
+require(vegan)
+
 
 ######################### READING AND CLAEANING DATA ###########################
 
