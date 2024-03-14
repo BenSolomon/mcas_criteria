@@ -148,7 +148,7 @@ plt_icd_trend <- df %>%
   group_by(year, diagnosis) %>% 
   summarise(count = sum(count)) %>% 
   ggplot(aes(x = as.numeric(year), y = count, color = diagnosis))+
-  geom_path() +
+  geom_path(size = 1) +
   theme_bw() +
   scale_x_continuous(n.breaks = length(unique(df$year))/2) +
   scale_y_continuous(limits = c(0,NA))+
@@ -159,7 +159,7 @@ plt_icd_trend <- df %>%
     legend.background = element_rect(fill=alpha("white",0.5)),
     legend.title = element_blank()) +
   labs(x = "", y="ICD code count", color = "")+
-  scale_color_brewer(palette = "Set1", labels = c("Mast cell activation\nsyndrome", "Mastocytosis"))
+  scale_color_brewer(palette = "Dark2", labels = c("Mast cell activation\nsyndrome", "Mastocytosis"))
 plt_icd_trend
 ```
 ```{r}
