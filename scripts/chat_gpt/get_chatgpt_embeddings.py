@@ -9,7 +9,8 @@ client = openai.OpenAI(
 )
 
 
-model = "text-embedding-3-large"
+# model = "text-embedding-3-large"
+model = "text-embedding-3-small"
 
 # def get_embeddings(text_string, model_id = "text-embedding-3-small"):
 #     # model_id = "text-embedding-ada-002"
@@ -43,15 +44,23 @@ def get_embeddings(text_string, model_id = "text-embedding-3-small"):
     return {x:y for x,y in embedding}
 
 
-df = pd.read_csv("/labs/khatrilab/solomonb/mcas/data/compiled_symptoms.csv")
+# df = pd.read_csv("/labs/khatrilab/solomonb/mcas/data/compiled_symptoms.csv")
+# df = pd.read_csv("/labs/khatrilab/solomonb/mcas/data/compiled_diagnoses.csv")
+df = pd.read_csv("/labs/khatrilab/solomonb/mcas/data/compiled_icd10_codes.csv")
+# df = df.head(100)
 
-df["embeddings"] = df["symptom"].map(lambda x: get_embeddings(x, model_id = model))
+# df["embeddings"] = df["symptom"].map(lambda x: get_embeddings(x, model_id = model))
+df["embeddings"] = df["diagnosis"].map(lambda x: get_embeddings(x, model_id = model))
 
 df = pd.concat(
-    [df["symptom"],
+    # [df["symptom"],
+    [df["code"],
+    df["diagnosis"],
     df["embeddings"].apply(pd.Series)],
     axis = 1
 )
 
 # df = df.melt(id_vars="symptom", var_name = "index", value_name="embedding")
-df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/symptom_chatgpt_embeddings_{model}.csv', index=False)
+# df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/symptom_chatgpt_embeddings_{model}.csv', index=False)
+# df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/diagnosis_chatgpt_embeddings_{model}.csv', index=False)
+df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/icd10_chatgpt_embeddings_{model}.csv.gz', compression='gzip', index=False)

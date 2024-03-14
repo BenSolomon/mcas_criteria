@@ -245,7 +245,12 @@ map_color <- function(x, min, max, steps){
 ################################################################################
 
 # Pipeline for generating a centrality-colored network plot with facets
-centrality_graph <- function(graph, point_size=2.5){
+centrality_graph <- function(graph, 
+                             layout = "fr",
+                             point_size=2.5, 
+                             border_size = 1,
+                             edge_width = 1,
+                             edge_alpha = 0.5){
   # Calculate centrality for the graph
   graph_ce <- graph %>%
     mutate(criteria = factor(criteria, levels = c(
@@ -294,9 +299,9 @@ centrality_graph <- function(graph, point_size=2.5){
   mcas_labeller <- as_labeller(criteria_names)
   
   # Generate the base plot. Node colors will be identical across all facets at this point
-  plt <- ggraph(graph_ce, layout = 'fr', ) +
-    geom_edge_link(alpha = 0.5) +
-    geom_node_point(size = point_size, aes(color = highlight, fill = ce), shape = 21, stroke = 1) +
+  plt <- ggraph(graph_ce, layout = layout, ) +
+    geom_edge_link(alpha = edge_alpha, edge_width = edge_width) +
+    geom_node_point(size = point_size, aes(color = highlight, fill = ce), shape = 21, stroke = border_size) +
     scale_color_identity()+
     scale_fill_viridis_c(breaks = c(0.00,0.25,0.50,0.75,1.00), limits = c(0,1)) +
     facet_wrap(~criteria, labeller = mcas_labeller) +
