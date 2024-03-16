@@ -309,6 +309,8 @@ permute_diversity_iteration <- function(df){
 # Calculate the p-values for diversity or precision differences between criteria
 # based on their # percentile relative to the null hypothesis permutation 
 # distribution of those differences 
+## gpt_iterations is effectively a filter of the number of original chatgpt
+## iterations that are included. Fewer means faster calculation, but less accurate
 difference_permutation_test <- function(df, metric, permutations = 10, gpt_iterations = NULL){
   if (!is.null(gpt_iterations)){df <- limit_gpt_iterations(df, gpt_iterations)}
   
