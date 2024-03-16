@@ -345,3 +345,23 @@ difference_permutation_test <- function(df, metric, permutations = 10, gpt_itera
     mutate(p_value_adj = p.adjust(p_value, method = "BH")) %>% 
     select(-null_ecdf)
 }
+
+################################################################################
+# Many calculations in study involve comparisons of pairs where one element of 
+# the pair is in one column and the other is in a second column. However, the
+# order of this pair may not matter, but affect the sign of the associated 
+# calculation (e.g. difference). If which element of the pair ends up in the 
+# first column is not consistent, this can result in discrepancies in the 
+# associated calculation. This function ensures that the element in the first
+# column is always the first in alphabetical order. 
+sort_paired_columns <- function(df, prefix){
+  prefix1 <- sprintf("%s1", prefix)
+  prefix2 <- sprintf("%s2", prefix)
+  
+  df %>% 
+    mutate_at(c(prefix1, prefix2), as.character) %>% 
+    mutate(!!prefix := map2(!!sym(prefix1),!!sym(prefix2), ~sort(c(.x,.y)))) %>% 
+    select(-!!sym(prefix1), -!!sym(prefix2)) %>% 
+    unnest_wider(prefix, names_sep = "")
+}
+
