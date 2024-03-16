@@ -5,11 +5,13 @@ library(future.apply)
 
 threads <- 48
 n_boot <- 500
+model <- "gpt4"
 
-df_gpt4 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4.csv.gz"))
-df_codiag_gpt4 <- create_codiagnosis_df(df_gpt4)
+read_path <- sprintf("data/processed_diagnoses/diagnoses_%s.csv.gz", model)
+df <- read_csv(here(read_path))
+df_codiag <- create_codiagnosis_df(df)
 
-df_density <- df_codiag_gpt4 %>%
+df_density <- df_codiag %>%
   ungroup() %>%
   select(criteria, from, to, weight = n, rank) %>%
   group_by(criteria) %>%
@@ -44,7 +46,7 @@ graph_permutation_diff <- function(){
     2)) %>% 
     as.data.frame() %>% 
     mutate(data = map2(V1, V2, function(x,y){
-      filter(df_gpt4, criteria == x | criteria == y) %>% 
+      filter(df, criteria == x | criteria == y) %>% 
         mutate(diagnosis = sample(diagnosis, replace = F)) %>% 
         create_codiagnosis_df()
     })) %>% 
@@ -113,4 +115,5 @@ output_list <- list(
   "permutation_plot_abs" = permutation_plot_abs
 )
 
-saveRDS(output_list, here("data/edge_density_permutation.RDS"))
+write_path <- sprintf("data/network_analysis/edge_density_permutation_%s.RDS", model)
+saveRDS(output_list, here(write_path))
