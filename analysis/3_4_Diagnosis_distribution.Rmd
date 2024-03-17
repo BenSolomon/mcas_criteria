@@ -309,6 +309,12 @@ plt_top <- top_diagnosis_plot(df_gpt4, n_diag = 25) +
   tidytext::scale_x_reordered(labels = custom_labeler)
 plt_top
 ```
+
+```{r}
+ggsave(plot=plt_top,filename=here("figures/3_Top_25_diagnoses.pdf"), width = 7.4, height = 6.5)
+```
+
+
 ### 3A_Rank_abundance
 ```{r, fig.width=3.5, fig.height=2.5}
 plt_rank <- rank_abundance_plot(df_gpt4) +theme(legend.position = c(0.7,0.7))
@@ -363,7 +369,7 @@ plt_fig3 <- plot_grid(
   nrow = 2
 )
 plt_fig3
-ggsave(plot=plt_fig3,filename=here("figures/3_Diagnosis_diversity.pdf"))
+ggsave(plot=plt_fig3,filename=here("figures/4_Diagnosis_diversity.pdf"), width = 6.5, height = 6)
 ```
 
 ### Table

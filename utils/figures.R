@@ -22,7 +22,7 @@ format_criteria <- function(df){
     )
   
   criteria_names <- c(
-    "mcas_consortium" = "MCAS - Consensus",
+    "mcas_consortium" = "MCAS - Consortium",
     "mcas_alternative" = "MCAS - Alternative",
     "eular_acr_sle" = "SLE - EULAR-ACR",
     "slicc_sle" = "SLE - SLICC",
