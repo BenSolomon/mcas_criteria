@@ -296,10 +296,10 @@ readRDS(here("data/diversity_analysis/mcas_iNEXT_dropSingle_psuedoMinus_gpt4_e20
 
 ### 2_Top_diagnoses
 ```{r, fig.width=7.4, fig.height=6.5}
-custom_labeler <- function(x) {
+custom_labeler <- function(x, wrap_width=33) {
     x %>%
         str_replace("___.+$", "") %>%
-        str_wrap(width = 33, )
+        str_wrap(width = wrap_width)
 }
 
 plt_top <- top_diagnosis_plot(df_gpt4, n_diag = 25) + 
@@ -381,9 +381,7 @@ ggsave(plot=plt_fig3,filename=here("figures/4_Diagnosis_diversity.pdf"), width =
 
 ### Table
 
-
-```{r, message = F}
-# pdf(file = here("test.pdf"), width = 5, height = 5)
+```{r, message = F, warning=FALSE}
 diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) %>% 
   select(contains(c("diagnosis","mcas"))) %>% 
   head(6) %>% 
@@ -391,6 +389,40 @@ diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis =
   rename(Diagnosis = diagnosis, `MCAS consortium` = mcas_consortium, `MCAS alternative` = mcas_alternative) %>% 
   flextable() %>% 
   width(width = 2) %>% 
-  align(j = 2:3, align = "center", part = "all") 
-# dev.off()
+  align(j = 2:3, align = "center", part = "all") %>% 
+  {print(., preview = "pdf");.}
 ```
+
+### Supplemental figures
+
+```{r, fig.width=7, fig.height=10, message = F}
+plot_grid(
+  top_diagnosis_plot(df_gpt3, n_diag = 25) + 
+    theme(axis.text = element_text(size = 4.5, lineheight = 0.7), 
+          strip.text = element_text(size = 7),
+          axis.title = element_text(size = 9)) + 
+    tidytext::scale_x_reordered(labels = custom_labeler),
+  
+  top_diagnosis_plot(df_gpt4_icd, n_diag = 25) + 
+    theme(axis.text = element_text(size = 4, lineheight = 0.7), 
+          strip.text = element_text(size = 7),
+          axis.title = element_text(size = 9)) + 
+    tidytext::scale_x_reordered(labels = ~custom_labeler(., wrap_width = 45)),
+  ncol = 1,
+  rel_heights = c(0.9,1),
+  labels = c("A","B")
+) %>% 
+  {ggsave(plot=.,filename=here("figures/S_Top_diagnoses.pdf"), width = 7, height = 10);.}
+```
+```{r, fig.width=7.5, fig.height=3}
+plot_grid(
+  rank_abundance_plot(df_gpt3) +theme(legend.position = c(0.7,0.7)),
+  rank_abundance_plot(df_gpt4_icd) +theme(legend.position = c(0.7,0.7)),
+  nrow = 1,
+  labels = c("A","B")
+) %>% 
+  {ggsave(plot=.,filename=here("figures/S_Ranked_abundance.pdf"), width = 7.5, height = 3);.}
+```
+
+
+
