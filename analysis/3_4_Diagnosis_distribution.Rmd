@@ -352,21 +352,28 @@ plt_precision
 
 ```{r, fig.width=6.5, fig.height=6}
 plt_fig3 <- plot_grid(
+  plot_grid(NULL),
   plot_grid(
     plt_rank,
     NULL,
     plt_cumulative,
     nrow = 1, 
-    rel_widths = c(3,0.2,2)
+    rel_widths = c(3,0.2,2),
+    labels = c("A", "", "B"),
+    vjust = 0.2
   ),
+  plot_grid(NULL),
   plot_grid(
     plt_div,
     NULL,
     plt_precision,
     nrow = 1,
-    rel_widths = c(1,0.1,1)
+    rel_widths = c(1,0.1,1),
+    labels = c("C", "", "D"),
+    vjust = 0.2
   ),
-  nrow = 2
+  ncol = 1,
+  rel_heights = c(0.05,1,0.05,1)
 )
 plt_fig3
 ggsave(plot=plt_fig3,filename=here("figures/4_Diagnosis_diversity.pdf"), width = 6.5, height = 6)
