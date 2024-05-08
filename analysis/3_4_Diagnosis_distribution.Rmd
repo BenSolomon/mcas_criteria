@@ -208,7 +208,7 @@ calculate_boxplot_stats <- function(df){
 
 
 
-manual_box_plot <- function(df){
+manual_box_plot <- function(df, width = 0.9){
   df %>% 
     format_criteria() %>% 
     ggplot(aes(
@@ -219,7 +219,7 @@ manual_box_plot <- function(df){
       upper = upper,
       ymax = max
     ))+
-    geom_boxplot(stat = "identity") +
+    geom_boxplot(stat = "identity", width = width) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))+
     labs(x = "", y = "Bray-Curtis similarity")
@@ -423,6 +423,138 @@ plot_grid(
 ) %>% 
   {ggsave(plot=.,filename=here("figures/S_Ranked_abundance.pdf"), width = 7.5, height = 3);.}
 ```
+### Alternative combined figure
+```{r, fig.width=7, fig.height=9, message = F}
+n_diagnoses_bar <- 15
+n_diagnoses_abundance <- 50
+n_diagnoses_cumulative <- 50
+
+apply_text_formatting <- list(theme(
+  axis.text = element_text(size = 6),
+  axis.title = element_text(size = 9),
+  legend.text = element_text(size = 6),
+  # legend.spacing.y = unit(0.1, 'cm')
+  # legend.height = unit(0.1, 'cm'),
+  legend.key.height = unit(0.3, 'cm')
+  # legend.key.spacing = unit(0.1, 'cm')
+  ))
+  
+  
+plot_grid(
+  
+  ###
+  top_diagnosis_plot(df_gpt4, n_diag = n_diagnoses_bar) + 
+    theme(axis.text = element_text(size = 5, lineheight = 0.7), 
+          strip.text = element_text(size = 7),
+          axis.title = element_text(size = 9)) + 
+    tidytext::scale_x_reordered(labels = custom_labeler),
+  ###
+  NULL,
+  plot_grid(
+    plot_grid(NULL),
+    plot_grid(
+      NULL,
+      ####
+      rank_abundance_plot(df_gpt4, n_diagnoses = n_diagnoses_abundance) +theme(legend.position = c(0.7,0.7)) + apply_text_formatting,
+      ###
+      NULL,
+      ###
+      cumulative_frequency_plot(df_gpt4, n_diagnoses = n_diagnoses_cumulative) + labs(y = str_glue("Combined frequency\nof top {n_diagnoses_cumulative} diagnoses")) + apply_text_formatting,
+      ###
+      NULL,
+      nrow = 1, 
+      rel_widths = c(0.2, 2.5, 0.2, 2, 0.2 ),
+      # labels = c("A", "", "B"),
+      vjust = 0.2
+    ),
+    plot_grid(NULL),
+    plot_grid(
+      NULL,
+      ###
+       df_diversity_ci %>% 
+        format_criteria() %>% 
+        ggplot(aes(x = criteria, y = shannon))+
+        geom_point(size = 1)+
+        geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.3)+
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+        labs(x = "", y = "Shannon\ndiversity") + apply_text_formatting,
+      ###
+      NULL,
+      ###
+      manual_box_plot(df_precision_stats) + labs(y='Bray-Curtis\nsimilarity') + apply_text_formatting,
+      ###
+      NULL,
+      nrow = 1,
+      rel_widths = c(0.2, 1, 0.1, 1, 0.2),
+      # labels = c("C", "", "D"),
+      vjust = 0.2
+    ),
+    ncol = 1,
+    rel_heights = c(0.05,1,0.05,1)
+  ),
+  
+  ncol = 1,
+  rel_heights = c(0.9,0.02,1)
+) %>% 
+  {ggsave(plot=.,filename=here("figures/3_4_combined.pdf"), width = 7, height = 9);.}
 
 
+
+```
+
+```{r, fig.width=7, fig.height=7, message = F}
+n_diagnoses_bar <- 15
+n_diagnoses_abundance <- 50
+n_diagnoses_cumulative <- 50
+
+apply_text_formatting <- list(theme(
+  axis.text = element_text(size = 6),
+  axis.title = element_text(size = 9),
+  legend.text = element_text(size = 6),
+  # legend.spacing.y = unit(0.1, 'cm')
+  # legend.height = unit(0.1, 'cm'),
+  legend.key.height = unit(0.3, 'cm')
+  # legend.key.spacing = unit(0.1, 'cm')
+  ))
+  
+  
+plot_grid(
+  
+  ###
+  top_diagnosis_plot(df_gpt4, n_diag = n_diagnoses_bar) + 
+    theme(axis.text = element_text(size = 5, lineheight = 0.7), 
+          strip.text = element_text(size = 7),
+          axis.title = element_text(size = 9)) + 
+    tidytext::scale_x_reordered(labels = custom_labeler),
+  ###
+  NULL,
+  plot_grid(
+      rank_abundance_plot(df_gpt4, n_diagnoses = n_diagnoses_abundance) +theme(legend.position = c(0.7,0.7)) + apply_text_formatting,
+      cumulative_frequency_plot(df_gpt4, n_diagnoses = n_diagnoses_cumulative, width = 0.75) + labs(y = str_glue("Combined frequency\nof top {n_diagnoses_cumulative} diagnoses")) + apply_text_formatting,
+      df_diversity_ci %>% 
+        format_criteria() %>% 
+        ggplot(aes(x = criteria, y = shannon))+
+        geom_point(size = 1)+
+        geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.3)+
+        theme_bw() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+        labs(x = "", y = "Shannon diversity") + apply_text_formatting,
+      manual_box_plot(df_precision_stats, width = 0.5) + labs(y='Bray-Curtis similarity') + apply_text_formatting,
+      nrow = 1, 
+      axis = 'tb',
+      align = 'h',
+      rel_widths = c(1, 0.7, 0.7, 0.7),
+      labels = c(LETTERS[2:5]),
+      vjust = 0.2
+    ),
+  ncol = 1,
+  rel_heights = c(1, 0.05, 0.65),
+  labels = c("A","","")
+)  %>% 
+  {ggsave(plot=.,filename=here("figures/3_diagnosis_diversity.pdf"), width = 7, height = 7);.}
+
+
+
+```
 

@@ -93,7 +93,7 @@ top_diagnosis_plot <- function(df, n_diagnoses=25){
 
 # Bar chart of cumulative frequency for top n_diagnoses
 # Also prints exact values of frequency sum
-cumulative_frequency_plot <- function(df, n_diagnoses = 25){
+cumulative_frequency_plot <- function(df, n_diagnoses = 25, width = 0.9){
   df <- df %>% 
     count(criteria, diagnosis, sort = T) %>% 
     mutate(freq = n/sum(n), .by = criteria) %>% 
@@ -103,7 +103,7 @@ cumulative_frequency_plot <- function(df, n_diagnoses = 25){
   print(df)
   
   ggplot(df, aes(x = criteria, y = total_frequency))+
-    geom_bar(stat = "identity", color = "black") +
+    geom_bar(stat = "identity", color = "black", width = width) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(y = sprintf("Combined frequency of top\n%s diagnoses",n_diagnoses), x="")
@@ -250,7 +250,13 @@ centrality_graph <- function(graph,
                              point_size=2.5, 
                              border_size = 1,
                              edge_width = 1,
-                             edge_alpha = 0.5){
+                             edge_alpha = 0.5,
+                             label_text_size = NULL,
+                             tick_text_size = NULL,
+                             legend_width = NULL,
+                             legend_height = NULL,
+                             legend_position = NULL,
+                             highlight_stroke_multiplier=2){
   # Calculate centrality for the graph
   graph_ce <- graph %>%
     mutate(criteria = factor(criteria, levels = c(
@@ -276,15 +282,23 @@ centrality_graph <- function(graph,
     mutate(color = map_color(ce, 0,1,100))
   
   # Specifically color the mastocytosis and MCAS nodes to highlight them
+  highlight_border_size = border_size*highlight_stroke_multiplier
   graph_ce <- graph_ce %>%
     activate(nodes) %>%
     mutate(
-      highlight = case_when(
+      highlight_color = case_when(
         name == "mastocytosis" ~ "red",
         name == "D47.02 Systemic mastocytosis" ~ "red",
         name == "mast cell activation syndrome" ~ "orange",
         name == "D89.41 Monoclonal mast cell activation syndrome" ~ "orange",
         .default = "black"
+      ),
+      highlight_stroke = case_when(
+        name == "mastocytosis" ~ highlight_border_size,
+        name == "D47.02 Systemic mastocytosis" ~ highlight_border_size,
+        name == "mast cell activation syndrome" ~ highlight_border_size,
+        name == "D89.41 Monoclonal mast cell activation syndrome" ~ highlight_border_size,
+        .default = border_size
       )
     ) %>% 
     arrange(ce)
@@ -301,13 +315,23 @@ centrality_graph <- function(graph,
   # Generate the base plot. Node colors will be identical across all facets at this point
   plt <- ggraph(graph_ce, layout = layout, ) +
     geom_edge_link(alpha = edge_alpha, edge_width = edge_width) +
-    geom_node_point(size = point_size, aes(color = highlight, fill = ce), shape = 21, stroke = border_size) +
+    geom_node_point(size = point_size, aes(color = highlight_color, fill = ce, stroke = highlight_stroke), shape = 21) +
     scale_color_identity()+
+    # scale_stroke_identity()+
     scale_fill_viridis_c(breaks = c(0.00,0.25,0.50,0.75,1.00), limits = c(0,1)) +
     facet_wrap(~criteria, labeller = mcas_labeller) +
     theme_void() +
-    theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
-    labs(fill = "Centrality")
+    labs(fill = "Centrality") +
+    theme(
+      panel.border = element_rect(color = "black", fill = NA, size = 1),
+      strip.text = element_text(size = label_text_size),
+      legend.title = element_text(size = label_text_size),
+      legend.text = element_text(size = tick_text_size)
+      ) +
+    theme(legend.position = legend_position)
+  
+  if (!is.null(legend_width)){plt <- plt+theme(legend.key.width = legend_width)}
+  if (!is.null(legend_height)){plt <- plt+theme(legend.key.height = legend_height)}
 
   # Recolor nodes so that color is specific to the facet of interest
   ggraph_color_faceted_nodes(plt,

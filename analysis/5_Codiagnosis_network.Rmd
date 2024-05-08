@@ -334,7 +334,26 @@ df_centr_gpt4 <- calculate_subgraph_centrality(graph_all_gpt4)
 ```
 
 ```{r}
-custom_heatmap <- function(data, title, metric, color_scale = hcl.colors(3, "Earth"), midpoint = NULL, symmetric = T, font_size=10){
+df_centr_gpt4 %>% 
+  rownames_to_column("criteria") %>% 
+  format_criteria() %>% 
+  column_to_rownames("criteria") %>% 
+  as.matrix() %>% 
+  t() %>% 
+  lsa::cosine() 
+```
+
+
+```{r}
+custom_heatmap <- function(data, 
+                           title, 
+                           metric, 
+                           color_scale = hcl.colors(3, "Earth"), 
+                           midpoint = NULL, 
+                           symmetric = T, 
+                           font_size=10,
+                           dendrogram_weight = unit(10, "mm"),
+                           legend_params = list(NULL)){
   scale_max <- ifelse(symmetric,max(abs(data)),max(data))
   scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
   scale_mid <- scale_min + (scale_max - scale_min)/2
@@ -343,14 +362,23 @@ custom_heatmap <- function(data, title, metric, color_scale = hcl.colors(3, "Ear
   
   color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
   
+  legend_params <- append(
+    list(
+      title_gp = gpar(fontsize = font_size),
+      labels_gp = gpar(fontsize = font_size*0.8)), 
+    legend_params)
+  
   ComplexHeatmap::Heatmap(
     data,
     col = color_function,
     rect_gp = grid::gpar(col = "black", lwd = 1),
     column_title = title,
     name = metric,
-    row_names_gp = grid::gpar(fontsize = font_size),  # Adjust font size for row labels
-    column_names_gp = grid::gpar(fontsize = font_size)
+    row_names_gp = grid::gpar(fontsize = font_size), 
+    column_names_gp = grid::gpar(fontsize = font_size),
+    column_dend_height  = dendrogram_weight,
+    row_dend_width = dendrogram_weight,
+    heatmap_legend_param = legend_params
   )
 }
 ```
@@ -392,6 +420,8 @@ set.seed(1234);plt_graph_gpt4 <- centrality_graph(
   border_size = 0.5,
   edge_width = 0.5,
   edge_alpha = 0.75)
+
+
 plt_fig <- cowplot::plot_grid(
   cowplot::plot_grid(
     NULL, plt_graph_gpt4, nrow=1, rel_widths=c(0.05,0.9), labels = c("A","")
@@ -412,9 +442,76 @@ plt_fig <- cowplot::plot_grid(
 
 plt_fig 
 ```
-```{r}
-ggsave(here("figures/5_Network_analysis.pdf"), plot=plt_fig, height = 6.75, width = 5)
+
+```{r, fig.width=3.5, fig.height=6}
+set.seed(1234);plt_graph_gpt4 <- centrality_graph(
+  graph_top_gpt4, 
+  layout = "stress",
+  point_size = 1.25, 
+  border_size = 0.25,
+  edge_width = 0.5,
+  edge_alpha = 0.5, 
+  label_text_size = 9,
+  tick_text_size = 6,
+  highlight_stroke_multiplier = 3,
+  legend_height = unit(35, "pt"),
+  legend_width = unit(10, "pt")) 
+
+plt_density_gpt4 <- edge_density_sig_plot(
+  ci_df = read_csv(here("data/network_analysis/edge_density_boot_gpt4.csv")),
+  permutation_df = readRDS(here("data/network_analysis/edge_density_permutation_gpt4.RDS")) %>% 
+    .$permutation_significance_abs 
+) + theme(
+  axis.text.y = element_text(size=7), 
+  axis.title.y = element_text(size=9))
+
+plt_heat_all <- df_codiag_gpt4 %>% 
+  make_codiagnosis_graph() %>% 
+  calculate_subgraph_centrality() %>% 
+  rownames_to_column("criteria") %>% 
+  format_criteria() %>% 
+  column_to_rownames("criteria") %>% 
+  as.matrix() %>% 
+  t() %>% 
+  lsa::cosine() %>% 
+  custom_heatmap(color_scale = viridis::viridis(3), 
+                 title = " ", 
+                 metric = "Cosine similarity", 
+                 symmetric = F, 
+                 font_size = 8,
+                 dendrogram_weight = unit(3, "mm"),
+                 legend_params = list(
+    legend_height = unit(5, 'cm'),
+    direction = "horizontal"
+  ))
+
+
+plt_fig <- cowplot::plot_grid(
+  NULL, 
+  cowplot::plot_grid(
+    NULL, plt_graph_gpt4, nrow=1, rel_widths=c(0.05,0.9)
+  ),
+  NULL,
+  cowplot::plot_grid(
+    plot_grid(NULL, plt_density_gpt4 ,rel_heights = c(0.1, 1), ncol = 1),
+    NULL,
+    grid::grid.grabExpr(ComplexHeatmap::draw(plt_heat_all, heatmap_legend_side = "bottom")),
+    nrow = 1,
+    rel_widths = c(0.4,0.05,0.7),
+    labels = c("B","","C"),
+    axis = 'h', align = 'bt'
+  ),
+
+  ncol = 1,
+  rel_heights = c(0.05, 1, 0.01, 1),
+  labels = c("A")
+)
+
+plt_fig 
 ```
 
 
+```{r}
+ggsave(here("figures/5_Network_analysis.pdf"), plot=plt_fig, height = 6, width = 3.5)
+```
 

@@ -379,3 +379,79 @@ plt_fig
 ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 6, width = 6)
 ```
 
+# Altenative layout
+```{r, fig.width=7, fig.height=3.5, message=F}
+title_size <- 9
+label_size <- 6
+
+apply_text_formatting <- list(theme(
+  axis.text = element_text(size = label_size),
+  axis.title = element_text(size = title_size),
+  legend.text = element_text(size = label_size),
+  legend.key.height = unit(0.4, 'cm')
+  ))
+
+plt_1 <- pca_embedding$x[,c(x,y)] %>% 
+  as.data.frame() %>% 
+  rownames_to_column("feature") %>% 
+  left_join(df_criteria) %>% 
+  drop_na() %>% 
+  ggplot(aes(x=!!sym(x), y=!!sym(y), color = criteria))+
+  geom_point(size = 0.5) +
+  geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 3, shape = 21, color = "black", aes(fill = criteria))+
+  theme_bw()+
+  scale_color_brewer(palette = "Dark2")+
+  scale_fill_brewer(palette = "Dark2") +
+  labs(fill = "", color = "") +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(ncol = 2))
+
+plt_2 <- df_compare_euc %>% 
+  ggplot(aes(x = criteria_pair, y = distance))+
+  stat_summary(fun = mean, geom = "point", size = 1) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.5)+
+  ggpubr::stat_pvalue_manual(
+    ggpubr::compare_means(distance ~ criteria_pair, df_compare_euc, method = "wilcox.test"),
+    label = "p = {p.adj}",
+    y.position = 55.6,
+    tip.length = 0.001, label.size = 3
+  )+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle =90, hjust =1)) +
+  labs(x="", y="Euclidean distance") +
+  coord_cartesian(ylim=c(NA,55.75))
+
+plt_3 <- as.data.frame(pca_embedding$x) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "euclidean") %>% 
+  # pheatmap::pheatmap(color = viridis::viridis(100, direction = -1))
+  ComplexHeatmap::Heatmap(
+    col = viridis::viridis(100, direction = -1), 
+    name= "Euclidean distance",
+    heatmap_legend_param = list(direction = "horizontal"),
+    rect_gp = grid::gpar(col = "black", lwd = 1),
+    row_names_gp = grid::gpar(fontsize = label_size),  # Adjust font size for row labels
+    column_names_gp = grid::gpar(fontsize = label_size)  # Adjust font size for column labels
+  )
+
+plt_fig <- cowplot::plot_grid(
+    plt_1 + apply_text_formatting,
+    plt_2 + apply_text_formatting,
+    grid::grid.grabExpr(ComplexHeatmap::draw(plt_3, heatmap_legend_side = 'bottom')),
+    rel_widths = c(0.9, 0.5, 1),
+    axis = 'bt',
+    align = 'h',
+    labels = LETTERS[1:3],
+    nrow = 1
+)
+
+plt_fig
+```
+
+```{r}
+ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 3.5, width = 7)
+```
+
+
+
+
