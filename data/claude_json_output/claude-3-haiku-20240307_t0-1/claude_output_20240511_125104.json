@@ -1,0 +1,266 @@
+[
+    {
+        "i": "9999",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "diffuse erythematous rash",
+            "thrombocytosis",
+            "oropharyngeal erythema"
+        ],
+        "diagnoses": [
+            "Stevens-Johnson syndrome",
+            "Toxic epidermal necrolysis",
+            "Erythema multiforme",
+            "Acute generalized exanthematous pustulosis",
+            "Acute myeloid leukemia",
+            "Immune thrombocytopenic purpura",
+            "Viral exanthem",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS)",
+            "Lupus erythematosus",
+            "Pemphigus vulgaris"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "fever",
+            "oropharyngeal erythema",
+            "lip erythema",
+            "cervical lymphadenopathy"
+        ],
+        "diagnoses": [
+            "Streptococcal pharyngitis",
+            "Infectious mononucleosis",
+            "Acute tonsillitis",
+            "Peritonsillar abscess",
+            "Diphtheria",
+            "Scarlet fever",
+            "Measles",
+            "Influenza",
+            "Hand",
+            "foot",
+            "and mouth disease",
+            "Kawasaki disease"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "malar rash",
+            "delirium",
+            "synovitis",
+            "fever",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatic fever",
+            "Adult-onset Stills disease",
+            "Viral pericarditis",
+            "Bacterial endocarditis",
+            "Rheumatoid arthritis",
+            "Sj\u00f6grens syndrome",
+            "Antiphospholipid syndrome",
+            "Vasculitis",
+            "Mixed connective tissue disease"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "proteinuria",
+            "autoimmune hemolysis",
+            "thrombocytopenia",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic Lupus Erythematosus (SLE)",
+            "Antiphospholipid Syndrome",
+            "Thrombotic Thrombocytopenic Purpura (TTP)",
+            "Disseminated Intravascular Coagulation (DIC)",
+            "Autoimmune Hemolytic Anemia",
+            "Immune Thrombocytopenic Purpura (ITP)",
+            "Scleroderma",
+            "Rheumatoid Arthritis",
+            "Mixed Connective Tissue Disease",
+            "Sj\u00f6grens Syndrome"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "Lymphadenopathy",
+            "Fatigue",
+            "hyperglycemia",
+            "obsessive-compulsive behavior",
+            "laryngitis"
+        ],
+        "diagnoses": [
+            "Lymphoma",
+            "Chronic Fatigue Syndrome",
+            "Diabetes Mellitus",
+            "Obsessive-Compulsive Disorder",
+            "Laryngitis"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "hemorrhoids",
+            "tags",
+            "tinnitus",
+            "Polycythemia",
+            "joint pain"
+        ],
+        "diagnoses": [
+            "Hemorrhoids",
+            "Polycythemia Vera",
+            "Tinnitus",
+            "Arthritis",
+            "Anemia",
+            "Myeloproliferative Disorder",
+            "Vitamin Deficiency",
+            "Thyroid Disorder",
+            "Menieres Disease",
+            "Acoustic Neuroma"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "syncope",
+            "conjunctival injections",
+            "hives",
+            "hypoxia"
+        ],
+        "diagnoses": [
+            "Anaphylaxis",
+            "Angioedema",
+            "Vasovagal syncope",
+            "Mast cell activation syndrome",
+            "Hypersensitivity reaction",
+            "Sepsis",
+            "Acute respiratory distress syndrome (ARDS)",
+            "Cardiogenic shock",
+            "Pulmonary embolism",
+            "Acute coronary syndrome"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "sneezing",
+            "diarrhea",
+            "incontinence",
+            "hypotension",
+            "pruritis"
+        ],
+        "diagnoses": [
+            "Carcinoid syndrome",
+            "Mastocytosis",
+            "Vasoactive intestinal polypeptide-secreting tumor (VIPoma)",
+            "Serotonin syndrome",
+            "Pheochromocytoma",
+            "Paraneoplastic syndrome",
+            "Neuroendocrine tumor",
+            "Medullary thyroid carcinoma",
+            "Gastrinoma",
+            "Diabetes insipidus"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "migraine",
+        "symptoms": [
+            "vomiting",
+            "weakness",
+            "dysphagia",
+            "parasthesia"
+        ],
+        "diagnoses": [
+            "Viral gastroenteritis",
+            "Food poisoning",
+            "Dehydration",
+            "Gastroparesis",
+            "Stroke",
+            "Myasthenia gravis",
+            "Guillain-Barre syndrome",
+            "Multiple sclerosis",
+            "Amyotrophic lateral sclerosis",
+            "Vitamin B12 deficiency"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "migraine",
+        "symptoms": [
+            "phonophobia",
+            "scintillation"
+        ],
+        "diagnoses": [
+            "Migraine",
+            "Tension-type headache",
+            "Subarachnoid hemorrhage",
+            "Acute angle-closure glaucoma",
+            "Stroke",
+            "Brain tumor",
+            "Meningitis",
+            "Idiopathic intracranial hypertension",
+            "Cluster headache",
+            "Medication overuse headache"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "leukopenia",
+            "nonscarring alopecia",
+            "proteinuria",
+            "arthropathy",
+            "telangiectasias"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Sjogrens syndrome",
+            "Dermatomyositis",
+            "Systemic sclerosis",
+            "Mixed connective tissue disease",
+            "Antiphospholipid syndrome",
+            "Granulomatosis with polyangiitis",
+            "Discoid lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Undifferentiated connective tissue disease"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "pleural effusion",
+            "lymphopenia",
+            "thrombocytopenia",
+            "pericardial effusion",
+            "verrucous rash"
+        ],
+        "diagnoses": [
+            "Tuberculosis",
+            "Systemic Lupus Erythematosus",
+            "Malignant Mesothelioma",
+            "Congestive Heart Failure",
+            "Pneumonia",
+            "Nephrotic Syndrome",
+            "Sarcoidosis",
+            "Lymphoma",
+            "Rheumatoid Arthritis",
+            "Bacterial Endocarditis"
+        ]
+    }
+]

@@ -200,6 +200,9 @@ df_compare_euc %>%
   coord_cartesian(ylim=c(NA,55.75))
 ```
 
+
+
+
 ```{r, fig.width=2, fig.height=4, message = F}
 symptom_distance_key_cos <- lsa::cosine(t(as.matrix(pca_embedding$x))) %>% 
   as.dist() %>% 
@@ -214,10 +217,12 @@ symptom_distance_key_cos <- lsa::cosine(t(as.matrix(pca_embedding$x))) %>%
 df_compare_cos <- tribble(
   ~criteria1, ~criteria2,
   "SLE - EULAR-ACR", "SLE - SLICC",
-  "MCAS - Consensus", "MCAS - Alternative"
+  "MCAS - Consortium", "MCAS - Alternative"
+  # "SLE - SLICC", "SLE - SLICC",
+  # "MCAS - Consensus",  "MCAS - Consensus"
 ) %>% 
   left_join(df_criteria, by = c("criteria1" = "criteria")) %>% 
-  left_join(df_criteria, by = c("criteria2" = "criteria")) %>% 
+  left_join(df_criteria, by = c("criteria2" = "criteria"))  %>% 
   mutate(symptom_pair = map2(feature.x, feature.y, ~sort(c(.x,.y)))) %>% 
   unnest_wider(symptom_pair, names_sep = "") %>% 
   unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
@@ -228,11 +233,13 @@ df_compare_cos <- tribble(
 
 df_compare_cos %>% 
   ggplot(aes(x = criteria_pair, y = distance))+
-  stat_summary(fun = mean, geom = "point") +
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar")+
+  geom_boxplot()+
+  # geom_violin()+
+  # stat_summary(fun = mean, geom = "point") +
+  # stat_summary(fun.data = mean_cl_normal, geom = "errorbar")+
   theme_bw()+
   theme(axis.text.x = element_text(angle =90, hjust =1)) +
-  labs(x="", y="Euclidean distance")
+  labs(x="", y="Cosine distance")
 ```
 ### Centroid distance heatmap
 
@@ -248,6 +255,14 @@ as.data.frame(pca_embedding$x) %>%
   custom_dist(method = "cosine") %>% 
   pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
 ```
+
+```{r}
+as.data.frame(pca_embedding$x) %>% 
+  # calculate_centroids() %>% 
+  custom_dist(method = "cosine")
+```
+
+
 
 ### Dendrogram significance
 ```{r, fig.width=6, fig.height=6, message = F}
