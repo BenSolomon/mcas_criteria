@@ -8,19 +8,25 @@ require(vegan)
 
 
 ######################### READING AND CLAEANING DATA ###########################
+check_valid_diagnoses <- function(diagnoses){
+  if (is.null(diagnoses)){return(FALSE)}
+  if (diagnoses[1]=="error"){return(FALSE)}
+  return(TRUE)
+}
 
 # Check if ChatGPT output was a valid JSON structure and remove if not
 # TODO Could be refined
 check_valid_json <- function(json) {
   invalid <- json %>%
-    mutate(invalid_diagnoses = map(diagnoses, is.null)) %>%
+    # mutate(invalid_diagnoses = map(diagnoses, is.null)) %>%
+    mutate(invalid_diagnoses = map_lgl(diagnoses, ~!check_valid_diagnoses(.))) %>% 
     filter(invalid_diagnoses == T) %>%
     unite(iteration_output, i, criteria, sep = "_") %>%
     pull(iteration_output) %>% 
     paste(collapse = ", ")
   print(sprintf("Invalid iterations: %s", invalid))
   json %>%
-    mutate(invalid_diagnoses = map(diagnoses, is.null)) %>%
+    mutate(invalid_diagnoses = map_lgl(diagnoses, ~!check_valid_diagnoses(.))) %>%
     filter(invalid_diagnoses == F) %>%
     select(i, criteria, symptoms, diagnoses)
 }
