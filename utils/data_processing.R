@@ -7,6 +7,7 @@ require(parallelDist)
 require(vegan)
 require(checkmate)
 
+source(here("utils/general.R"))
 
 ######################### READING AND CLAEANING DATA ###########################
 check_valid_diagnoses <- function(diagnoses){

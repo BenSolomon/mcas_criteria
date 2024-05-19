@@ -28,15 +28,20 @@ df_gemini1.5_flash_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gem
 ```{r, message = F}
 # ICD mapped outputs
 #TODO Find source of NAs 
-df_gpt3.5_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.5_icd.csv.gz")) %>% drop_na()
-df_gpt4.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4_icd.csv.gz")) %>% drop_na()
-df_claude3_haiku_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0_icd.csv.gz")) %>% drop_na()
-df_claude3_opus_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0_icd.csv.gz")) %>% drop_na()
-df_gemini1.0_pro_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0_icd.csv.gz")) %>% drop_na()
+#TODO drop index column in processing script
+df_gpt3.5_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.5_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_gpt4.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_claude3_haiku_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_claude3_opus_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_gemini1.0_pro_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
 ```
 
 
 # Rank abundance
+
+## Individual model data
+
+### Original responses
 ```{r}
 rank_abundance_plot(df_gpt3.5)+ggtitle("ChatGPT 3.5")
 rank_abundance_plot(df_gpt4.0)+ggtitle("ChatGPT 4.0")
@@ -47,6 +52,7 @@ rank_abundance_plot(df_gemini1.0_pro_t1.0)+ggtitle("Gemini 1.0 Pro")
 rank_abundance_plot(df_gemini1.5_flash_t1.0)+ggtitle("Gemini 1.5 Flash")
 ```
 
+### ICD converted responses
 ```{r}
 rank_abundance_plot(df_gpt3.5_icd)+ggtitle("ChatGPT 3.5 ICD")
 rank_abundance_plot(df_gpt4.0_icd)+ggtitle("ChatGPT 4.0 ICD")
@@ -55,59 +61,40 @@ rank_abundance_plot(df_claude3_opus_t1.0_icd)+ggtitle("Claude3 Opus ICD")
 rank_abundance_plot(df_gemini1.0_pro_t1.0_icd)+ggtitle("Gemini 1.0 Pro ICD")
 ```
 
+## Combined model data
+
+### Original responses
 
 ```{r}
-bind_rows(
-  rank_abundance_plot(df_gpt3.5)$data,
-  rank_abundance_plot(df_gpt4.0)$data,
-  # rank_abundance_plot(df_gpt4_icd)$data,
-  rank_abundance_plot(df_claude3_haiku_t1.0)$data,
-  rank_abundance_plot(df_claude3_opus_t1.0)$data,
-  rank_abundance_plot(df_gemini1.0_pro_t1.0)$data,
-  rank_abundance_plot(df_gemini1.5_flash_t1.0)$data
-) %>% 
-  ggplot(aes(x = rank, y = freq, color = criteria))+
-  # geom_point(size = 0.1)+
-  stat_summary(fun.data = mean_se, geom = "ribbon", fill = "grey75", color = "grey75", mapping = aes(group = criteria)) +
-  stat_summary(fun.y = mean, geom = "path", size = 1) +
-  scale_color_manual(values = brewer.pal(7, "Set1")[-6]) +
-  theme_classic() +
-  scale_x_continuous(expand = c(0,0))+
-  scale_y_continuous(expand = c(0,0)) +
-  labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
+multi_ranked_abundance_plot(df_gpt3.5, df_gpt4.0, df_claude3_haiku_t1.0, 
+                            df_claude3_opus_t1.0, df_gemini1.0_pro_t1.0)+
+  ggtitle("Combined model rank abundance")
 ```
+### ICD converted response 
 ```{r}
-bind_rows(
-  rank_abundance_plot(df_gpt3.5_icd)$data,
-  rank_abundance_plot(df_gpt4.0_icd)$data,
-  # rank_abundance_plot(df_gpt4_icd)$data,
-  rank_abundance_plot(df_claude3_haiku_t1.0_icd)$data,
-  rank_abundance_plot(df_claude3_opus_t1.0_icd)$data,
-  rank_abundance_plot(df_gemini1.0_pro_t1.0_icd)$data
-  # rank_abundance_plot(df_gemini1.5_flash_t1.0)$data
-) %>% 
-  ggplot(aes(x = rank, y = freq, color = criteria))+
-  # geom_point(size = 0.1)+
-  stat_summary(fun.data = mean_se, geom = "ribbon", fill = "grey75", color = "grey75", mapping = aes(group = criteria)) +
-  stat_summary(fun.y = mean, geom = "path", size = 1) +
-  scale_color_manual(values = brewer.pal(7, "Set1")[-6]) +
-  theme_classic() +
-  scale_x_continuous(expand = c(0,0))+
-  scale_y_continuous(expand = c(0,0)) +
-  labs(x = "Diagnosis rank", y = "Diagnosis frequency", color = "")
+multi_ranked_abundance_plot(df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, 
+                            df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd)+
+  ggtitle("Combined model ICD rank abundance")
 ```
 
-# Top diagnoses
+# Top diagnoses plots
+
+## Individual model data
+
+### Original responses
+
 ```{r, fig.width = 16, fig.height = 8}
 n_diag <- 25
-top_diagnosis_plot(df_gpt3.5, n_diag = n_diag)+ggtitle("GPT3")
-top_diagnosis_plot(df_gpt4.0, n_diag = n_diag)+ggtitle("GPT4")
+top_diagnosis_plot(df_gpt3.5, n_diag = n_diag)+ggtitle("ChatGPT 3.5")
+top_diagnosis_plot(df_gpt4.0, n_diag = n_diag)+ggtitle("ChatGPT 4.0")
 top_diagnosis_plot(df_claude3_haiku_t0.1, n_diag = n_diag)+ggtitle("Claude3 Haiku t0.1")
 top_diagnosis_plot(df_claude3_haiku_t1.0, n_diag = n_diag)+ggtitle("Claude3 Haiku t1.0")
-top_diagnosis_plot(df_claude3_haiku_t1.0, n_diag = n_diag)+ggtitle("Claude3 Opus t1.0")
-top_diagnosis_plot(df_gemini1.0_pro_t1.0, n_diag = n_diag)+ggtitle("Gemini t1.0")
+top_diagnosis_plot(df_claude3_opus_t1.0, n_diag = n_diag)+ggtitle("Claude3 Opus t1.0")
+top_diagnosis_plot(df_gemini1.0_pro_t1.0, n_diag = n_diag)+ggtitle("Gemini 1.0 Pro")
 top_diagnosis_plot(df_gemini1.5_flash_t1.0, n_diag = n_diag)+ggtitle("Gemini 1.5 Flash")
 ```
+
+### ICD converted responses 
 
 ```{r, fig.width = 12, fig.height = 8}
 custom_labeler <- function(x, wrap_width=33) {
@@ -116,183 +103,102 @@ custom_labeler <- function(x, wrap_width=33) {
         str_wrap(width = wrap_width)
 }
 
-top_diagnosis_plot(df_gpt4_icd, n_diag = 15)+ggtitle("GPT4 ICD") +
-      theme(axis.text = element_text(size = 7, lineheight = 0.7), 
-          strip.text = element_text(size = 7),
-          axis.title = element_text(size = 9)) + 
-    tidytext::scale_x_reordered(labels = ~custom_labeler(., wrap_width = 45))
-```
-
-
-```{r, fig.width = 16, fig.height = 8}
-calc_freq <- function(df){
-  df %>% 
-      count(criteria, diagnosis, sort = T) %>% 
-      mutate(freq = n/sum(n), .by = criteria) %>% 
-      mutate(diagnosis = str_to_sentence(diagnosis))
-}
-
-df_all_diags <- tibble(model = c("GPT3", "GPT4", "Claude3_Haiku", "Claude3_Opus", "Gemini t1.0"),
-       data = list(df_gpt3, df_gpt4, df_claude3_haiku_t1_0, df_claude3_opus_t1_0, df_gemini_t1_0)) %>% 
-  mutate(data = map(data, calc_freq)) %>% 
-  unnest(data) 
-
-
-df_rank_key <- df_all_diags %>% 
-  summarise(freq = mean(freq), .by = c("criteria", "diagnosis")) %>% 
-  arrange(criteria, desc(freq)) %>% 
-  mutate(rank = 1:n(), .by = "criteria") %>% 
-  select(-freq)
-
-df_all_diags %>% 
-  left_join(df_rank_key, by = c("criteria", "diagnosis")) %>% 
-  filter(rank <= n_diag) %>% 
-  # slice_max(n=n_diag, order_by = freq, by = criteria) %>% 
-    mutate(group = tidytext::reorder_within(diagnosis, freq, within = criteria)) %>% 
-    format_criteria() %>% 
-    ggplot(aes(x = group, y = freq))+
-  # geom_point(size = 0.5)+
-  geom_boxplot()+
-    # geom_bar(stat = "identity", width = 0.8)+
-    tidytext::scale_x_reordered()+
-    # tidytext::scale_x_reordered(labels = custom_labeler)+
-    theme_bw() +
-    coord_flip() +
-    labs(x="", y="Frequency") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylim(c(0,0.1))+ # Since 10-item differential, max frequency is 0.1
-    facet_wrap(~criteria, scales = "free_y", dir = "v", nrow = 2)
-```
-```{r, fig.width = 16, fig.height = 10}
-custom_labeler <- function(x, wrap_width=33) {
-    x %>%
-        str_replace("___.+$", "") %>%
-        str_wrap(width = wrap_width)
-}
-
-
-calc_freq <- function(df){
-  df %>% 
-      count(criteria, diagnosis, sort = T) %>% 
-      mutate(freq = n/sum(n), .by = criteria) %>% 
-      mutate(diagnosis = str_to_sentence(diagnosis))
-}
-
-df_all_diags <- tibble(model = c("GPT3", "GPT4", "Claude3_Haiku", "Claude3_Opus", "Gemini1_Pro"),
-       data = list(df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd)) %>% 
-  mutate(data = map(data, calc_freq)) %>% 
-  unnest(data) 
-
-
-df_rank_key <- df_all_diags %>% 
-  summarise(freq = mean(freq), .by = c("criteria", "diagnosis")) %>% 
-  arrange(criteria, desc(freq)) %>% 
-  mutate(rank = 1:n(), .by = "criteria") %>% 
-  select(-freq)
-
-df_all_diags %>% 
-  left_join(df_rank_key, by = c("criteria", "diagnosis")) %>% 
-  filter(rank <= n_diag) %>% 
-  # slice_max(n=n_diag, order_by = freq, by = criteria) %>% 
-    mutate(group = tidytext::reorder_within(diagnosis, freq, within = criteria)) %>% 
-    format_criteria() %>% 
-    ggplot(aes(x = group, y = freq))+
-  # geom_point(size = 0.5)+
-  # geom_boxplot()+
-  # geom_violin()+
-  stat_summary(fun.y = mean, geom = "point")+
-  stat_summary(fun.min = min, fun.max = max, geom = "errorbar")+
-    # geom_bar(stat = "identity", width = 0.8)+
-    tidytext::scale_x_reordered()+
-    # tidytext::scale_x_reordered(labels = custom_labeler)+
-    theme_bw() +
-    coord_flip() +
-    labs(x="", y="Frequency") +
-    theme(axis.text.x = element_text(angle = 90)) +
-    ylim(c(0,0.1))+ # Since 10-item differential, max frequency is 0.1
-    facet_wrap(~criteria, scales = "free_y", dir = "v", nrow = 2) +
+custom_text_formatting <- list(
   theme(axis.text = element_text(size = 7, lineheight = 0.7), 
           strip.text = element_text(size = 7),
-          axis.title = element_text(size = 9)) + 
-    tidytext::scale_x_reordered(labels = ~custom_labeler(., wrap_width = 45))
+          axis.title = element_text(size = 9)),
+  tidytext::scale_x_reordered(labels = ~custom_labeler(., wrap_width = 45))
+)
 ```
 
 
-# Cumulative top frequency
-```{r, fig.width=3, fig.height=3.5}
-cumulative_frequency_plot(df_gpt3.5)+ggtitle("GPT3")
-cumulative_frequency_plot(df_gpt4.0)+ggtitle("GPT4")
-cumulative_frequency_plot(df_claude3_haiku_t1.0)+ggtitle("Claude3 Haiku")
-cumulative_frequency_plot(df_claude3_opus_t1.0)+ggtitle("Claude3 Haiku")
-cumulative_frequency_plot(df_gemini1.0_pro_t1.0)+ggtitle("Gemini Pro 1.0")
+```{r, fig.width = 16, fig.height = 10}
+n_diag <- 25
+top_diagnosis_plot(df_gpt3.5_icd, n_diag = n_diag) + custom_text_formatting + ggtitle("ChatGPT 3.5 ICD") 
+top_diagnosis_plot(df_gpt4.0_icd, n_diag = n_diag)+ custom_text_formatting+ggtitle("ChatGPT 4.0 ICD")
+top_diagnosis_plot(df_claude3_haiku_t1.0_icd, n_diag = n_diag)+ custom_text_formatting+ggtitle("Claude3 Haiku t1.0 ICD")
+top_diagnosis_plot(df_claude3_opus_t1.0_icd, n_diag = n_diag)+ custom_text_formatting+ggtitle("Claude3 Opus t1.0 ICD")
+top_diagnosis_plot(df_gemini1.0_pro_t1.0_icd, n_diag = n_diag)+ custom_text_formatting+ggtitle("Gemini 1.0 Pro ICD")
 ```
-```{r, fig.width=3, fig.height=3.5}
-bind_rows(
-  cumulative_frequency_plot(df_gpt3.5)$data,
-  cumulative_frequency_plot(df_gpt4.0)$data,
-  # cumulative_frequency_plot(df_gpt4_icd)$data,
-  cumulative_frequency_plot(df_claude3_haiku_t1.0)$data,
-  cumulative_frequency_plot(df_claude3_opus_t1.0)$data,
-  cumulative_frequency_plot(df_gemini1.0_pro_t1.0)$data,
-  # cumulative_frequency_plot(df_gemini1.5_flash_t1.0)$data
-) %>% 
-  ggplot(aes(x = criteria, y = total_frequency))+
-  # geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", size = 0.75)+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y = sprintf("Combined frequency of top\n%s diagnoses",n_diag), x="")+
-  ggpubr::geom_pwc(aes(group = criteria), 
-                   method = "wilcox.test",
-                   label = "p.signif",
-                   p.adjust.method = "BH",
-                   hide.ns = T,
-                   vjust = 0.5
-                   )+
-  ylim(c(0,NA))
 
+## Combined model data
+
+### Original responses
+
+```{r, fig.width = 16, fig.height = 10}
+multi_top_diagnosis_plot(distribution_vis = "points", wrap_width=45, n_diag = 25,
+                         df_gpt3.5, df_gpt4.0, df_claude3_haiku_t1.0, 
+                         df_claude3_opus_t1.0, df_gemini1.0_pro_t1.0)
 ```
+
+### ICD converted responses
+
+```{r, fig.width = 16, fig.height = 10}
+multi_top_diagnosis_plot(errorbar_type = "range", wrap_width = 33, 
+                         df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, 
+                         df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd)
+```
+
+# Cumulative top frequency plots
+
+## Individual model data
+
+### Original responses
 
 ```{r, fig.width=3, fig.height=3.5}
-bind_rows(
-  cumulative_frequency_plot(df_gpt3.5_icd)$data,
-  cumulative_frequency_plot(df_gpt4.0_icd)$data,
-  # cumulative_frequency_plot(df_gpt4_icd)$data,
-  cumulative_frequency_plot(df_claude3_haiku_t1.0_icd)$data,
-  cumulative_frequency_plot(df_claude3_opus_t1.0_icd)$data,
-  cumulative_frequency_plot(df_gemini1.0_pro_t1.0_icd)$data,
-  # cumulative_frequency_plot(df_gemini1.5_flash_t1.0)$data
-) %>% 
-  ggplot(aes(x = criteria, y = total_frequency))+
-  # geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", size = 0.75)+
-  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y = sprintf("Combined frequency of top\n%s diagnoses",n_diag), x="")+
-  ggpubr::geom_pwc(aes(group = criteria), 
-                   method = "wilcox.test",
-                   label = "p.signif",
-                   p.adjust.method = "BH",
-                   hide.ns = T,
-                   vjust = 0.5
-                   )+
-  ylim(c(0,NA))
-
+cumulative_frequency_plot(df_gpt3.5)$plot+ggtitle("GPT3")
+cumulative_frequency_plot(df_gpt4.0)$plot+ggtitle("GPT4")
+cumulative_frequency_plot(df_claude3_haiku_t1.0)$plot+ggtitle("Claude3 Haiku")
+cumulative_frequency_plot(df_claude3_opus_t1.0)$plot+ggtitle("Claude3 Haiku")
+cumulative_frequency_plot(df_gemini1.0_pro_t1.0)$plot+ggtitle("Gemini Pro 1.0")
+```
+```{r}
+# Example of cumulative frequency values
+cumulative_frequency_plot(df_gpt4.0)$data
 ```
 
-# Diagnosis rank list
+
+### ICD converted responses
+
+```{r, fig.width=3, fig.height=3.5}
+cumulative_frequency_plot(df_gpt3.5_icd)$plot+ggtitle("GPT3 ICD")
+cumulative_frequency_plot(df_gpt4.0_icd)$plot+ggtitle("GPT4 ICD")
+cumulative_frequency_plot(df_claude3_haiku_t1.0_icd)$plot+ggtitle("Claude3 Haiku ICD")
+cumulative_frequency_plot(df_claude3_opus_t1.0_icd)$plot+ggtitle("Claude3 Haiku ICD")
+cumulative_frequency_plot(df_gemini1.0_pro_t1.0_icd)$plot+ggtitle("Gemini Pro 1.0 ICD")
+```
+
+## Combined model data
+
+### Original responses
+
+```{r, fig.width=3, fig.height=3.5}
+multi_cumulative_frequency_plot(df_gpt3.5, df_gpt4.0, df_claude3_haiku_t1.0, 
+                                df_claude3_opus_t1.0, df_gemini1.0_pro_t1.0)
+```
+
+### ICD converted responses
+```{r, fig.width=3, fig.height=3.5}
+multi_cumulative_frequency_plot(df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, 
+                                df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd) +
+  ggtitle("ICD converted responses")
+```
+
+# Diagnosis rank table
+
+## Individual model data
+
+### Original responses
 ```{r}
 diagnosis_rank_table(df_gpt3.5, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60))
-diagnosis_rank_table(df_gpt4.5, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
+diagnosis_rank_table(df_gpt4.0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
 # diagnosis_rank_table(df_claude3_haiku_t0_1, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
-diagnosis_rank_table(df_claude3_haiku_t1_0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
-diagnosis_rank_table(df_claude3_opus_t1_0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
-diagnosis_rank_table(df_gemini_t1_0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
+diagnosis_rank_table(df_claude3_haiku_t1.0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
+diagnosis_rank_table(df_claude3_opus_t1.0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
+diagnosis_rank_table(df_gemini1.0_pro_t1.0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
 diagnosis_rank_table(df_gemini1.5_flash_t1.0, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
 ```
-
+### ICD converted responses
 ```{r}
 diagnosis_rank_table(df_gpt3.5_icd, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
 diagnosis_rank_table(df_gpt4.0_icd, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
@@ -317,6 +223,8 @@ diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis =
 
 
 # Diversity
+
+## Individual model data
 
 ```{r}
 calculate_diversity_ci <- function(df, b = 100, seed = 1234){
@@ -354,6 +262,7 @@ plot_diversity_ci <- function(df){
 }
 ```
 
+### Original responses
 
 ```{r, fig.width=4, fig.height=3.5}
 calculate_diversity_ci(df_gpt3.5) %>% plot_diversity_ci() + ggtitle("GPT3")
@@ -363,7 +272,9 @@ calculate_diversity_ci(df_claude3_opus_t1.0) %>% plot_diversity_ci() + ggtitle("
 calculate_diversity_ci(df_gemini1.0_pro_t1.0) %>% plot_diversity_ci() + ggtitle("Gemini t1.0")
 
 ```
+## Combined model data
 
+### Original responses
 ```{r, fig.width=4, fig.height=3.5}
 calculate_shannon <- function(df){
   table(df$criteria, df$diagnosis) %>% 
@@ -398,7 +309,7 @@ tibble(model = c("ChatGPT 3.5", "ChatGPT 4.0", "Claude3 Haiku", "Claude3 Opus", 
                    #  symbols = c("****", "***", "**", "*", "ns")))
   # ggpubr::stat_compare_means(comparisons = list(c("SLE - EULAR-ACR", "MCAS - Alternative")))
 ```
-
+### ICD converted responses
 ```{r, fig.width=4, fig.height=3.5}
 calculate_shannon <- function(df){
   table(df$criteria, df$diagnosis) %>% 
@@ -434,20 +345,6 @@ tibble(model = c("ChatGPT 3.5", "ChatGPT 4.0", "Claude3 Haiku", "Claude3 Opus", 
   # ggpubr::stat_compare_means(comparisons = list(c("SLE - EULAR-ACR", "MCAS - Alternative")))
 ```
 
-
-```{r}
-x <- tibble(model = c("GPT3", "GPT4", "GPT4_ICD", "Claude3_Haiku", "Gemini t1.0"),
-       data = list(df_gpt3, df_gpt4, df_gpt4_icd, df_claude3_haiku, df_gemini_t1_0)) %>% 
-  mutate(shannon = map(data, calculate_shannon)) %>% 
-  select(model, shannon) %>% 
-  unnest_wider(shannon) %>% 
-  pivot_longer(-model, names_to = "criteria", values_to = "shannon") %>% 
-  format_criteria()
-
-pairwise.wilcox.test(x = x$shannon, g = as.character(x$criteria), p.adjust = "BH", paired = F) %>% 
-  broom::tidy() %>% 
-  arrange(p.value)
-```
 
 
 
