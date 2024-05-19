@@ -12,9 +12,10 @@ client = openai.OpenAI(
 # model = "text-embedding-3-large"
 model = "text-embedding-3-small"
 # diagnosis_data = "claude3_haiku_t1.0"
+diagnosis_data = "claude3_opus_t1.0"
 # diagnosis_data = "gemini1.0_pro_t1.0"
 # diagnosis_data = "gpt3.5"
-diagnosis_data = "gpt4.0"
+# diagnosis_data = "gpt4.0"
 
 def get_embeddings(text_string, model_id = "text-embedding-3-small"):
     embedding = client.embeddings.create(input=text_string, model=model_id)

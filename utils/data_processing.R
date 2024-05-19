@@ -5,6 +5,7 @@ require(future)
 require(future.apply)
 require(parallelDist)
 require(vegan)
+require(checkmate)
 
 
 ######################### READING AND CLAEANING DATA ###########################
@@ -78,7 +79,12 @@ consolidate_prefix <- function(df, string){
     select(-wo_suffix)
 }
 
+
 ################################################################################
+### LEGACY - Used prior to introducing knn-matching to ICD codes. Focused more
+### on generating parsimonious responses (e.g. removing modifiers like 'unspecified')
+### Results were less consistent when applied across responses from different
+### LLM models
 
 # Function that cleans up various aspects of the diagnosis text that ChatGPT might generate
 # TODO Rename
@@ -127,10 +133,145 @@ test_clean <- function(df){
 }
 
 ################################################################################
+# Identifies strings that represent a concatenated lists and separates them
+
+# Generalized function to find list-strings based on patter and split them 
+# based on a second patter. 
+# perl_method must be TRUE is look-forwards/backs are needed
+unnest_pattern <- function(df, search_pattern, split_pattern, perl_method = F){
+  df %>% 
+    filter(grepl(search_pattern, diagnosis, perl = perl_method)) %>% 
+    mutate(diagnosis = str_split(diagnosis, split_pattern)) %>% 
+    unnest(diagnosis) %>% 
+    select(i, criteria, diagnosis)
+}
+
+# Function that unifies multiple unnest_pattern calls to assemble final df
+unnest_oneliners <- function(df){
+  # Find all strings that contain all three of 1. 2. 3. (and likely more) and split them apart
+  number_pattern <- "^(?=.*1\\.)(?=.*2\\.)(?=.*3\\.).+$"
+  letter_pattern <- "^(?=.*a\\.)(?=.*b\\.)(?=.*c\\.).+$"
+  html_pattern <- '<.{2,3}>'
+  newline_pattern <- "(.*\\n){5}"
+  
+  
+  oneliner_numbers <- unnest_pattern(df, number_pattern, "[0-9]{1,2}\\.", perl_method = T)
+  oneliner_letters <- unnest_pattern(df, letter_pattern, "[a-l]{1}\\.", perl_method = T)
+  oneliner_html <- unnest_pattern(df, html_pattern, html_pattern, perl_method = F)
+  oneliner_newline <- unnest_pattern(df, newline_pattern, "\\n", perl_method = T)
+  
+  
+  not_oneliners <- df %>% 
+    filter(!grepl(number_pattern, diagnosis, perl = T)) %>% 
+    filter(!grepl(letter_pattern, diagnosis, perl = T)) %>% 
+    filter(!grepl(newline_pattern, diagnosis, perl = T)) %>% 
+    filter(!grepl(html_pattern, diagnosis)) 
+  
+  bind_rows(
+    not_oneliners,
+    oneliner_numbers,
+    oneliner_letters,
+    oneliner_html,
+    oneliner_newline
+  )
+}
+
+################################################################################
+# Converts all strings to ASCII and removes any string with characters
+# that could not be converted to a compatible character
+# E.g. will remove non-roman alphabet language strings 
+remove_non_ascii <- function(df){
+  df %>% 
+    mutate(diagnosis = iconv(diagnosis, to="ASCII//TRANSLIT")) %>% 
+    filter(!grepl("\\?", diagnosis)) %>% 
+    select(i, criteria, diagnosis)
+}
+################################################################################
+# Function to clean responses generate by LLM in a variety of ways such as:
+## Eliminating line breaks, json formatting, list prefixes, white space,
+## non ASCII characters, non-diagnosis strings, and more
+
+clean_responses <- function(df){
+  
+  # To remove line breaks or characters that might be confused for json formatting
+  special_patterns <- c("\\\\n", "\\\\|", "\\{", "\\}", "\\[", "\\]")
+  
+  # To filter responses where LLM desclined to give an answer
+  llm_patterns <- c("qualified", "sorry", "provide")
+  
+  # To filter elements of a response that do not represent the diagnosis itself
+  filter_patterns <- c(llm_patterns,
+                       "description:",
+                       "explanation:",
+                       "id:",
+                       "icd10:",
+                       "prevalence",
+                       "probability:",
+                       "details:",
+                       "info:",
+                       "reason:",
+                       "notes:",
+                       "code:",
+                       "confidence:",
+                       "count:",
+                       "definition:",
+                       "diagnostic category:",
+                       "diagnostic criteria:",
+                       "frequency:",
+                       "likelihood:",
+                       "snomed-ct:",
+                       "symptoms:",
+                       "details:",
+                       "true",
+                       "false",
+                       "score:",
+                       "\\$[0-9]", # Currency string
+                       "^and ", # Vast majority of responses starting with 'and ' are restating the query symptoms
+                       "^can " # Vast majority of responses starting with 'can ' are restating the query symptoms
+  )
+  
+  # To remove extraneous characters in a response containing a diagnosis
+  trim_patterns <- c("name:",
+                     "diagnosis:",
+                     "diagnoses:",
+                     "term:",
+                     "text:",
+                     "condition:",
+                     "\\*",
+                     "\\\\\\u2019s", # Unicode apostrophe
+                     "#",
+                     "\\$",
+                     "<.*>" # Remove urls
+  )
+  
+  df %>% 
+    mutate(diagnosis = tolower(diagnosis)) %>% # Make all lowercase
+    unnest_oneliners() %>% # Split strings w/ multiple diagnoses
+    mutate(diagnosis = gsub(paste(special_patterns, collapse = "|"), "", diagnosis)) %>% # Remove special patterns
+    # mutate(diagnosis = gsub("(\\{|\\}|\\[|\\])","", diagnosis)) %>% # Remove brackets
+    remove_non_ascii() %>%  # Remove strings that cant be converted to ASCII
+    filter(!grepl(paste(filter_patterns, collapse = "|"), diagnosis)) %>% 
+    mutate(diagnosis = gsub(paste(trim_patterns, collapse = "|"), "", diagnosis)) %>%
+    mutate(diagnosis = gsub("^[^a-zA-Z]*(?=[a-zA-Z])", "", diagnosis, perl = TRUE)) %>% # Remove all characters until the first letter (e.g numbered lists)
+    mutate(diagnosis = gsub("_"," ",diagnosis)) %>% 
+    mutate(diagnosis = gsub(" - .*","",diagnosis)) %>% #Vast majority with " - " are of the form "{diagnosis} - {description}"
+    filter(!grepl("^(icd|http)", diagnosis)) %>% 
+    mutate(diagnosis = trimws(diagnosis)) %>% 
+    filter(str_count(diagnosis, "[[:alpha:]]") > 2) %>% # Remove strings with less than 3 letters
+    filter(grepl("[a-z]", diagnosis)) %>% # Remove strings with no letters
+    filter(diagnosis != "") # Remove empty strings
+}
+
+################################################################################
 
 # Pipeline for importing and processing all json data from files in a directory
-process_json <- function(json_dir){
-  # browser()
+process_json <- function(json_dir, clean_method = "current"){
+  # Input checks
+  arg_col <- makeAssertCollection()
+  assertChoice(clean_method, c("legacy", "current", "none"), add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+
+    # browser()
   # Read in all json containing files
   print("Reading data")
   df <- tibble(file = list.files(json_dir, full.names = T)) %>%
@@ -156,9 +297,11 @@ process_json <- function(json_dir){
     unnest(diagnoses) %>% 
     rename(diagnosis = diagnoses) %>% 
     filter(diagnosis != "") %>%  
-    drop_na() %>% # Check on what this is dropping
-    test_clean()
+    drop_na() 
   
+  if (clean_method == "legacy"){df <- test_clean(df)}
+  if (clean_method == "current"){df <- clean_responses(df)}
+
   print(sprintf("Iterations processed: %s", length(unique(df$i))))
   return(df)
 }
