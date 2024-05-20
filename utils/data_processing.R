@@ -312,30 +312,37 @@ process_json <- function(json_dir, clean_method = "current"){
 # Creates a dataframe that tallies the number of times two diagnoses appear 
 # in the same differential diagnosis iteration
 # Also obtains the frequency of that co-occurence and ranks them by frequency
-create_codiagnosis_df <- function(df){
+create_codiagnosis_df <- function(df, remove_singletons = F){
+  
+  # To reduce noise, remove diagnoses that only appear once in all 10,000 replications
+  if (remove_singletons){
+    df <- df %>% 
+      ungroup() %>% 
+      add_count(criteria, diagnosis) %>% 
+      filter(n > 1) %>% 
+      select(-n)
+  }
+
   df %>% 
-    mutate(criteria = factor(criteria, levels = c("mcas_consortium", "mcas_alternative", "eular_acr_sle", "slicc_sle"))) %>% 
     filter(grepl("mcas|sle", criteria)) %>% 
-    group_by(i, criteria) %>% 
-    nest() %>% 
-    mutate(len = map_dbl(data, nrow)) %>% 
-    filter(len > 2) %>% 
+    nest(.by = c("i", "criteria")) %>% 
+    mutate(diag_per_i = map_dbl(data, nrow)) %>% # Count number of diagnoses per iteration
+    filter(diag_per_i > 2) %>% # Ensure that at least 2 diagnoses were made per iteration
+    # Create all pairs of diagnoses within a single iteration
     mutate(data = map(data, function(x) {
       try(as.data.frame(t(combn(sort(x$diagnosis), 2))))
     })) %>% 
     unnest(data) %>% 
-    ungroup() %>% 
     count(criteria, V1, V2, sort = T) %>% 
-    filter(V1 != V2) %>% 
+    filter(V1 != V2) %>% # Remove identity pairings
     # Ensure that same V1, V2, order is used
     rowwise() %>% 
     mutate(from = min(V1, V2), to = max(V1, V2)) %>% 
     ungroup() %>% 
     summarise(n = sum(n), .by = c(criteria, from, to)) %>% 
     # Add some statistics
-    group_by(criteria) %>%
-    arrange(desc(n), .by_group = T) %>% 
-    mutate(rank = 1:n())  %>% 
+    arrange(desc(n)) %>% 
+    mutate(rank = 1:n(), .by = "criteria")  %>% 
     mutate(freq = n/sum(n)) %>%
     select(from, to, n, criteria, rank, freq)
 }
@@ -348,7 +355,7 @@ make_codiagnosis_graph <- function(df, n_diagnoses = NULL){
   # If specified, limit to top diagnoses
   if (!is.null(n_diagnoses)){
     df <- df %>% 
-      filter(rank <= top_n)
+      filter(rank <= n_diagnoses)
   }
   df %>% 
     as_tbl_graph() %>% 

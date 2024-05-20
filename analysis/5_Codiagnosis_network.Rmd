@@ -19,25 +19,55 @@ source(here("utils/figures.R"))
 
 # Import and process data
 ```{r, message=F}
-df_gpt3 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.csv.gz"))
-df_gpt4 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4.csv.gz"))
-df_gpt4_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4_icd.csv.gz"))
+# Original outputs
+df_gpt3.5 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.csv.gz"))
+df_gpt4.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4.csv.gz"))
+df_claude3_haiku_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0.csv.gz"))
+df_claude3_haiku_t0.1 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t0.1.csv.gz"))
+df_claude3_opus_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0.csv.gz"))
+df_gemini1.0_pro_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0.csv.gz"))
+df_gemini1.5_flash_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0.csv.gz"))
+```
+
+```{r, message = F}
+# ICD mapped outputs
+#TODO Find source of NAs 
+#TODO drop index column in processing script
+df_gpt3.5_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.5_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_gpt4.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_claude3_haiku_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_claude3_opus_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_gemini1.0_pro_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
 ```
 
 ```{r}
 # Tally each pair of co-occuring diagnoses within each criteria
-df_codiag_gpt3 <- create_codiagnosis_df(df_gpt3)
-df_codiag_gpt4 <- create_codiagnosis_df(df_gpt4)
-df_codiag_gpt4_icd <- create_codiagnosis_df(df_gpt4_icd)
+# Original responses
+df_gpt3.5_codiag <- create_codiagnosis_df(df_gpt3.5, remove_singletons = T)
+df_gpt4.0_codiag <- create_codiagnosis_df(df_gpt4.0, remove_singletons = T)
+df_claude3_haiku_t1.0_codiag <- create_codiagnosis_df(df_claude3_haiku_t1.0, remove_singletons = T)
+df_claude3_opus_t1.0_codiag <- create_codiagnosis_df(df_claude3_opus_t1.0, remove_singletons = T)
+df_gemini1.0_pro_t1.0_codiag <- create_codiagnosis_df(df_gemini1.0_pro_t1.0, remove_singletons = T)
 ```
 
+
 ```{r}
-df_codiag_gpt4
+# ICD converted responses
+df_gpt3.5_icd_codiag <- create_codiagnosis_df(df_gpt3.5_icd, remove_singletons = T)
+df_gpt4.0_icd_codiag <- create_codiagnosis_df(df_gpt4.0_icd, remove_singletons = T)
+df_claude3_haiku_t1.0_icd_codiag <- create_codiagnosis_df(df_claude3_haiku_t1.0_icd, remove_singletons = T)
+df_claude3_opus_t1.0_icd_codiag <- create_codiagnosis_df(df_claude3_opus_t1.0_icd, remove_singletons = T)
+df_gemini1.0_pro_t1.0_icd_codiag <- create_codiagnosis_df(df_gemini1.0_pro_t1.0_icd, remove_singletons = T)
+```
+
+
+```{r}
+df_gpt4.0_codiag
 ```
 
 # Graph visualization
 
-### Exploring layouts 
+## Exploring layouts 
 
 - To determine clearest visualization of nodes and edges
 
@@ -48,7 +78,7 @@ seed <- 1234
 
 layouts <- c("fr", "dh", "kk", "stress", "graphopt")
 
-graph_top_gpt4 <- make_codiagnosis_graph(df_codiag_gpt4, n_diagnoses = top_n)
+graph_top_gpt4 <- make_codiagnosis_graph(df_gpt4.0_codiag, n_diagnoses = top_n)
 
 for (l in layouts){
   set.seed(seed)
@@ -58,19 +88,73 @@ for (l in layouts){
 }
 
 ```
+## Individual model data
+
+### Original responses
+
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
 top_n <-  200
 seed <- 321
-layout <- "stress"
+graph_layout <- "stress"
 
-graph_top_gpt3 <- make_codiagnosis_graph(df_codiag_gpt3, n_diagnoses = top_n)
-graph_top_gpt4 <- make_codiagnosis_graph(df_codiag_gpt4, n_diagnoses = top_n)
-graph_top_gpt4_icd <- make_codiagnosis_graph(df_codiag_gpt4_icd, n_diagnoses = top_n)
+codiag_graph_wrapper <- function(data){
+  set.seed(seed)
+  data <- make_codiagnosis_graph(data, n_diagnoses = top_n)
+  centrality_graph(data, layout = graph_layout)
+}
 
-set.seed(seed);plt_graph_gpt3 <- centrality_graph(graph_top_gpt3, layout = layout); plt_graph_gpt3 + ggtitle("GPT3", subtitle = sprintf("Top %s", top_n))
-set.seed(seed);plt_graph_gpt4 <- centrality_graph(graph_top_gpt4, layout = layout); plt_graph_gpt4 + ggtitle("GPT4", subtitle = sprintf("Top %s", top_n))
-set.seed(seed);plt_graph_gpt4icd <- centrality_graph(graph_top_gpt4_icd, layout = layout); plt_graph_gpt4icd + ggtitle("GPT4 ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gpt3.5_codiag)+ ggtitle("ChatGPT 3.5", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gpt4.0_codiag)+ ggtitle("ChatGPT 4.0", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_claude3_haiku_t1.0_codiag)+ ggtitle("Claude 3 Haiku", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_claude3_opus_t1.0_codiag)+ ggtitle("Claude 3 Opus", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gemini1.0_pro_t1.0_codiag)+ ggtitle("Gemini 1.0 Pro", subtitle = sprintf("Top %s", top_n))
 ```
+### ICD converted respones
+
+```{r, fig.width=8, fig.height=6, warning=F, message=F}
+codiag_graph_wrapper(df_gpt3.5_icd_codiag)+ ggtitle("ChatGPT 3.5 ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gpt4.0_icd_codiag)+ ggtitle("ChatGPT 4.0 ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_claude3_haiku_t1.0_icd_codiag)+ ggtitle("Claude 3 Haiku ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_claude3_opus_t1.0_icd_codiag)+ ggtitle("Claude 3 Opus ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gemini1.0_pro_t1.0_icd_codiag)+ ggtitle("Gemini 1.0 Pro ICD", subtitle = sprintf("Top %s", top_n))
+```
+
+## Combined model data
+
+### Original responses
+
+```{r, fig.width=8, fig.height=6, warning=F, message=F}
+set.seed(seed)
+multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
+                             df_gpt3.5_codiag, df_gpt4.0_codiag, 
+                             df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
+                             df_gemini1.0_pro_t1.0_codiag)
+```
+
+```{r, fig.width=8, fig.height=6, warning=F, message=F}
+multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="stress",
+                             df_gpt3.5_codiag, df_gpt4.0_codiag, 
+                             df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
+                             df_gemini1.0_pro_t1.0_codiag)
+```
+### ICD converted responses
+
+```{r, fig.width=8, fig.height=6, warning=F, message=F}
+set.seed(seed)
+multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
+                             df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
+                             df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
+                             df_gemini1.0_pro_t1.0_icd_codiag)
+```
+
+
+```{r, fig.width=8, fig.height=6, warning=F, message=F}
+multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="stress",
+                             df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
+                             df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
+                             df_gemini1.0_pro_t1.0_icd_codiag)
+```
+
 # Evaluate edge density
 
 - Edge density represents the total number of edges in a graph relative to the total number of **possible** edges in the graph
@@ -78,7 +162,26 @@ set.seed(seed);plt_graph_gpt4icd <- centrality_graph(graph_top_gpt4_icd, layout 
   - When no edges are present, edge density = 0
 - Dense co-occurrence networks represent criteria that generate highly reproducible diagnoses. A sparse co-occurrence represents a high degree of variability 
 
+## Combined model data
 
+### Original responses
+
+```{r, fig.width=4, fig.height=3.5}
+multi_edge_density_plot(df_gpt3.5_codiag, df_gpt4.0_codiag, df_claude3_haiku_t1.0_codiag,
+                        df_claude3_opus_t1.0_codiag, df_gemini1.0_pro_t1.0_codiag)  
+
+```
+
+### ICD converted responses
+
+```{r, fig.width=4, fig.height=3.5}
+multi_edge_density_plot(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
+                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag)  
+
+```
+
+
+## Bootstrapping individual model
 ```{r, eval=F}
 # Run in script scripts/network_analysis/edge_density_ci.R
 boot_graph_ci <- function(g, B, seed=NULL){
@@ -108,7 +211,7 @@ edge_density_boot <- function(df, replications = 100, seed = 1234){
   return(df_density)
 }
 
-edge_density_boot(df_codiag_gpt4, replications = 1000)
+edge_density_boot(df_gpt4.0_codiag, replications = 1000)
 ```
 
 ```{r}
@@ -329,20 +432,150 @@ calculate_subgraph_centrality <- function(g, centrality_fun = "centrality_eigen"
   column_to_rownames("criteria")
 }
 
-graph_all_gpt4 <- make_codiagnosis_graph(df_codiag_gpt4, n_diagnoses = top_n)
+graph_all_gpt4 <- make_codiagnosis_graph(df_gpt4.0_codiag, n_diagnoses = top_n)
 df_centr_gpt4 <- calculate_subgraph_centrality(graph_all_gpt4)
 ```
 
 ```{r}
-df_centr_gpt4 %>% 
-  rownames_to_column("criteria") %>% 
-  format_criteria() %>% 
-  column_to_rownames("criteria") %>% 
-  as.matrix() %>% 
-  t() %>% 
-  lsa::cosine() 
-```
+centrality_similarity <- function(data){
+  data %>% 
+    rownames_to_column("criteria") %>% 
+    format_criteria() %>% 
+    column_to_rownames("criteria") %>% 
+    as.matrix() %>% 
+    t() %>% 
+    lsa::cosine() %>% 
+    as.data.frame() %>% 
+    rownames_to_column("V1") %>% 
+    pivot_longer(-V1, names_to = "V2", values_to = "cosine")
+}
 
+centrality_similarity(df_centr_gpt4)
+```
+```{r}
+centrality_wrapper <- function(data){
+  make_codiagnosis_graph(data, n_diagnoses = 200) %>% 
+    calculate_subgraph_centrality() %>% 
+    centrality_similarity()
+}
+
+listN(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
+                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag) %>% 
+  enframe(name = "model", value = "data") %>% 
+  mutate(data = map(data, centrality_wrapper)) %>% 
+  unnest(data) %>% 
+  summarise(cosine = mean(cosine), .by = c("V1", "V2")) %>% 
+  pivot_wider(names_from = "V2", values_from = "cosine") %>% 
+  column_to_rownames("V1") %>% 
+  as.matrix() %>% 
+  ComplexHeatmap::Heatmap()
+```
+```{r}
+centrality_wrapper <- function(data){
+  # make_codiagnosis_graph(data, n_diagnoses = 200) %>% 
+  make_codiagnosis_graph(data) %>% 
+    calculate_subgraph_centrality()
+  # %>% 
+    # centrality_similarity()
+}
+
+cosine_data <- listN(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
+                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag) %>% 
+  enframe(name = "model", value = "data") %>% 
+  mutate(data = map(data, ~centrality_wrapper(.) %>% rownames_to_column("criteria"))) %>% 
+  unnest(data) %>% 
+  mutate_all(~replace_na(., 0)) %>% 
+  unite(sample, model, criteria, sep = "_") %>% 
+  column_to_rownames("sample") %>% 
+  t() %>% 
+  lsa::cosine()
+
+ComplexHeatmap::Heatmap(cosine_data)
+```
+```{r}
+custom_heatmap2 <- function(data, 
+                           title, 
+                           metric, 
+                           color_scale = hcl.colors(3, "Earth"), 
+                           midpoint = NULL, 
+                           symmetric = T, 
+                           font_size=10,
+                           dendrogram_weight = unit(10, "mm"),
+                           legend_params = list(NULL)){
+  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
+  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
+  scale_mid <- scale_min + (scale_max - scale_min)/2
+  
+  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
+  
+  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
+  
+  # legend_params <- append(
+  #   list(
+  #     title_gp = grid::gpar(fontsize = font_size),
+  #     labels_gp = grid::gpar(fontsize = font_size*0.8)), 
+  #   legend_params)
+  
+
+  annotation_data <- data.frame(
+  rownames = rownames(cosine_data),
+  model = str_extract(rownames(cosine_data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro"),
+  criteria = str_extract(rownames(cosine_data), "slicc_sle|eular_acr_sle|mcas_consortium|mcas_alternative")
+) %>% 
+  column_to_rownames("rownames")
+
+  # model_colors <- brewer.pal(7, "Dark2")[-6]
+  model_colors <- brewer.pal(5, "Dark2")
+  names(model_colors) <- unique(annotation_data$model)
+  
+  criteria_colors <- brewer.pal(4, "Set1")
+  names(criteria_colors) <- unique(annotation_data$criteria)
+  
+  col_annotation <- HeatmapAnnotation(
+    Model = annotation_data$model,
+    Criteria = annotation_data$criteria,
+    col = list(Model = model_colors, Criteria = criteria_colors)
+  )
+  
+  # Heatmap(
+  #   data,
+  #   name = "Distance",
+  #   top_annotation = col_annotation,
+  #   rect_gp = grid::gpar(col = "black", lwd = 1),
+  #   show_row_names = FALSE,
+  #   show_column_names = FALSE,
+  #   cluster_columns = TRUE,
+  #   cluster_rows = TRUE,
+  #   col = circlize::colorRamp2(c(min(distance_matrix), max(distance_matrix)), c("white", "red"))
+  # )
+  
+  ComplexHeatmap::Heatmap(
+    data,
+    col = color_function,
+    top_annotation = col_annotation,
+    show_row_names = FALSE,
+    show_column_names = FALSE,
+    cluster_columns = TRUE,
+    cluster_rows = TRUE,
+    
+    # rect_gp = grid::gpar(col = "black", lwd = 1),
+    column_title = title,
+    name = metric,
+    # row_names_gp = grid::gpar(fontsize = font_size), 
+    # column_names_gp = grid::gpar(fontsize = font_size),
+    column_dend_height  = dendrogram_weight,
+    row_dend_width = dendrogram_weight,
+    # heatmap_legend_param = legend_params
+  )
+  
+}
+  
+custom_heatmap2(cosine_data, color_scale = viridis::viridis(3), title = " ", metric = "Cosine\nsimilarity", symmetric = F,
+                 font_size = 8)  
+  
+
+
+```
 
 ```{r}
 custom_heatmap <- function(data, 
@@ -364,8 +597,8 @@ custom_heatmap <- function(data,
   
   legend_params <- append(
     list(
-      title_gp = gpar(fontsize = font_size),
-      labels_gp = gpar(fontsize = font_size*0.8)), 
+      title_gp = grid::gpar(fontsize = font_size),
+      labels_gp = grid::gpar(fontsize = font_size*0.8)), 
     legend_params)
   
   ComplexHeatmap::Heatmap(
@@ -383,10 +616,14 @@ custom_heatmap <- function(data,
 }
 ```
 
+```{r}
+plt_heat_all %>% ComplexHeatmap::Heatmap()
+```
+
 
 ```{r, fig.width=4, fig.height=3.5}
 cp_font <- 9
-plt_heat_all <- df_codiag_gpt4 %>% 
+plt_heat_all <- df_gpt4.0_codiag %>% 
   make_codiagnosis_graph() %>% 
   calculate_subgraph_centrality() %>% 
   rownames_to_column("criteria") %>% 
@@ -465,7 +702,7 @@ plt_density_gpt4 <- edge_density_sig_plot(
   axis.text.y = element_text(size=7), 
   axis.title.y = element_text(size=9))
 
-plt_heat_all <- df_codiag_gpt4 %>% 
+plt_heat_all <- df_gpt4.0_codiag %>% 
   make_codiagnosis_graph() %>% 
   calculate_subgraph_centrality() %>% 
   rownames_to_column("criteria") %>% 

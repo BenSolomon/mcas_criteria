@@ -55,22 +55,26 @@ format_models <- function(df){
   assertNames(names(df), must.include = "model", add = arg_col)
   if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
   
+  models <- c("gpt3.5", "gpt4.0", "claude3_haiku", "claude3_opus", "gemini1.0_pro", "gemini1.5_flash")
+  
+  df <- mutate(df, model = str_extract(model, paste(models, collapse = "|")))
+  
   model_order <- c(
-    "df_gpt3.5", 
-    "df_gpt4.0", 
-    "df_claude3_haiku_t1.0", 
-    "df_claude3_opus_t1.0",
-    "df_gemini1.0_pro_t1.0", 
-    "df_gemini1.5_flash_t1.0" 
+    "gpt3.5", 
+    "gpt4.0", 
+    "claude3_haiku", 
+    "claude3_opus",
+    "gemini1.0_pro", 
+    "gemini1.5_flash" 
   )
   
   model_names <- c(
-    "df_gpt3.5" = "ChatGPT 3.5",
-    "df_gpt4.0" = "ChatGPT 4.0",
-    "df_claude3_haiku_t1.0" = "Claude 3 Haiku",
-    "df_claude3_opus_t1.0" = "Claude 3 Opus",
-    "df_gemini1.0_pro_t1.0" = "Gemini 1.0 Pro",
-    "df_gemini1.5_flash_t1.0" = "Gemini 1.5 Flash")
+    "gpt3.5" = "ChatGPT 3.5",
+    "gpt4.0" = "ChatGPT 4.0",
+    "claude3_haiku" = "Claude 3 Haiku",
+    "claude3_opus" = "Claude 3 Opus",
+    "gemini1.0_pro" = "Gemini 1.0 Pro",
+    "gemini1.5_flash" = "Gemini 1.5 Flash")
   
   df %>% 
     mutate(model = factor(model, levels = model_order)) %>%
@@ -388,7 +392,7 @@ permutation_test_plot <- function(df){
 
 
 ########################### GRAPH FUNCTIONS ####################################
-
+################################################################################
 # Recolors a faceted ggraph plot to make node colors specific to the facet, rather than globasl
 ggraph_color_faceted_nodes <- function(plt, data, label_col, facet_col, color_col, na_color = "black"){
   # Adding a label text will create a data table with labeled rows that can be 
@@ -423,7 +427,6 @@ ggraph_color_faceted_nodes <- function(plt, data, label_col, facet_col, color_co
 }
 
 ################################################################################
-
 # Maps a viridis color scale based on a vector of values x
 map_color <- function(x, min, max, steps){
   df <- data.frame(
@@ -434,7 +437,6 @@ map_color <- function(x, min, max, steps){
 }
 
 ################################################################################
-
 # Pipeline for generating a centrality-colored network plot with facets
 centrality_graph <- function(graph, 
                              layout = "fr",
@@ -482,6 +484,7 @@ centrality_graph <- function(graph,
         name == "D47.02 Systemic mastocytosis" ~ "red",
         name == "mast cell activation syndrome" ~ "orange",
         name == "D89.41 Monoclonal mast cell activation syndrome" ~ "orange",
+        name == "D89.49 Other mast cell activation disorder" ~ "orange",
         .default = "black"
       ),
       highlight_stroke = case_when(
@@ -489,6 +492,7 @@ centrality_graph <- function(graph,
         name == "D47.02 Systemic mastocytosis" ~ highlight_border_size,
         name == "mast cell activation syndrome" ~ highlight_border_size,
         name == "D89.41 Monoclonal mast cell activation syndrome" ~ highlight_border_size,
+        name == "D89.49 Other mast cell activation disorder" ~ highlight_border_size,
         .default = border_size
       )
     ) %>% 
@@ -531,4 +535,89 @@ centrality_graph <- function(graph,
                              facet_col = "criteria",
                              color_col = "color")
   
+}
+
+################################################################################
+# Extended version of centrality_graph that takes multiple diagnosis data
+# frames from different models. Two options as to how top_n co-diagnoses
+# are determined: either selecting all co-diagnoses from any model meeting
+# the threshold or taking the average frequency and selecting the top_n from
+# the average frequency across all models
+multi_make_codiagnosis_graph <- function(threshold_method="individual", top_n=200, 
+                                         layout = "stress", ...){
+  df_list <- list(...)
+  
+  # Input checks
+  arg_col <- makeAssertCollection()
+  # Check all inputs are data frames
+  lapply(df_list, function(x) assertClass(x, "data.frame" , add = arg_col))
+  # Check all inputs have the expected columns
+  expected_columns <- c("from", "to", "n", "criteria", "rank", "freq")
+  lapply(df_list, function(x) assertNames(names(x), permutation.of = expected_columns, add = arg_col))
+  # Check appropriate threshold_method
+  assertChoice(threshold_method, choices = c("individual", "average"), add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  df_combine <- bind_rows(df_list)
+  
+  # Selects all co-diagnoses within the top_n in any model
+  if (threshold_method=="individual"){
+    df_combine <- df_combine %>% 
+      filter(rank <= top_n) %>% 
+      select(criteria, from, to) %>% 
+      mutate(rank = 0) %>% 
+      distinct()
+  }
+  
+  # Selects top_n co-diagnoses based on average frequency across all models
+  if (threshold_method=="average"){
+    df_combine <- df_combine %>% 
+      summarise(freq = mean(freq), .by = c("criteria", "from", "to")) %>% 
+      arrange(desc(freq)) %>% 
+      mutate(rank = 1:n(), .by = c("criteria"))
+  }
+  
+  df_combine %>% 
+    make_codiagnosis_graph(n_diagnoses = top_n) %>% 
+    centrality_graph(layout = layout)
+}
+
+################################################################################
+# Calculates the edge density for each graph for a given criteria and model
+# Plots the mean and std error of these edge densities for each criteria
+# across the difference models and applies statistical testing
+multi_edge_density_plot <- function(...){
+  df_list <- listN(...)
+  df_list <- lapply(df_list, ungroup)
+  
+  # Process data
+  df_combined <- df_list %>% 
+    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+    bind_rows() %>% 
+    nest(.by = c("model", "criteria")) %>% 
+    mutate(edge_density = map_dbl(data, ~edge_density(graph_from_data_frame(.)))) %>% 
+    select(-data)
+  
+  # Create plot
+  plt <- df_combined %>% 
+    format_criteria() %>% 
+    format_models() %>% 
+    ggplot(aes(x = criteria, y=edge_density,))+
+    geom_point(aes( color = model), position = position_dodge(width = 0.75))+
+    stat_summary(fun.y = mean, geom = "point") + 
+    stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.3)+
+    theme_bw()+
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(x="", y="Edge density")
+  
+  # Add statistics
+  plt + 
+    ggpubr::geom_pwc(aes(group = criteria), 
+                     method = "wilcox.test",
+                     label = "p.signif",
+                     p.adjust.method = "BH",
+                     hide.ns = T,
+                     vjust = 0.5)+
+    scale_color_manual(values = brewer.pal(7, "Dark2")[-6])+
+    labs(color = "")
 }
