@@ -18,14 +18,46 @@ source(here("utils/figures.R"))
 - As such, these embeddings represent a way to measure the similarity of different symptoms or diagnoses based on how they were used in the large set of ChatGPT training data
 - In order to evaluate how similar different MCAS criteria are based on the symptoms they include, these symptoms can be converted into ChatGPT embeddings and then the similarity of these embeddings can be quantified.
 
+## Embedding models
+
+- OpenAI
+
+  | Model                  | Dimensions | Max Tokens |   |   |   |
+  |------------------------|:----------:|:----------:|:-:|:-:|:-:|
+  | text-embedding-ada-002 |    1536    |    8191    |   |   |   |
+  | text-embedding-3-small |    1536    |    8191    |   |   |   |
+  | text-embedding-3-large |    3072    |    8191    |   |   |   |
+
+- Voyage AI - Anthropic does not offer an embedding API, but recommends Voyage
+  
+  | Model                   | Context Length (tokens) | Embedding Dimension |                                                                                                                                                               Description                                                                                                                                                              |   |
+  |-------------------------|:-----------------------:|:-------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|---|
+  | voyage-large-2-instruct |          16000          |         1024        | Top of MTEB leaderboard. Instruction-tuned general-purpose embedding model optimized for clustering, classification, and retrieval. For retrieval, please use input_type parameter to specify whether the text is a query or document. For classification and clustering, please use the instructions here. See blog post for details. |   |
+  | voyage-law-2            |          16000          |         1024        | Optimized for legal and long-context retrieval and RAG. Also improved performance across all domains. See blog post for details.                                                                                                                                                                                                       |   |
+  | voyage-code-2           |          16000          |         1536        | Optimized for code retrieval (17% better than alternatives). See blog post for details.                                                                                                                                                                                                                                                |   |
+  | voyage-large-2          |          16000          |         1536        | General-purpose embedding model that is optimized for retrieval quality (e.g., better than OpenAI V3 Large).                                                                                                                                                                                                                           |   |
+  | voyage-2                |           4000          |         1024        | General-purpose embedding model optimized for a balance between cost, latency, and retrieval quality.                                                                                                                                                                                                                                  |   |
+  
+- Gemini
+
 
 # Import data
 ```{r, message=F}
-df_embeddings <- read_csv(here("data/symptom_chatgpt_embeddings_text-embedding-3-small.csv")) # Small ChatGPT embedding model
-# df_embeddings <- read_csv(here("data/symptom_chatgpt_embeddings_text-embedding-3-large.csv")) # Large ChatGPT embedding model
-df_embeddings <- df_embeddings %>% column_to_rownames("symptom")
+read_embeddings <- function(path){
+  read_csv(path) %>% column_to_rownames("symptom")
+}
 
-df_embeddings[1:5,1:5]
+df_embeddings_chatgpt <- read_embeddings(here("data/chatgpt_embeddings/text-embedding-3-small/symptom_chatgpt_embeddings_text-embedding-3-small.csv")) # Small ChatGPT embedding model
+df_embeddings_chatgpt_large <- read_embeddings(here("data/chatgpt_embeddings/text-embedding-3-large/symptom_chatgpt_embeddings_text-embedding-3-large.csv")) # Small ChatGPT embedding model
+df_embeddings_voyage <- read_embeddings(here("data/voyage_embeddings/voyage-large-2/symptom_embeddings_voyage-large-2.csv")) # voyage embedding model
+df_embeddings_gemini <- read_embeddings(here("data/gemini_embeddings/text-embedding-004/symptom_embeddings_text-embedding-004.csv")) # Gemini embedding model
+df_embeddings_mistral <- read_embeddings(here("data/mistral_embeddings/mistral-embed/symptom_embeddings_mistral-embed.csv")) # Gemini embedding model
+
+df_embeddings_chatgpt[1:5,1:5]
+df_embeddings_chatgpt_large[1:5,1:5]
+df_embeddings_voyage[1:5,1:5]
+df_embeddings_gemini[1:5,1:5]
+df_embeddings_mistral[1:5,1:5]
 ```
 
 
@@ -79,16 +111,32 @@ custom_dist <- function(df, method = "euclidean"){
 
 ```{r, fig.width=4.5, fig.height=4, message = F}
 # Plot heatmap of distance between centroids using full embeddings
-as.data.frame(df_embeddings) %>% 
+as.data.frame(df_embeddings_chatgpt) %>% 
   calculate_centroids() %>% 
   custom_dist(method = "euclidean") %>% 
   pheatmap::pheatmap(color = viridis::viridis(100, direction = -1), main = "Euclidean")
 
-as.data.frame(df_embeddings) %>% 
+as.data.frame(df_embeddings_chatgpt) %>% 
   calculate_centroids() %>% 
   custom_dist(method = "cosine") %>% 
-  pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
+  # pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
+  pheatmap::pheatmap(color = viridis::viridis(100), main = "Cosine")
 ```
+```{r, fig.width=4.5, fig.height=4, message = F}
+# Plot heatmap of distance between centroids using full embeddings
+as.data.frame(df_embeddings_voyage) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "euclidean") %>% 
+  pheatmap::pheatmap(color = viridis::viridis(100, direction = -1), main = "Euclidean")
+
+as.data.frame(df_embeddings_voyage) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "cosine") %>% 
+  # pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
+  pheatmap::pheatmap(color = viridis::viridis(100), main = "Cosine")
+```
+
+
 - With full embedding space, cosine similarity doesn't have enough resolution. Likely because disease terms occupy a relatively similar reagion of the ChatGPT embedding space
 
 
@@ -97,150 +145,394 @@ as.data.frame(df_embeddings) %>%
 - Instead of working with full embedding space, reduce variability via PCA
 
 ```{r}
-pca_embedding <- prcomp(df_embeddings, scale. = T)
-pca_embedding <- summary(pca_embedding)
+scaling = T
+pca_chatgpt <- prcomp(df_embeddings_chatgpt, scale. = scaling) %>% summary()
+pca_chatgpt_large <- prcomp(df_embeddings_chatgpt_large, scale. = scaling) %>% summary()
+pca_voyage <- prcomp(df_embeddings_voyage, scale. = scaling) %>% summary()
+pca_gemini <- prcomp(df_embeddings_gemini, scale. = scaling) %>% summary()
+pca_mistral <- prcomp(df_embeddings_mistral, scale. = scaling) %>% summary()
 ```
 
 ```{r, fig.width=5, fig.height=4}
 # Cumulative proportion of variance explained by component
-pca_embedding$importance %>% t() %>% as.data.frame() %>% 
-  rownames_to_column("component") %>% 
-  mutate(component = as.numeric(str_extract(component, "[0-9]+"))) %>% 
-  # ggplot(aes(x=component, y = `Proportion of Variance`)) +
-  ggplot(aes(x=component, y = `Cumulative Proportion`)) +
-  geom_path()+
-  theme_bw()
+cumulative_variance_plot <- function(pca_data){
+  pca_data$importance %>% t() %>% as.data.frame() %>% 
+    rownames_to_column("component") %>% 
+    mutate(component = as.numeric(str_extract(component, "[0-9]+"))) %>% 
+    # ggplot(aes(x=component, y = `Proportion of Variance`)) +
+    ggplot(aes(x=component, y = `Cumulative Proportion`)) +
+    geom_path()+
+    theme_bw()
+}
+
+cumulative_variance_plot(pca_chatgpt)+ggtitle("ChatGPT")
+cumulative_variance_plot(pca_chatgpt_large)+ggtitle("ChatGPT Large")
+cumulative_variance_plot(pca_voyage)+ggtitle("voyage")
+cumulative_variance_plot(pca_gemini)+ggtitle("Gemini")
+cumulative_variance_plot(pca_mistral)+ggtitle("Mistral")
 ```
 - No clear set of PCA components to use for calculations. Supports using all components for distance calculations
 
 ### PCA Plot
-```{r, fig.width=6, fig.height=4}
+```{r}
 # Plot PCA reductions with criteria centroids
-x <- "PC1"
-y <- "PC2"
+pca_centroid_plot <- function(pca_data, criteria_key, components = c(1,2)){
+  axes <- colnames(pca_data$x)[components]
+  
+  pca_data$x[,components] %>% 
+    as.data.frame() %>% 
+    rownames_to_column("feature") %>% 
+    left_join(criteria_key) %>% 
+    drop_na() %>% 
+    ggplot(aes(x=!!sym(axes[1]), y=!!sym(axes[2]), color = criteria))+
+    geom_point(size = 0.5) +
+    geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 3, shape = 21, color = "black", aes(fill = criteria))+
+    # stat_ellipse(size = 2, type = "t", level = 0.95)+
+    # facet_wrap(~criteria) +
+    theme_bw()+
+    scale_color_brewer(palette = "Dark2")+
+    scale_fill_brewer(palette = "Dark2") +
+    labs(color = "", fill = "")
+}
+```
 
-pca_embedding$x[,c(x,y)] %>% 
-  as.data.frame() %>% 
-  rownames_to_column("feature") %>% 
-  left_join(df_criteria) %>% 
-  drop_na() %>% 
-  ggplot(aes(x=!!sym(x), y=!!sym(y), color = criteria))+
-  geom_point(size = 0.5) +
-  geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 3, shape = 21, color = "black", aes(fill = criteria))+
-  # stat_ellipse(size = 2, type = "t", level = 0.95)+
-  # facet_wrap(~criteria) +
-  theme_bw()+
-  scale_color_brewer(palette = "Dark2")+
-  scale_fill_brewer(palette = "Dark2")
+
+```{r, fig.width=6, fig.height=4}
+pca_centroid_plot(pca_chatgpt, df_criteria)+ggtitle("ChatGPT")
+pca_centroid_plot(pca_chatgpt_large, df_criteria)+ggtitle("ChatGPT Large")
+pca_centroid_plot(pca_voyage, df_criteria)+ggtitle("voyage")
+pca_centroid_plot(pca_gemini, df_criteria)+ggtitle("Gemini")
+pca_centroid_plot(pca_mistral, df_criteria)+ggtitle("Mistral")
 ```
 - Using the two SLE criteria as a reference for similarity, plot demonstrates increased distance between the two MCAS criteria
+```{r}
+format_embeddings <- function(df){
+  
+  # Input checks, must be data frame with model column
+  arg_col <- makeAssertCollection()
+  assertClass(df, "data.frame" , add = arg_col)
+  assertNames(names(df), must.include = "model", add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  models <- c("chatgpt", "gemini", "voyage", "mistral")
+  
+  df <- mutate(df, model = str_extract(model, paste(models, collapse = "|")))
+  
+  model_order <- c(
+    "chatgpt", 
+    "voyage", 
+    "gemini", 
+    "mistral"
+  )
+  
+  model_names <- c(
+    "chatgpt" = "OpenAI Text 3 Small",
+    "voyage" = "Voyage 2 Large",
+    "gemini" = "Gemini Text 4",
+    "mistral" = "Mistral Embed")
+  
+  df %>% 
+    mutate(model = factor(model, levels = model_order)) %>%
+    mutate(model = fct_recode(model, !!!setNames(names(model_names), model_names)))
+}
+```
+
+```{r, fig.width=5, fig.height=5}
+multi_pca_centroid_plot <- function(criteria_key, components = c(1,2), ...){
+  
+  pca_list <- listN(...)
+  
+  axes <- colnames(pca_list[[1]]$x)[components]
+  
+  pca_list %>% 
+    lapply(., function(x) {
+      x <- x$x[,components]
+      x <- as.data.frame(x)
+      rownames_to_column(x, "feature")
+    }) %>% 
+    mapply(function(x,y){mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+    bind_rows() %>% 
+    left_join(criteria_key) %>% 
+    drop_na() %>%
+    format_embeddings() %>% 
+    ggplot(aes(x=!!sym(axes[1]), y=!!sym(axes[2]), color = criteria))+
+    geom_point(size = 0.5) +
+    geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 2, shape = 21, color = "black", aes(fill = criteria))+
+    # stat_ellipse(size = 2, type = "t", level = 0.95)+
+    facet_wrap(~model, scales = "free") +
+    theme_bw()+
+    scale_color_brewer(palette = "Dark2")+
+    scale_fill_brewer(palette = "Dark2") +
+    labs(color = "", fill = "")
+}
+
+
+multi_pca_centroid_plot(criteria_key = df_criteria, components = c(1,3), pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) +theme(legend.position = "bottom", legend.direction = "horizontal")
+```
+
+
+
 
 ### Mean distance plot
-```{r}
-symptom_distance_key_euc <- dist(pca_embedding$x) %>% 
-  broom::tidy() %>% 
-  mutate_at(vars(contains("item")), as.character) %>% 
-  mutate(symptom_pair = map2(item1, item2, ~sort(c(.x,.y)))) %>% 
-  unnest_wider(symptom_pair, names_sep = "") %>% 
-  unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
-  select(symptom_pair, distance)
 
-symptom_distance_key_euc
-```
 ```{r}
-df_compare_euc <- tribble(
-  ~criteria1, ~criteria2,
-  "SLE - EULAR-ACR", "SLE - SLICC",
-  "MCAS - Consortium", "MCAS - Alternative"
-  # "SLE - SLICC", "SLE - SLICC",
-  # "MCAS - Consensus",  "MCAS - Consensus"
-) %>% 
-  left_join(df_criteria, by = c("criteria1" = "criteria")) %>% 
-  left_join(df_criteria, by = c("criteria2" = "criteria")) %>% 
-  mutate(symptom_pair = map2(feature.x, feature.y, ~sort(c(.x,.y)))) %>% 
-  unnest_wider(symptom_pair, names_sep = "") %>% 
-  unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
-  unite(criteria_pair, criteria1, criteria2, sep = " : ") %>% 
-  select(criteria_pair, symptom_pair) %>% 
-  left_join(symptom_distance_key_euc, by = "symptom_pair") %>% 
-  drop_na() %>% 
-  mutate(criteria_pair = gsub(" : ", "\nvs. ", criteria_pair)) 
-df_compare_euc
+make_distance_key <- function(data, metric = "euclidean"){
+  if (class(data) == "summary.prcomp"){data <- data$x}
+  if (metric == "euclidean"){data <- dist(data)}
+  if (metric == "cosine"){
+    # data <- as.matrix(data)
+    data <- t(data)
+    data <- lsa::cosine(data)
+    data <- as.dist(data)
+  }
+  
+  data %>% 
+    broom::tidy() %>% 
+    mutate_at(vars(contains("item")), as.character) %>% 
+    mutate(symptom_pair = map2(item1, item2, ~sort(c(.x,.y)))) %>% 
+    unnest_wider(symptom_pair, names_sep = "") %>% 
+    unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
+    select(symptom_pair, distance)
+}
+
+
+calculate_distance <- function(distance_key, criteria_key){
+  df_distance_comp <- tribble(
+    ~criteria1, ~criteria2,
+    "SLE - EULAR-ACR", "SLE - SLICC",
+    "MCAS - Consortium", "MCAS - Alternative"
+  ) %>% 
+    left_join(criteria_key, by = c("criteria1" = "criteria")) %>% 
+    left_join(criteria_key, by = c("criteria2" = "criteria")) %>% 
+    mutate(symptom_pair = map2(feature.x, feature.y, ~sort(c(.x,.y)))) %>% 
+    unnest_wider(symptom_pair, names_sep = "") %>% 
+    unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
+    unite(criteria_pair, criteria1, criteria2, sep = " : ") %>% 
+    select(criteria_pair, symptom_pair) %>% 
+    left_join(distance_key, by = "symptom_pair") %>% 
+    drop_na() %>% 
+    mutate(criteria_pair = gsub(" : ", "\nvs. ", criteria_pair)) 
+  
+  return(df_distance_comp)
+}
+
+plot_distance <- function(distance_comp){
+  
+  distance_comp %>%
+    ggplot(aes(x = criteria_pair, y = distance))+
+    stat_summary(fun = mean, geom = "point", size = 0.5) +
+    stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.5)+
+    ggpubr::stat_compare_means(method = "wilcox.test", label = "p", vjust = 1)+
+    theme_bw() +
+    theme(axis.text.x = element_text(angle =90, hjust =1)) +
+    labs(x="", y="Euclidean distance") 
+}
+
+plot_distance_wrapper <- function(data, criteria_key, metric = "euclidean"){
+    distance_key <- make_distance_key(data, metric = metric)
+    distance_comp <- calculate_distance(distance_key, criteria_key)
+    plot_distance(distance_comp)
+}
 ```
-```{r}
-pairwise.wilcox.test(x = df_compare_euc$distance, g = df_compare_euc$criteria_pair, p.adjust.method = "BH") %>% 
-  broom::tidy() %>% 
-  mutate(p.value = round(p.value, 4)) %>% 
-  arrange(desc(p.value))
+
+```{r, fig.width=2, fig.height=4}
+plot_distance_wrapper(pca_chatgpt, df_criteria) + ggtitle("ChatGPT", "PCA")
+plot_distance_wrapper(pca_chatgpt_large, df_criteria) + ggtitle("ChatGPT Large", "PCA")
+plot_distance_wrapper(pca_voyage, df_criteria) + ggtitle("voyage", "PCA")
+plot_distance_wrapper(pca_gemini, df_criteria) + ggtitle("Gemini", "PCA")
+plot_distance_wrapper(pca_mistral, df_criteria) + ggtitle("Mistral", "PCA")
+
 ```
+```{r, fig.width=2, fig.height=4}
+plot_distance_wrapper(df_embeddings_chatgpt, df_criteria) + ggtitle("ChatGPT", "Embeddings")
+plot_distance_wrapper(df_embeddings_chatgpt_large, df_criteria) + ggtitle("ChatGPT Large", "Embeddings")
+plot_distance_wrapper(df_embeddings_voyage, df_criteria) + ggtitle("voyage", "Embeddings")
+plot_distance_wrapper(df_embeddings_gemini, df_criteria) + ggtitle("Gemini", "Embeddings")
+plot_distance_wrapper(df_embeddings_mistral, df_criteria) + ggtitle("Mistral", "Embeddings")
+```
+
+
+
 
 
 ```{r, fig.width=2, fig.height=4}
-df_compare_euc %>% 
-  ggplot(aes(x = criteria_pair, y = distance))+
-  # geom_violin()+
-  stat_summary(fun = mean, geom = "point", size = 0.5) +
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.5)+
-  # ggpubr::stat_compare_means(
-  #   aes(label = paste0("p = ", after_stat(p.format))), 
-  #   method = "wilcox.test",
-  #   label.y=56,
-  #   vjust=1,
-  #   tip.length = 1,
-  #   step.increase = 2)+
-  ggpubr::stat_pvalue_manual(
-    ggpubr::compare_means(distance ~ criteria_pair, df_compare_euc, method = "wilcox.test"),
-    label = "p = {p.adj}",
-    y.position = 55.6,
-    tip.length = 0.001
-  )+
+plot_distance_wrapper(pca_chatgpt, df_criteria, metric = "cosine") + ggtitle("ChatGPT", "PCA") + geom_violin()
+plot_distance_wrapper(pca_chatgpt_large, df_criteria, metric = "cosine") + ggtitle("ChatGPT Large", "PCA") + geom_violin()
+plot_distance_wrapper(pca_voyage, df_criteria, metric = "cosine") + ggtitle("voyage", "PCA") + geom_violin()
+plot_distance_wrapper(pca_gemini, df_criteria, metric = "cosine") + ggtitle("Gemini", "PCA") + geom_violin()
+
+```
+```{r, fig.width=2, fig.height=4}
+plot_distance_wrapper(df_embeddings_chatgpt, df_criteria, metric = "cosine") + ggtitle("ChatGPT", "Embeddings") + geom_violin()
+plot_distance_wrapper(df_embeddings_chatgpt_large, df_criteria, metric = "cosine") + ggtitle("ChatGPT Large", "Embeddings") + geom_violin()
+plot_distance_wrapper(df_embeddings_voyage, df_criteria, metric = "cosine") + ggtitle("voyage", "Embeddings") + geom_violin()
+plot_distance_wrapper(df_embeddings_gemini, df_criteria, metric = "cosine") + ggtitle("Gemini", "Embeddings") + geom_violin()
+```
+
+````{r, fig.width=5, fig.height=4}
+listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>% 
+  lapply(., function(x){
+    make_distance_key(data = x, metric = "cosine") %>% 
+    calculate_distance(distance_key = ., criteria_key = df_criteria)
+  }) %>% 
+  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+  bind_rows() %>% 
+  plot_distance()+
+  facet_wrap(~model)+
+  geom_violin()+
+  stat_summary(fun = mean, geom = "point") +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.3)
+  
+```
+
+
+# Centroids
+
+```{r}
+dist_wrapper <- function(data){
+  as.data.frame(data$x) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "cosine") %>% 
+  as.data.frame() %>% 
+  rownames_to_column("V1") %>% 
+  pivot_longer(-V1, names_to = "V2", values_to = "metric")
+}
+
+dist_wrapper(pca_chatgpt)
+```
+```{r, fig.width=3.5, fig.height=4}
+listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>% 
+  lapply(., dist_wrapper) %>%  
+  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+  bind_rows() %>% 
+  unite(comp, V1, V2) %>% 
+  filter(comp %in% c("MCAS - Consortium_MCAS - Alternative", "SLE - EULAR-ACR_SLE - SLICC")) %>% 
+  mutate(comp = gsub("_", "\nvs. ", comp)) %>%  
+  format_embeddings() %>% 
+  ggplot(aes(x = comp, y = metric, color = model))+
+  geom_point(position = position_dodge(width = 0.75))+
+  # stat_summary(fun = mean, geom = "point", color = "black")+
   theme_bw() +
+  ggpubr::stat_compare_means(aes(group = comp), method = "wilcox.test", label = "p", vjust = 1, show.legend = F)+
+    # theme_bw() +
   theme(axis.text.x = element_text(angle =90, hjust =1)) +
-  labs(x="", y="Euclidean distance") +
-  coord_cartesian(ylim=c(NA,55.75))
+  labs(x="", y="Cosine similarity") +
+  ylim(-0.1,1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(color = "")
+
+```
+
+```{r}
+dist_wrapper <- function(data){
+  as.data.frame(data$x) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "cosine") %>% 
+  as.data.frame() %>% 
+  rownames_to_column("V1") %>% 
+  pivot_longer(-V1, names_to = "V2", values_to = "metric")
+}
+
+dist_wrapper(pca_chatgpt)
+
+
+cosine_data <- listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>% 
+  lapply(., function(x) {as.data.frame(x$x) %>% calculate_centroids() %>% rownames_to_column("criteria")}) %>%  
+  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+  bind_rows() %>% 
+  unite(sample, criteria, model) %>% 
+  column_to_rownames("sample") %>% 
+  custom_dist(method = "cosine")
+  
+
+ComplexHeatmap::Heatmap(cosine_data)
+```
+
+```{r}
+unique(df_criteria$criteria  )
 ```
 
 
 
+```{r, fig.width=5.5, fig.height=3.5}
+custom_heatmap2 <- function(data, 
+                           title, 
+                           metric, 
+                           color_scale = hcl.colors(3, "Earth"), 
+                           midpoint = NULL, 
+                           symmetric = T, 
+                           font_size=10,
+                           dendrogram_weight = unit(10, "mm"),
+                           legend_params = list(NULL)){
+  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
+  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
+  scale_mid <- scale_min + (scale_max - scale_min)/2
+  
+  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
+  
+  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
+  
 
-```{r, fig.width=2, fig.height=4, message = F}
-symptom_distance_key_cos <- lsa::cosine(t(as.matrix(pca_embedding$x))) %>% 
-  as.dist() %>% 
-  broom::tidy() %>% 
-  mutate_at(vars(contains("item")), as.character) %>% 
-  mutate(symptom_pair = map2(item1, item2, ~sort(c(.x,.y)))) %>% 
-  unnest_wider(symptom_pair, names_sep = "") %>% 
-  unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
-  select(symptom_pair, distance)
-
-
-df_compare_cos <- tribble(
-  ~criteria1, ~criteria2,
-  "SLE - EULAR-ACR", "SLE - SLICC",
-  "MCAS - Consortium", "MCAS - Alternative"
-  # "SLE - SLICC", "SLE - SLICC",
-  # "MCAS - Consensus",  "MCAS - Consensus"
+  annotation_data <- data.frame(
+  rownames = rownames(cosine_data),
+  model = str_extract(rownames(cosine_data), "gpt|voyage|gemini|mistral"),
+  criteria = str_extract(rownames(cosine_data), "Migraine - ICHD3|Kawasaki - AHA|SLE - EULAR-ACR|SLE - SLICC|MCAS - Consortium|MCAS - Alternative")
 ) %>% 
-  left_join(df_criteria, by = c("criteria1" = "criteria")) %>% 
-  left_join(df_criteria, by = c("criteria2" = "criteria"))  %>% 
-  mutate(symptom_pair = map2(feature.x, feature.y, ~sort(c(.x,.y)))) %>% 
-  unnest_wider(symptom_pair, names_sep = "") %>% 
-  unite(symptom_pair, symptom_pair1, symptom_pair2, sep = " : ") %>% 
-  unite(criteria_pair, criteria1, criteria2, sep = " : ") %>% 
-  select(criteria_pair, symptom_pair) %>% 
-  left_join(symptom_distance_key_cos, by = "symptom_pair") %>% 
-  drop_na()
+  column_to_rownames("rownames")
 
-df_compare_cos %>% 
-  ggplot(aes(x = criteria_pair, y = distance))+
-  geom_boxplot()+
-  # geom_violin()+
-  # stat_summary(fun = mean, geom = "point") +
-  # stat_summary(fun.data = mean_cl_normal, geom = "errorbar")+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle =90, hjust =1)) +
-  labs(x="", y="Cosine distance")
+  model_colors <- colorspace::lighten(brewer.pal(4, "Dark2"), amount = -0.1)
+  names(model_colors) <- unique(annotation_data$model)
+  
+  criteria_colors <- colorspace::lighten(brewer.pal(6, "Set1"), amount = 0.3)
+  names(criteria_colors) <- unique(annotation_data$criteria)
+  
+  col_annotation <- HeatmapAnnotation(
+    Model = annotation_data$model,
+    Criteria = annotation_data$criteria,
+    col = list(Model = model_colors, Criteria = criteria_colors)
+  )
+  
+  ComplexHeatmap::Heatmap(
+    data,
+    col = color_function,
+    top_annotation = col_annotation,
+    show_row_names = FALSE,
+    show_column_names = FALSE,
+    cluster_columns = TRUE,
+    cluster_rows = TRUE,
+    
+    column_title = title,
+    name = metric,
+    column_dend_height  = dendrogram_weight,
+    row_dend_width = dendrogram_weight,
+  )
+  
+}
+  
+custom_heatmap2(cosine_data, 
+                color_scale = RColorBrewer::brewer.pal(5, "BrBG")[c(1,3,5)], 
+                title = " ", 
+                metric = "Cosine\nsimilarity", 
+                symmetric = T,
+                font_size = 8)  
+  
+
 ```
+
+```{r}
+listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>% 
+  lapply(., dist_wrapper) %>%  
+  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+  bind_rows() %>% 
+  unite(comp, V1, V2) %>% 
+  summarise(metric = mean(metric), .by = "comp") %>% 
+  separate(comp, into = c("V1", "V2"), sep = "_") %>% 
+  pivot_wider(names_from = "V2", values_from = "metric") %>% 
+  column_to_rownames("V1") %>% 
+  ComplexHeatmap::Heatmap()
+
+```
+
 ### Centroid distance heatmap
 
 ```{r, fig.width=4.5, fig.height=4, message = F}
@@ -256,10 +548,18 @@ as.data.frame(pca_embedding$x) %>%
   pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
 ```
 
-```{r}
-as.data.frame(pca_embedding$x) %>% 
-  # calculate_centroids() %>% 
-  custom_dist(method = "cosine")
+```{r, fig.width=4.5, fig.height=4, message = F}
+# Plot heatmap of distance between centroids using full embeddings
+as.data.frame(pca_chatgpt$x) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "euclidean") %>% 
+  pheatmap::pheatmap(color = viridis::viridis(100, direction = -1), main = "Euclidean")
+
+as.data.frame(df_embeddings_chatgpt) %>% 
+  calculate_centroids() %>% 
+  custom_dist(method = "cosine") %>% 
+  # pheatmap::pheatmap(color = colorRampPalette(RColorBrewer::brewer.pal(11, "BrBG"))(101), main = "Cosine", breaks = seq(-1,1,length.out = 101))
+  pheatmap::pheatmap(color = viridis::viridis(100), main = "Cosine")
 ```
 
 

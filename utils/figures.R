@@ -12,7 +12,7 @@ require(checkmate)
 require(here)
 
 source(here("utils/general.R"))
-
+####################### GENERAL FUNCTION #######################################
 ################################################################################
 # Order levels for criteria for use in plots
 format_criteria <- function(df){
@@ -46,7 +46,7 @@ format_criteria <- function(df){
 }
 
 ################################################################################
-# Order levels for models for use in plots
+# Order levels for generaltive language models for use in plots
 format_models <- function(df){
   
   # Input checks, must be data frame with model column
@@ -82,6 +82,38 @@ format_models <- function(df){
 }
 
 ################################################################################
+# Order levels for embedding models for use in plots
+format_embeddings <- function(df){
+  
+  # Input checks, must be data frame with model column
+  arg_col <- makeAssertCollection()
+  assertClass(df, "data.frame" , add = arg_col)
+  assertNames(names(df), must.include = "model", add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  models <- c("chatgpt", "gemini", "voyage", "mistral")
+  
+  df <- mutate(df, model = str_extract(model, paste(models, collapse = "|")))
+  
+  model_order <- c(
+    "chatgpt", 
+    "voyage", 
+    "gemini", 
+    "mistral"
+  )
+  
+  model_names <- c(
+    "chatgpt" = "OpenAI Text 3 Small",
+    "voyage" = "Voyage 2 Large",
+    "gemini" = "Gemini Text 4",
+    "mistral" = "Mistral Embed")
+  
+  df %>% 
+    mutate(model = factor(model, levels = model_order)) %>%
+    mutate(model = fct_recode(model, !!!setNames(names(model_names), model_names)))
+}
+
+################################################################################
 # Function that wrap text in a ggplot function
 # E.g. scale_x_discrete(labels = ~custom_labeler(., wrap_width = 20))
 # Will wrap labels every 20 characters
@@ -91,6 +123,73 @@ custom_labeler <- function(x, wrap_width=33) {
     str_wrap(width = wrap_width)
 }
 
+#################### EMBEDDING FUNCTIONS #######################################
+################################################################################
+# Plots cumulative proportion of variance explained by each component in PCA
+# Used to visualize variability captured in PCA reduction of embeddings
+cumulative_variance_plot <- function(pca_data){
+  pca_data$importance %>% t() %>% as.data.frame() %>% 
+    rownames_to_column("component") %>% 
+    mutate(component = as.numeric(str_extract(component, "[0-9]+"))) %>% 
+    ggplot(aes(x=component, y = `Cumulative Proportion`)) +
+    geom_path()+
+    theme_bw()
+}
+
+################################################################################
+# Plot embedding PCA reductions with diagnostic criteria centroids
+pca_centroid_plot <- function(pca_data, criteria_key, components = c(1,2)){
+  axes <- colnames(pca_data$x)[components]
+  
+  pca_data$x[,components] %>% 
+    as.data.frame() %>% 
+    rownames_to_column("feature") %>% 
+    left_join(criteria_key) %>% 
+    drop_na() %>% 
+    ggplot(aes(x=!!sym(axes[1]), y=!!sym(axes[2]), color = criteria))+
+    geom_point(size = 0.5) +
+    geom_point( # Add centroids
+      data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), 
+      size = 3, shape = 21, color = "black", aes(fill = criteria))+
+    theme_bw()+
+    scale_color_brewer(palette = "Dark2")+
+    scale_fill_brewer(palette = "Dark2") +
+    labs(color = "", fill = "")
+}
+
+################################################################################
+# Extended version of pca_centroid_plot plots embedding PCAs for multiple
+# embedding models as facets. Cannot combine facets into single plot
+# because PCA reductions are different coordinate systems
+multi_pca_centroid_plot <- function(criteria_key, components = c(1,2), ...){
+  
+  pca_list <- listN(...)
+  
+  axes <- colnames(pca_list[[1]]$x)[components]
+  
+  pca_list %>% 
+    lapply(., function(x) {
+      x <- x$x[,components]
+      x <- as.data.frame(x)
+      rownames_to_column(x, "feature")
+    }) %>% 
+    mapply(function(x,y){mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+    bind_rows() %>% 
+    left_join(criteria_key) %>% 
+    drop_na() %>%
+    format_embeddings() %>% 
+    ggplot(aes(x=!!sym(axes[1]), y=!!sym(axes[2]), color = criteria))+
+    geom_point(size = 0.5) +
+    geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 2, shape = 21, color = "black", aes(fill = criteria))+
+    facet_wrap(~model, scales = "free") +
+    theme_bw()+
+    scale_color_brewer(palette = "Dark2")+
+    scale_fill_brewer(palette = "Dark2") +
+    labs(color = "", fill = "")
+}
+
+
+################### DIVERSITY FUNCTIONS ########################################
 ################################################################################
 # Line graph of rank abundance by criteria. Will plot up to n_diagnoses number of top diagnoses
 rank_abundance_plot <- function(df, n_diagnoses = 50){

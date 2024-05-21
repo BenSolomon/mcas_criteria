@@ -492,7 +492,7 @@ cosine_data <- listN(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haik
 
 ComplexHeatmap::Heatmap(cosine_data)
 ```
-```{r}
+```{r, fig.width=5.5, fig.height=3.5}
 custom_heatmap2 <- function(data, 
                            title, 
                            metric, 
@@ -522,13 +522,15 @@ custom_heatmap2 <- function(data,
   model = str_extract(rownames(cosine_data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro"),
   criteria = str_extract(rownames(cosine_data), "slicc_sle|eular_acr_sle|mcas_consortium|mcas_alternative")
 ) %>% 
-  column_to_rownames("rownames")
+  column_to_rownames("rownames") %>% 
+  format_criteria() %>% 
+  format_models()
 
   # model_colors <- brewer.pal(7, "Dark2")[-6]
-  model_colors <- brewer.pal(5, "Dark2")
+  model_colors <- colorspace::lighten(brewer.pal(5, "Dark2"), amount = -0.1)
   names(model_colors) <- unique(annotation_data$model)
   
-  criteria_colors <- brewer.pal(4, "Set1")
+  criteria_colors <- colorspace::lighten(brewer.pal(4, "Set1"), amount = 0.3)
   names(criteria_colors) <- unique(annotation_data$criteria)
   
   col_annotation <- HeatmapAnnotation(
@@ -570,8 +572,12 @@ custom_heatmap2 <- function(data,
   
 }
   
-custom_heatmap2(cosine_data, color_scale = viridis::viridis(3), title = " ", metric = "Cosine\nsimilarity", symmetric = F,
-                 font_size = 8)  
+custom_heatmap2(cosine_data, 
+                color_scale = viridis::viridis(3), 
+                title = " ", 
+                metric = "Cosine\nsimilarity", 
+                symmetric = F,
+                font_size = 8)  
   
 
 
