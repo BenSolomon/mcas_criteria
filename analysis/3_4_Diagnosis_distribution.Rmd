@@ -211,14 +211,35 @@ diagnosis_rank_table(df_claude3_opus_t1.0_icd, "mast |mastoc|anaphylaxis") %>% m
 diagnosis_rank_table(df_gemini1.0_pro_t1.0_icd, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) 
 ```
 
+
 ```{r}
-diagnosis_rank_table(df_gpt4, "mast |mastoc|anaphylaxis") %>% mutate(diagnosis = substr(diagnosis, 1, 60)) %>% 
-  select(contains(c("diagnosis","mcas"))) %>% 
-  head(6) %>% 
-  mutate(diagnosis = str_to_sentence(diagnosis)) %>% 
-  rename(Diagnosis = diagnosis, `MCAS consortium` = mcas_consortium, `MCAS alternative` = mcas_alternative) %>% 
+multi_diagnosis_rank_table <- function(search_pattern, ...){
+  listN(...) %>% 
+  lapply(., diagnosis_rank_table, pattern = search_pattern) %>%
+  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+  bind_rows() %>% 
+  pivot_longer(contains(c("mcas","kawasaki","sle","migraine")), names_to = "criteria", values_to = "rank") %>% 
+  filter(grepl("mcas", criteria)) %>% 
+  format_models() %>% 
+  format_criteria() %>% 
+  pivot_wider(names_from = "model", values_from = "rank",names_prefix = "model_") %>% 
+  rowwise() %>%
+  mutate(mean_rank = round(mean(c_across(contains("model_")), na.rm=T)), 0) %>%
+  mutate(ranks = paste(c_across(contains("model_")), collapse = ", ")) %>%
+  mutate(output = str_glue("{mean_rank}\n[{ranks}]")) %>%
+  select(Diagnosis = diagnosis, criteria, output) %>%
+  pivot_wider(names_from = "criteria", values_from = "output")
+}
+
+rank_table <- multi_diagnosis_rank_table(search_pattern = "T78\\.2 |D47\\.02 |D89\\.41 |D89\\.49 |D89\\.4 ",
+                                         df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd)
+rank_table  
+```
+
+```{r}
+rank_table %>% 
   flextable() %>% 
-  width(width = 2) %>% 
+  width(width = 30) %>% 
   align(j = 2:3, align = "center", part = "all")
   
 ```
@@ -1053,6 +1074,26 @@ Things to fix
 - Legend position for C-E
 - Legend width for B
 - Move legend for A to the left of "Frequency?"
+- Rank plot line weight
 
+```{r}
+ggsave(plot=full_plt,filename=here("figures/3_diagnosis_diversity.pdf"), width = 7.5, height = 7.5)
+```
+
+set_table_properties(opts_pdf = list(tabcolsep = 0))
+```{r}
+set_flextable_defaults(fonts_ignore=TRUE)
+
+multi_diagnosis_rank_table(search_pattern = "T78\\.2 |D47\\.02 |D89\\.41 |D89\\.49 |D89\\.4 ",
+                                         df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd) %>% 
+  flextable() %>% 
+  width(width = 2) %>% 
+  fontsize(size = 9) %>% 
+  fontsize(size = 10, part = "header") %>% 
+  padding(padding = 0) %>% 
+  align(j = 2:3, align = "center", part = "all") %>% 
+  set_table_properties(opts_pdf = list(arraystretch = 1.25)) %>% 
+  {print(., preview = "pdf");.}
+```
 
 
