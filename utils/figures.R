@@ -123,6 +123,7 @@ custom_labeler <- function(x, wrap_width=33) {
     str_wrap(width = wrap_width)
 }
 
+
 #################### EMBEDDING FUNCTIONS #######################################
 ################################################################################
 # Plots cumulative proportion of variance explained by each component in PCA
@@ -314,10 +315,10 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
     ggplot(aes(x = group, y = freq))+
     theme_bw() +
     coord_flip() +
-    labs(x="", y="Frequency")+
+    labs(x=NULL, y="Frequency")+
     theme(axis.text.x = element_text(angle = 90)) +
     ylim(c(0,0.1))+ # Since 10-item differential, max frequency is 0.1
-    facet_wrap(~criteria, scales = "free_y", dir = "v", nrow = 2) +
+    facet_wrap(~criteria, scales = "free_y", dir = "h", nrow = 3) +
     theme(axis.text = element_text(size = 7, lineheight = 0.7), 
           strip.text = element_text(size = 7),
           axis.title = element_text(size = 9)) + 
@@ -334,10 +335,12 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
   # frequencies as colored points
   if (distribution_vis == "points"){
     out_plt <- base_plt +
-      geom_point(size = 1, aes(color = model))+
-      stat_summary(fun.y = mean, geom = "point") +
-      scale_color_manual(values = brewer.pal(7, "Set1")[-6])+
-      labs(color = "")
+      stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75) +
+      geom_point(size = 0.5, aes(color = model), position = position_dodge(width = 0.25))+
+      # stat_summary(fun.data = median_bar, geom = "errorbar", width = 0.5) +
+      # geom_mean_bar()+
+      scale_color_brewer(palette = "Dark2")+
+      labs(color = NULL)
   }
   
   return(out_plt)
@@ -367,8 +370,8 @@ cumulative_frequency_plot <- function(df, n_diagnoses = 25, width = 0.9){
 # frames from different models and plots the mean cumulative frequencies with
 # error bars and statistical testing
 
-multi_cumulative_frequency_plot <- function(...){
-  df_list <- list(...)
+multi_cumulative_frequency_plot <- function(n_diagnoses, distribution_vis = "points", ...){
+  df_list <- listN(...)
   
   # Input checks
   arg_col <- makeAssertCollection()
@@ -377,31 +380,58 @@ multi_cumulative_frequency_plot <- function(...){
   # Check all inputs have the expected columns
   expected_columns <- c("i", "criteria", "diagnosis")
   lapply(df_list, function(x) assertNames(names(x), permutation.of = expected_columns, add = arg_col))
+  # Check valid distribution_vis option
+  assertChoice(distribution_vis, c("range", "std_error", "points") , add = arg_col)
   if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
   
   # Combine data frames
   df_combined <- df_list %>% 
-    lapply(., function(x) cumulative_frequency_plot(x)$plot$data) %>% 
-    bind_rows()
+    lapply(., function(x) cumulative_frequency_plot(x, n_diagnoses = n_diagnoses)$plot$data) %>% 
+    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+    bind_rows() %>% 
+    format_models()
   
   # Plot
-  plt <- df_combined %>% 
+  base_plt <- df_combined %>% 
     ggplot(aes(x = criteria, y = total_frequency))+
-    stat_summary(fun.y = mean, geom = "point", size = 0.75)+
-    stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)+
     theme_bw()+
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(y = sprintf("Combined frequency of top\n%s diagnoses",n_diag), x="")
+    labs(y = str_glue("Combined frequency\nof top {n_diagnoses} diagnoses"), x = NULL)
   
   # Statistical testing
-  plt +
-    ggpubr::geom_pwc(aes(group = criteria), 
-                     method = "wilcox.test",
-                     label = "p.signif",
-                     p.adjust.method = "BH",
-                     hide.ns = T,
-                     vjust = 0.5)+
+  base_plt <- base_plt +
+    ggpubr::geom_pwc(method = "wilcox.test", p.adjust.method = "BH", hide.ns = T, label = "p.adj.signif", bracket.nudge.y = 0.3, vjust = 0.6, step.increase = 0.14, tip.length = 0.02)+
     ylim(c(0,NA))
+  
+  
+  # Plot mean frequency as point and min-max as error bar  
+  if (distribution_vis == "range"){
+    out_plt <- base_plt +
+      stat_summary(fun.y = mean, geom = "point") +
+      stat_summary(fun.min = min, fun.max = max, geom = "errorbar")
+  }  
+  
+  # Plot mean frequency as point and min-max as error bar  
+  if (distribution_vis == "std_error"){
+    out_plt <- base_plt +
+      stat_summary(fun.y = mean, geom = "point", size = 0.75)+
+      stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)
+  }  
+  
+  # Plot mean frequency as black point and individual model 
+  # frequencies as colored points
+  if (distribution_vis == "points"){
+    out_plt <- base_plt +
+      stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75) +
+      geom_point(size = 0.5, aes(color = model), position = position_dodge(width = 0.25))+
+      # stat_summary(fun.data = median_bar, geom = "errorbar", width = 0.5) +
+      # geom_mean_bar()+
+      scale_color_brewer(palette = "Dark2")+
+      labs(color = NULL)
+  }
+  
+  return(out_plt)
+  
 }
 ################################################################################
 
