@@ -55,9 +55,7 @@ format_models <- function(df){
   assertNames(names(df), must.include = "model", add = arg_col)
   if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
   
-  models <- c("gpt3.5", "gpt4.0", "claude3_haiku", "claude3_opus", "gemini1.0_pro", "gemini1.5_flash")
-  
-  df <- mutate(df, model = str_extract(model, paste(models, collapse = "|")))
+  # models <- c("gpt3.5", "gpt4.0", "claude3_haiku", "claude3_opus", "gemini1.0_pro", "gemini1.5_flash", "gemini1.5_pro")
   
   model_order <- c(
     "gpt3.5", 
@@ -65,7 +63,8 @@ format_models <- function(df){
     "claude3_haiku", 
     "claude3_opus",
     "gemini1.0_pro", 
-    "gemini1.5_flash" 
+    "gemini1.5_flash", 
+    "gemini1.5_pro"
   )
   
   model_names <- c(
@@ -74,9 +73,11 @@ format_models <- function(df){
     "claude3_haiku" = "Claude 3 Haiku",
     "claude3_opus" = "Claude 3 Opus",
     "gemini1.0_pro" = "Gemini 1.0 Pro",
-    "gemini1.5_flash" = "Gemini 1.5 Flash")
+    "gemini1.5_flash" = "Gemini 1.5 Flash",
+    "gemini1.5_pro" = "Gemini 1.5 Pro")
   
   df %>% 
+    mutate(df, model = str_extract(model, paste(model_order, collapse = "|"))) %>% 
     mutate(model = factor(model, levels = model_order)) %>%
     mutate(model = fct_recode(model, !!!setNames(names(model_names), model_names)))
 }

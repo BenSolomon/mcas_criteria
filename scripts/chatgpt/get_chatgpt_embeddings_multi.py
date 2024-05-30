@@ -30,7 +30,7 @@ def get_embeddings_pipeline(model, diagnosis_data):
   
   print(f'READING DIAGNOSES - {diagnosis_data} - {datetime.now()}')
   sys.stdout.flush()
-  df = pd.read_csv(f'/labs/khatrilab/solomonb/mcas/data/unique_diagnoses/unique_diagnoses_{diagnosis_data}.csv')
+  df = pd.read_csv(f'/labs/khatrilab/solomonb/mcas/data/unique_diagnoses/unique_diagnoses_{diagnosis_data}.csv.gz')
   # df = df.head(10)
   # time.sleep(5)
   
@@ -51,8 +51,10 @@ def get_embeddings_pipeline(model, diagnosis_data):
   df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/chatgpt_embeddings/{model}/{diagnosis_data}_diagnoses_chatgpt_embeddings.csv.gz', compression='gzip', index=False)
   
 
-get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt3.5")
-get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt4.0")
-get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude3_haiku_t1.0")
-get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude3_opus_t1.0")
-get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini1.0_pro_t1.0")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-3.5-turbo-1106")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-4-turbo-preview")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-haiku-20240307_t1-0")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-opus-20240229_t1-0")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.0-pro-002_t1-0")
+# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.5-flash-preview-0514_t1-0")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.5-pro-001_t1-0")

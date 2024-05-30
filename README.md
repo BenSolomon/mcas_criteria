@@ -3,10 +3,53 @@ LLM Analysis of MCAS diagnostic criteria
 
 - [Converting LLM diagnoses to ICD codes using
   embeddings](#converting-llm-diagnoses-to-icd-codes-using-embeddings)
+- [Calculating symptom embeddings](#calculating-symptom-embeddings)
 
 # Converting LLM diagnoses to ICD codes using embeddings
 
-- `/scripts/embeddings/diagnosis_chatgpt_embeddings_to_ICD.R`
+- `get_chatgpt_embeddings_icd.py` - Finds ChatGPT embeddings for all
+  ICD10 codes
+  - Inputs
+    - `data/compiled_icd10_codes.csv`
+  - Steps
+    - Read in all ICD codes
+    - Filter codes to those starting with the letter of the input
+      variable
+    - Find ChatGPT embeddings for all filtered diagnoses
+    - Save diagnoses and embeddings to output file
+  - Control
+    - Run with the following command
+
+    ``` bash
+    parallel \
+    --delay 10 \
+    -j $SLURM_NTASKS \
+    --joblog $LOG_DIR/parallel_$(date +'%y%m%d_%H%M%S').log \
+    python $SCRIPT_DIR/get_chatgpt_embeddings_icd.py ::: {A..Z} # Run a parallel process for each A-Z
+    ```
+  - Outputs
+    - All files in `data/chatgpt_embeddings/icd_embeddings/`
+- `/concatenate_icd_embeddings.R` - Concatenates the multiple ICD10
+  embedding files
+  - Inputs
+    - All files in `data/chatgpt_embeddings/icd_embeddings/`
+  - Steps
+    - For each files in directory, read file and append to out_path
+  - Output
+    - `data/chatgpt_embeddings/icd10_chatgpt_embeddings.csv.gz`
+- `/icd_embedding_reduction.R` - Generates a PCA reduction of all ICD10
+  embeddings
+  - Input
+    - `data/chatgpt_embeddings/icd10_chatgpt_embeddings.csv.gz`
+  - Steps
+    - Read in ICD10 ChatGPT embeddings
+    - Calculate PCA of embeddings
+    - Save PCA object
+  - Output
+    - `data/chatgpt_embeddings/icd10_chatgpt_embedding_pca.RDS`
+- `/scripts/embeddings/diagnosis_chatgpt_embeddings_to_ICD.R` - Matches
+  all diagnoses with an ICD10 code based on finding k-nearest neighbor
+  in ICD10 embedding PCA space
   - Inputs
     - `data/chatgpt_embeddings/icd10_chatgpt_embedding_pca.RDS` - PCA
       reduction of ICD10 embeddings from
@@ -25,3 +68,7 @@ LLM Analysis of MCAS diagnostic criteria
       neighbor in the ICD10 ChatGPT embedding PCA space
   - Output
     - `data/chatgpt_embeddings/diagnosis_chatgpt_embeddings_to_ICD.csv`
+
+# Calculating symptom embeddings
+
+- `compiled_symptoms.csv`

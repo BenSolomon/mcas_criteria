@@ -307,6 +307,19 @@ process_json <- function(json_dir, clean_method = "current"){
   return(df)
 }
 
+################################################################################
+# Wrapper to read in processed diagnosis data
+# icd = whether to read in the ICD code mapped version
+read_model <- function(model, icd = FALSE){
+  if (icd){
+    path <- here(str_glue("data/processed_diagnoses/diagnoses_{model}_icd.csv.gz"))
+  } else {
+    path <- here(str_glue("data/processed_diagnoses/diagnoses_{model}.csv.gz"))
+  }
+  read_csv(path) %>% 
+    select(i, criteria, diagnosis)
+}
+
 ############################# DATA CALCULATIONS ################################
 
 # Creates a dataframe that tallies the number of times two diagnoses appear 

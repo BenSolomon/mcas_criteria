@@ -7,6 +7,7 @@ output:
 ---
 
 ```{r, message = F}
+library(here)
 source(here("utils/data_processing.R"))
 source(here("utils/figures.R"))
 ```
@@ -40,6 +41,16 @@ df_claude3_opus_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_cl
 df_gemini1.0_pro_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
 ```
 
+```{r, message = F}
+df_gpt3.5_icd <- read_model("gpt-3.5-turbo-1106", icd = TRUE)
+df_gpt4.0_icd <- read_model("gpt-4-turbo-preview", icd = TRUE)
+df_claude3_haiku_t1.0_icd <- read_model("claude-3-haiku-20240307_t1-0", icd = TRUE)
+df_claude3_opus_t1.0_icd <- read_model("claude-3-opus-20240229_t1-0", icd = TRUE)
+df_gemini1.0_pro_t1.0_icd <- read_model("gemini-1.0-pro-002_t1-0", icd = TRUE)
+df_gemini1.5_flash_t1.0_icd <- read_model("gemini-1.5-flash-preview-0514_t1-0", icd = TRUE)
+df_gemini1.5_pro_t1.0_icd <- read_model("gemini-1.5-pro-001_t1-0", icd = TRUE)
+```
+
 ```{r}
 # Tally each pair of co-occuring diagnoses within each criteria
 # Original responses
@@ -58,6 +69,7 @@ df_gpt4.0_icd_codiag <- create_codiagnosis_df(df_gpt4.0_icd, remove_singletons =
 df_claude3_haiku_t1.0_icd_codiag <- create_codiagnosis_df(df_claude3_haiku_t1.0_icd, remove_singletons = T)
 df_claude3_opus_t1.0_icd_codiag <- create_codiagnosis_df(df_claude3_opus_t1.0_icd, remove_singletons = T)
 df_gemini1.0_pro_t1.0_icd_codiag <- create_codiagnosis_df(df_gemini1.0_pro_t1.0_icd, remove_singletons = T)
+df_gemini1.5_pro_t1.0_icd_codiag <- create_codiagnosis_df(df_gemini1.5_pro_t1.0_icd, remove_singletons = T)
 ```
 
 
@@ -117,6 +129,7 @@ codiag_graph_wrapper(df_gpt4.0_icd_codiag)+ ggtitle("ChatGPT 4.0 ICD", subtitle 
 codiag_graph_wrapper(df_claude3_haiku_t1.0_icd_codiag)+ ggtitle("Claude 3 Haiku ICD", subtitle = sprintf("Top %s", top_n))
 codiag_graph_wrapper(df_claude3_opus_t1.0_icd_codiag)+ ggtitle("Claude 3 Opus ICD", subtitle = sprintf("Top %s", top_n))
 codiag_graph_wrapper(df_gemini1.0_pro_t1.0_icd_codiag)+ ggtitle("Gemini 1.0 Pro ICD", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gemini1.5_pro_t1.0_icd_codiag)+ ggtitle("Gemini 1.5 Pro ICD", subtitle = sprintf("Top %s", top_n))
 ```
 
 ## Combined model data
@@ -128,14 +141,14 @@ set.seed(seed)
 multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
                              df_gpt3.5_codiag, df_gpt4.0_codiag, 
                              df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
-                             df_gemini1.0_pro_t1.0_codiag)
+                             df_gemini1.0_pro_t1.0_codiag, df_gemini1.5_pro_t1.0_codiag)
 ```
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
 multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="stress",
                              df_gpt3.5_codiag, df_gpt4.0_codiag, 
                              df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
-                             df_gemini1.0_pro_t1.0_codiag)
+                             df_gemini1.0_pro_t1.0_codiag, df_gemini1.5_pro_t1.0_codiag)
 ```
 ### ICD converted responses
 
@@ -144,15 +157,15 @@ set.seed(seed)
 multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
                              df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
                              df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
-                             df_gemini1.0_pro_t1.0_icd_codiag)
+                             df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)
 ```
 
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
-multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="stress",
+multi_make_codiagnosis_graph(threshold_method = "average", top_n = 150, layout="stress",
                              df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
                              df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
-                             df_gemini1.0_pro_t1.0_icd_codiag)
+                             df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)
 ```
 
 # Evaluate edge density
@@ -176,7 +189,7 @@ multi_edge_density_plot(df_gpt3.5_codiag, df_gpt4.0_codiag, df_claude3_haiku_t1.
 
 ```{r, fig.width=4, fig.height=3.5}
 multi_edge_density_plot(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
-                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag)  
+                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)  
 
 ```
 

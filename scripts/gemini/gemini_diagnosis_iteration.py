@@ -216,8 +216,8 @@ gemini_pipeline(
         output_dir="/labs/khatrilab/solomonb/mcas/data/gemini_json_output",
         batch_size = 200, 
         temp=1.0,
-        # gemini_version = "gemini-1.5-pro-latest",
-        gemini_version = "gemini-1.5-flash-latest",
+        gemini_version = "gemini-1.5-pro-latest",
+        # gemini_version = "gemini-1.5-flash-latest",
         sleep_time = 4
-        # maximum_batches = 1
+        maximum_batches = 1
 )
