@@ -55,31 +55,27 @@ format_models <- function(df){
   assertNames(names(df), must.include = "model", add = arg_col)
   if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
   
-  # models <- c("gpt3.5", "gpt4.0", "claude3_haiku", "claude3_opus", "gemini1.0_pro", "gemini1.5_flash", "gemini1.5_pro")
-  
-  model_order <- c(
-    "gpt3.5", 
-    "gpt4.0", 
-    "claude3_haiku", 
-    "claude3_opus",
-    "gemini1.0_pro", 
-    "gemini1.5_flash", 
-    "gemini1.5_pro"
-  )
-  
   model_names <- c(
     "gpt3.5" = "ChatGPT 3.5",
+    "gpt-3.5" = "ChatGPT 3.5",
     "gpt4.0" = "ChatGPT 4.0",
+    "gpt-4" = "ChatGPT 4.0",
     "claude3_haiku" = "Claude 3 Haiku",
+    "claude-3-haiku" = "Claude 3 Haiku",
     "claude3_opus" = "Claude 3 Opus",
+    "claude-3-opus" = "Claude 3 Opus",
     "gemini1.0_pro" = "Gemini 1.0 Pro",
+    "gemini-1.0-pro" = "Gemini 1.0 Pro",
     "gemini1.5_flash" = "Gemini 1.5 Flash",
-    "gemini1.5_pro" = "Gemini 1.5 Pro")
+    "gemini-1.5-flash" = "Gemini 1.5 Flash",
+    "gemini1.5_pro" = "Gemini 1.5 Pro",
+    "gemini-1.5-pro" = "Gemini 1.5 Pro")
   
   df %>% 
-    mutate(df, model = str_extract(model, paste(model_order, collapse = "|"))) %>% 
-    mutate(model = factor(model, levels = model_order)) %>%
-    mutate(model = fct_recode(model, !!!setNames(names(model_names), model_names)))
+    mutate(df, model = str_extract(model, paste(names(model_names), collapse = "|"))) %>% 
+    mutate(model = factor(model, levels = names(model_names))) %>%
+    mutate(model = fct_recode(model, !!!setNames(names(model_names), model_names))) %>% 
+    arrange(model)
 }
 
 ################################################################################
@@ -124,7 +120,67 @@ custom_labeler <- function(x, wrap_width=33) {
     str_wrap(width = wrap_width)
 }
 
+################################################################################
+# Function that adds indicated layer to a base ggplot. Meant to be used with 
+# multi plots, defining how to visualize the multiple models
+# "range" - mean point + max/min error bar
+# "std_error" - mean point + stderr error bars
+# "points" - mean bar and individual model points
 
+plot_selector <- function(distribution_vis = "range"){
+  arg_col <- makeAssertCollection()
+  assertChoice(distribution_vis, c("range", "std_error", "points") , add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  # Plot mean frequency as point and min-max as error bar  
+  if (distribution_vis == "range"){
+    out_plt <- list(
+      stat_summary(fun.y = mean, geom = "point"),
+      stat_summary(fun.min = min, fun.max = max, geom = "errorbar")
+    )
+  }  
+  
+  # Plot mean frequency as point and min-max as error bar  
+  if (distribution_vis == "std_error"){
+    out_plt <- list(
+      stat_summary(fun.y = mean, geom = "point", size = 0.75),
+      stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)
+    )
+  }  
+  
+  # Plot mean frequency as black point and individual model 
+  # frequencies as colored points
+  if (distribution_vis == "points"){
+    out_plt <- list(
+      stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75),
+      geom_point(size = 0.75, aes(color = model), position = position_dodge(width = 0.25)),
+      scale_color_brewer(palette = "Dark2"),
+      labs(color = NULL)
+    )
+  }
+  return(out_plt)
+}
+
+################################################################################
+# When a ggplot includes a ggpubr::geom_pwc layer, this function will extract
+# the p-values from the plot
+
+extract_ggpubr_pvalues <- function(plt){
+  plt <- ggplot_build(plt)
+  plt_data <- plt$data
+  ggpubr_layer_index <- which(sapply(plt_data, function(x) "p" %in% names(x)))
+  ggpubr_data <- plt_data[[ggpubr_layer_index]]
+  
+  key <- data.frame(criteria = plt$layout$panel_params[[1]]$x$get_labels()) %>% 
+    mutate(index = as.character(1:n()))
+  
+  ggpubr_data %>% 
+    left_join(key, by = c("group1" = "index")) %>% 
+    left_join(key, by = c("group2" = "index")) %>% 
+    unite(comparison, starts_with("criteria"), sep = " - ") %>% 
+    select(comparison, starts_with("p")) %>% 
+    distinct()
+}
 #################### EMBEDDING FUNCTIONS #######################################
 ################################################################################
 # Plots cumulative proportion of variance explained by each component in PCA
@@ -325,24 +381,7 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
           axis.title = element_text(size = 9)) + 
     tidytext::scale_x_reordered(labels = ~custom_labeler(., wrap_width = wrap_width))
   
-  # Plot mean frequency as point and min-max as error bar  
-  if (distribution_vis == "range"){
-    out_plt <- base_plt +
-      stat_summary(fun.y = mean, geom = "point") +
-      stat_summary(fun.min = min, fun.max = max, geom = "errorbar")
-  }  
-  
-  # Plot mean frequency as black point and individual model 
-  # frequencies as colored points
-  if (distribution_vis == "points"){
-    out_plt <- base_plt +
-      stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75) +
-      geom_point(size = 0.5, aes(color = model), position = position_dodge(width = 0.25))+
-      # stat_summary(fun.data = median_bar, geom = "errorbar", width = 0.5) +
-      # geom_mean_bar()+
-      scale_color_brewer(palette = "Dark2")+
-      labs(color = NULL)
-  }
+  out_plt <- base_plt + plot_selector(distribution_vis)
   
   return(out_plt)
 }
@@ -404,38 +443,12 @@ multi_cumulative_frequency_plot <- function(n_diagnoses, distribution_vis = "poi
     ggpubr::geom_pwc(method = "wilcox.test", p.adjust.method = "BH", hide.ns = T, label = "p.adj.signif", bracket.nudge.y = 0.3, vjust = 0.6, step.increase = 0.14, tip.length = 0.02)+
     ylim(c(0,NA))
   
-  
-  # Plot mean frequency as point and min-max as error bar  
-  if (distribution_vis == "range"){
-    out_plt <- base_plt +
-      stat_summary(fun.y = mean, geom = "point") +
-      stat_summary(fun.min = min, fun.max = max, geom = "errorbar")
-  }  
-  
-  # Plot mean frequency as point and min-max as error bar  
-  if (distribution_vis == "std_error"){
-    out_plt <- base_plt +
-      stat_summary(fun.y = mean, geom = "point", size = 0.75)+
-      stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5)
-  }  
-  
-  # Plot mean frequency as black point and individual model 
-  # frequencies as colored points
-  if (distribution_vis == "points"){
-    out_plt <- base_plt +
-      stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75) +
-      geom_point(size = 0.5, aes(color = model), position = position_dodge(width = 0.25))+
-      # stat_summary(fun.data = median_bar, geom = "errorbar", width = 0.5) +
-      # geom_mean_bar()+
-      scale_color_brewer(palette = "Dark2")+
-      labs(color = NULL)
-  }
+  out_plt <- base_plt + plot_selector(distribution_vis)
   
   return(out_plt)
   
 }
 ################################################################################
-
 # Based on a regex pattern, return a table with the rank of every match within 
 # all criteria
 diagnosis_rank_table <- function(df, pattern){
@@ -449,7 +462,30 @@ diagnosis_rank_table <- function(df, pattern){
 }
 
 ################################################################################
+# Extension of diagnosis_rank_table that takes responses from multiple models
+# and finds the ranks of specific diagnoses according to a search pattern. 
+# Finds the average rank across all models and also returns the 
+# individual model rankings for reference. Mean + ranks returned as a string
+# intended for visualization with a flextable
 
+multi_diagnosis_rank_table <- function(search_pattern, ...){
+  listN(...) %>% 
+    lapply(., diagnosis_rank_table, pattern = search_pattern) %>%
+    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
+    bind_rows() %>% 
+    pivot_longer(contains(c("mcas","kawasaki","sle","migraine")), names_to = "criteria", values_to = "rank") %>% 
+    filter(grepl("mcas", criteria)) %>% 
+    format_models() %>% 
+    format_criteria() %>% 
+    pivot_wider(names_from = "model", values_from = "rank",names_prefix = "model_") %>% 
+    rowwise() %>%
+    mutate(mean_rank = round(mean(c_across(contains("model_")), na.rm=T)), 0) %>%
+    mutate(ranks = paste(c_across(contains("model_")), collapse = ", ")) %>%
+    mutate(output = str_glue("{mean_rank}\n[{ranks}]")) %>%
+    select(Diagnosis = diagnosis, criteria, output) %>%
+    pivot_wider(names_from = "criteria", values_from = "output")
+}
+################################################################################
 # Shannon diversity plot. Also prints values
 diversity_plot <- function(df){
   diagnosis_table <- table(df$criteria, df$diagnosis)
@@ -467,10 +503,68 @@ diversity_plot <- function(df){
 }
 
 ################################################################################
+# Calculate shannon diversity for responses of multiple models and plot 
+# differences between criteria. # Includes wilcox test of means and
+# distribution_vis control visualization of diversity values for models
+
+# Helper functionto calculate diversity
+calculate_shannon <- function(df){
+  table(df$criteria, df$diagnosis) %>% 
+    vegan::diversity()
+}
+
+multi_shannon_plot <- function(distribution_vis = "range", wrap_width=45, n_diag = 25, ...){
+  df_list <- listN(...)
+  
+  # Input checks
+  arg_col <- makeAssertCollection()
+  # Check all inputs are data frames
+  lapply(df_list, function(x) assertClass(x, "data.frame" , add = arg_col))
+  # Check all inputs have the expected columns
+  expected_columns <- c("i", "criteria", "diagnosis")
+  lapply(df_list, function(x) assertNames(names(x), permutation.of = expected_columns, add = arg_col))
+  # Check valid distribution_vis option
+  assertChoice(distribution_vis, c("range", "std_error", "points") , add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  # Combine data into single data frame
+  df_combined <- df_list %>% 
+    lapply(function(x) enframe(calculate_shannon(x), "criteria", "shannon")) %>%
+    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>%
+    bind_rows() %>% 
+    format_criteria() %>% 
+    format_models()
+  
+  # Create base plot 
+  base_plt <- df_combined %>% 
+    ggplot(aes(x = criteria, y = shannon))+
+    theme_bw()+
+    labs(x=NULL, y="Shannon diversity") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  
+  # Statistical testing
+  base_plt <- base_plt +
+    ggpubr::geom_pwc(
+      method = "wilcox.test",
+      p.adjust.method = "BH",
+      hide.ns = T,
+      label = "p.adj.signif",
+      bracket.nudge.y = 0.3,
+      vjust = 0.6,
+      step.increase = 0.14,
+      tip.length = 0.02
+    )
+  
+  out_plt <- base_plt + plot_selector(distribution_vis)
+  
+  return(out_plt)
+}
+################################################################################
 
 # Calculate bray-curtis or jaccard similarity of diagnoses counts
 # between criteria and plot similarity as a heatmap
-diagnosis_similarity_heatmap <- function(df, method = "jaccard"){
+diagnosis_similarity_heatmap <- function(df, method = "jaccard",
+                                         label_size=6, title_size=9){
   df <- format_criteria(df)
   diagnosis_table <- table(df$criteria, df$diagnosis)
   dist_mtx <- vegan::vegdist(diagnosis_table, method = method)
@@ -478,7 +572,89 @@ diagnosis_similarity_heatmap <- function(df, method = "jaccard"){
   plt_title <- sprintf("%s\nsimilarity", str_to_sentence(method))
   ComplexHeatmap::Heatmap(sim_mtx,
                           name = plt_title,
-                          col = viridis::viridis(100))
+                          col = viridis::viridis(100),
+                          rect_gp = grid::gpar(col = "black", lwd = 1),
+                          row_names_gp = grid::gpar(fontsize = label_size),
+                          column_names_gp = grid::gpar(fontsize = label_size),
+                          show_row_dend = FALSE,
+                          show_column_dend = FALSE
+                          )
+}
+
+################################################################################
+# Extension of diagnosis_similarity_heatmap for multiple models
+# Finds and plots average of similarity across models for each criteria
+
+# Helper function to calculate jaccard or bray-curtis distance
+calculate_distance <- function(df, method){
+  # Input checks
+  arg_col <- makeAssertCollection()
+  # Check all inputs are data frames
+  assertClass(df, "data.frame" , add = arg_col)
+  # Check all inputs have the expected columns
+  expected_columns <- c("i", "criteria", "diagnosis")
+  assertNames(names(df), permutation.of = expected_columns, add = arg_col)
+  # Check valid distribution_vis option
+  assertChoice(method, c("jaccard", "bray") , add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  df <- format_criteria(df)
+  diagnosis_table <- table(df$criteria, df$diagnosis)
+  dist_mtx <- vegan::vegdist(diagnosis_table, method = method)
+  dist_df <- as.dist(dist_mtx, diag = T) %>% broom::tidy()
+  # sim_df <- mutate(dist_df, similarity = 1-distance)
+  return(dist_df)
+}
+
+
+multi_diagnosis_similarity_heatmap <- function(method = "jaccard", show_dend=T,
+                                               legend_label = NULL,legend_direction="vertical",
+                                               label_size=6, title_size=9, ...){
+  
+  df_list <- listN(...)
+  
+  # Input checks
+  arg_col <- makeAssertCollection()
+  # Check all inputs are data frames
+  lapply(df_list, function(x) assertClass(x, "data.frame" , add = arg_col))
+  # Check all inputs have the expected columns
+  expected_columns <- c("i", "criteria", "diagnosis")
+  lapply(df_list, function(x) assertNames(names(x), permutation.of = expected_columns, add = arg_col))
+  # Check valid distribution_vis option
+  assertChoice(method, c("jaccard", "bray") , add = arg_col)
+  if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
+  
+  df_combined <- df_list %>% 
+    lapply(calculate_distance, method) %>%
+    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>%
+    bind_rows() %>% 
+    # format_criteria() %>% 
+    format_models() %>% 
+    summarize(distance = mean(distance), .by = c("item1", "item2"))
+  
+  mtx_combined <- df_combined %>%
+    pivot_wider(names_from = "item1", values_from = "distance") %>%
+    column_to_rownames("item2") %>% 
+    as.dist(diag = T, upper = T) %>% 
+    as.matrix()
+  
+  sim_mtx <- 1-as.matrix(mtx_combined)
+  if (is.null(legend_label)){legend_label <- sprintf("%s\nsimilarity", str_to_sentence(method))}
+  ComplexHeatmap::Heatmap(sim_mtx,
+                          name = legend_label,
+                          col = viridis::viridis(100),
+                          rect_gp = grid::gpar(col = "black", lwd = 1),
+                          row_names_gp = grid::gpar(fontsize = label_size),
+                          column_names_gp = grid::gpar(fontsize = label_size),
+                          show_row_dend = show_dend,
+                          show_column_dend = show_dend,
+                          heatmap_legend_param = list(
+                            direction = legend_direction, 
+                            title_gp  = grid::gpar(fontsize = title_size),
+                            labels_gp = grid::gpar(fontsize = label_size),
+                            legend_width = unit(3, "cm")
+                          )
+  )
 }
 
 ################################################################################

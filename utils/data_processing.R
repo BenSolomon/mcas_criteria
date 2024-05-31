@@ -393,22 +393,19 @@ pairwise_diversity_difference <- function(df){
 
 
 ################################################################################
+# Calculate bray-curtis distance between all gpt_iteration results of a given criteria 
 
-# Important for precision because there will be choose(gpt_iterations, 2)
-# number of bray-curtis calculations
-limit_gpt_iterations <- function(df, gpt_iterations){
+# Helper function
+limit_iterations <- function(df, iterations){
   df %>%  
     mutate(i = as.numeric(i)) %>% 
-    filter(i <= gpt_iterations)
+    filter(i <= iterations)
 }
 
-################################################################################
-
-# Calculate bray-curtis distance between all gpt_iteration results of a given criteria 
-calculate_precision <- function(df, gpt_iterations = NULL){
+calculate_precision <- function(df, iterations = NULL){
   # If not null, limit df to number of gpt_iterations specified
-  # There will be choose(gpt_iterations, 2) number of bray-curtis calculations
-  if (!is.null(gpt_iterations)){df <- limit_gpt_iterations(df, gpt_iterations)}
+  # There will be choose(iterations, 2) number of bray-curtis calculations
+  if (!is.null(iterations)){df <- limit_iterations(df, iterations)}
   
   df %>%  
     nest(.by = criteria) %>% 
