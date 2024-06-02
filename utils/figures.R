@@ -849,8 +849,22 @@ centrality_graph <- function(graph,
 # are determined: either selecting all co-diagnoses from any model meeting
 # the threshold or taking the average frequency and selecting the top_n from
 # the average frequency across all models
-multi_make_codiagnosis_graph <- function(threshold_method="individual", top_n=200, 
-                                         layout = "stress", ...){
+multi_make_codiagnosis_graph <-
+  function(..., threshold_method = "individual",
+           top_n = 200,
+           layout = "stress",
+           point_size=2.5, 
+           border_size = 1,
+           edge_width = 1,
+           edge_alpha = 0.5,
+           label_text_size = NULL,
+           tick_text_size = NULL,
+           legend_width = NULL,
+           legend_height = NULL,
+           legend_position = NULL,
+           highlight_stroke_multiplier=2
+           ) {
+    
   df_list <- list(...)
   
   # Input checks
@@ -885,7 +899,17 @@ multi_make_codiagnosis_graph <- function(threshold_method="individual", top_n=20
   
   df_combine %>% 
     make_codiagnosis_graph(n_diagnoses = top_n) %>% 
-    centrality_graph(layout = layout)
+    centrality_graph(layout = layout,
+                     point_size=point_size, 
+                     border_size = border_size,
+                     edge_width = edge_width,
+                     edge_alpha = edge_alpha,
+                     label_text_size = label_text_size,
+                     tick_text_size = tick_text_size,
+                     legend_width = legend_width,
+                     legend_height = legend_height,
+                     legend_position = legend_position,
+                     highlight_stroke_multiplier=highlight_stroke_multiplier)
 }
 
 ################################################################################
@@ -909,15 +933,15 @@ multi_edge_density_plot <- function(...){
     format_criteria() %>% 
     format_models() %>% 
     ggplot(aes(x = criteria, y=edge_density,))+
-    geom_point(aes( color = model), position = position_dodge(width = 0.75))+
-    stat_summary(fun.y = mean, geom = "point") + 
-    stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.3)+
+    # geom_point(aes( color = model), position = position_dodge(width = 0.75))+
+    # stat_summary(fun.y = mean, geom = "point") + 
+    # stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.3)+
     theme_bw()+
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x="", y="Edge density")
+    labs(x=NULL, y="Edge density")
   
   # Add statistics
-  plt + 
+  plt <- plt + 
     ggpubr::geom_pwc(aes(group = criteria), 
                      method = "wilcox.test",
                      label = "p.signif",
@@ -926,4 +950,7 @@ multi_edge_density_plot <- function(...){
                      vjust = 0.5)+
     scale_color_manual(values = brewer.pal(7, "Dark2")[-6])+
     labs(color = "")
+  
+  out_plt <- plt + plot_selector(distribution_vis = "points")
+  return(out_plt)
 }

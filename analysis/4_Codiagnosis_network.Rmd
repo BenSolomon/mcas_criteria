@@ -19,26 +19,14 @@ source(here("utils/figures.R"))
 - Conversely, a poor set of criteria will generate highly variable diagnoses in each iteration and rates of co-occurrence will be comparatively lower.
 
 # Import and process data
-```{r, message=F}
-# Original outputs
-df_gpt3.5 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.csv.gz"))
-df_gpt4.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4.csv.gz"))
-df_claude3_haiku_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0.csv.gz"))
-df_claude3_haiku_t0.1 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t0.1.csv.gz"))
-df_claude3_opus_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0.csv.gz"))
-df_gemini1.0_pro_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0.csv.gz"))
-df_gemini1.5_flash_t1.0 <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0.csv.gz"))
-```
 
 ```{r, message = F}
-# ICD mapped outputs
-#TODO Find source of NAs 
-#TODO drop index column in processing script
-df_gpt3.5_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt3.5_icd.csv.gz")) %>% drop_na() %>% select(-index)
-df_gpt4.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gpt4_icd.csv.gz")) %>% drop_na() %>% select(-index)
-df_claude3_haiku_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_haiku_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
-df_claude3_opus_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_claude3_opus_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
-df_gemini1.0_pro_t1.0_icd <- read_csv(here("data/processed_diagnoses/diagnoses_gemini1.0_pro_t1.0_icd.csv.gz")) %>% drop_na() %>% select(-index)
+df_gpt3.5 <- read_model("gpt-3.5-turbo-1106", icd = FALSE)
+df_gpt4.0 <- read_model("gpt-4-turbo-preview", icd = FALSE)
+df_claude3_haiku_t1.0 <- read_model("claude-3-haiku-20240307_t1-0", icd = FALSE)
+df_claude3_opus_t1.0 <- read_model("claude-3-opus-20240229_t1-0", icd = FALSE)
+df_gemini1.0_pro_t1.0 <- read_model("gemini-1.0-pro-002_t1-0", icd = FALSE)
+df_gemini1.5_pro_t1.0 <- read_model("gemini-1.5-pro-001_t1-0", icd = FALSE)
 ```
 
 ```{r, message = F}
@@ -47,7 +35,6 @@ df_gpt4.0_icd <- read_model("gpt-4-turbo-preview", icd = TRUE)
 df_claude3_haiku_t1.0_icd <- read_model("claude-3-haiku-20240307_t1-0", icd = TRUE)
 df_claude3_opus_t1.0_icd <- read_model("claude-3-opus-20240229_t1-0", icd = TRUE)
 df_gemini1.0_pro_t1.0_icd <- read_model("gemini-1.0-pro-002_t1-0", icd = TRUE)
-df_gemini1.5_flash_t1.0_icd <- read_model("gemini-1.5-flash-preview-0514_t1-0", icd = TRUE)
 df_gemini1.5_pro_t1.0_icd <- read_model("gemini-1.5-pro-001_t1-0", icd = TRUE)
 ```
 
@@ -59,6 +46,7 @@ df_gpt4.0_codiag <- create_codiagnosis_df(df_gpt4.0, remove_singletons = T)
 df_claude3_haiku_t1.0_codiag <- create_codiagnosis_df(df_claude3_haiku_t1.0, remove_singletons = T)
 df_claude3_opus_t1.0_codiag <- create_codiagnosis_df(df_claude3_opus_t1.0, remove_singletons = T)
 df_gemini1.0_pro_t1.0_codiag <- create_codiagnosis_df(df_gemini1.0_pro_t1.0, remove_singletons = T)
+df_gemini1.5_pro_t1.0_codiag <- create_codiagnosis_df(df_gemini1.5_pro_t1.0, remove_singletons = T)
 ```
 
 
@@ -105,7 +93,7 @@ for (l in layouts){
 ### Original responses
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
-top_n <-  200
+top_n <-  100
 seed <- 321
 graph_layout <- "stress"
 
@@ -120,6 +108,7 @@ codiag_graph_wrapper(df_gpt4.0_codiag)+ ggtitle("ChatGPT 4.0", subtitle = sprint
 codiag_graph_wrapper(df_claude3_haiku_t1.0_codiag)+ ggtitle("Claude 3 Haiku", subtitle = sprintf("Top %s", top_n))
 codiag_graph_wrapper(df_claude3_opus_t1.0_codiag)+ ggtitle("Claude 3 Opus", subtitle = sprintf("Top %s", top_n))
 codiag_graph_wrapper(df_gemini1.0_pro_t1.0_codiag)+ ggtitle("Gemini 1.0 Pro", subtitle = sprintf("Top %s", top_n))
+codiag_graph_wrapper(df_gemini1.5_pro_t1.0_codiag)+ ggtitle("Gemini 1.5 Pro", subtitle = sprintf("Top %s", top_n))
 ```
 ### ICD converted respones
 
@@ -138,14 +127,14 @@ codiag_graph_wrapper(df_gemini1.5_pro_t1.0_icd_codiag)+ ggtitle("Gemini 1.5 Pro 
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
 set.seed(seed)
-multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
+multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 100, layout="stress",
                              df_gpt3.5_codiag, df_gpt4.0_codiag, 
                              df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
                              df_gemini1.0_pro_t1.0_codiag, df_gemini1.5_pro_t1.0_codiag)
 ```
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
-multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="stress",
+multi_make_codiagnosis_graph(threshold_method = "average", top_n = 100, layout="stress",
                              df_gpt3.5_codiag, df_gpt4.0_codiag, 
                              df_claude3_haiku_t1.0_codiag, df_claude3_opus_t1.0_codiag,
                              df_gemini1.0_pro_t1.0_codiag, df_gemini1.5_pro_t1.0_codiag)
@@ -154,7 +143,7 @@ multi_make_codiagnosis_graph(threshold_method = "average", top_n = 200, layout="
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
 set.seed(seed)
-multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layout="stress",
+multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 100, layout="stress",
                              df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
                              df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
                              df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)
@@ -162,7 +151,7 @@ multi_make_codiagnosis_graph(threshold_method = "individual", top_n = 200, layou
 
 
 ```{r, fig.width=8, fig.height=6, warning=F, message=F}
-multi_make_codiagnosis_graph(threshold_method = "average", top_n = 150, layout="stress",
+multi_make_codiagnosis_graph(threshold_method = "average", top_n = 100, layout="stress",
                              df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, 
                              df_claude3_haiku_t1.0_icd_codiag, df_claude3_opus_t1.0_icd_codiag,
                              df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)
@@ -180,257 +169,32 @@ multi_make_codiagnosis_graph(threshold_method = "average", top_n = 150, layout="
 ### Original responses
 
 ```{r, fig.width=4, fig.height=3.5}
-multi_edge_density_plot(df_gpt3.5_codiag, df_gpt4.0_codiag, df_claude3_haiku_t1.0_codiag,
-                        df_claude3_opus_t1.0_codiag, df_gemini1.0_pro_t1.0_codiag)  
+multi_edge_density_plot(
+  df_gpt3.5_codiag,
+  df_gpt4.0_codiag,
+  df_claude3_haiku_t1.0_codiag,
+  df_claude3_opus_t1.0_codiag,
+  df_gemini1.0_pro_t1.0_codiag,
+  df_gemini1.5_pro_t1.0_codiag
+)  
 
 ```
 
 ### ICD converted responses
 
 ```{r, fig.width=4, fig.height=3.5}
-multi_edge_density_plot(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
-                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag, df_gemini1.5_pro_t1.0_icd_codiag)  
-
+plt_edge_icd <- multi_edge_density_plot(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag
+)  
+plt_edge_icd
 ```
 
 
-## Bootstrapping individual model
-```{r, eval=F}
-# Run in script scripts/network_analysis/edge_density_ci.R
-boot_graph_ci <- function(g, B, seed=NULL){
-  if (!is.null(seed)){set.seed(seed)}
-  g <- as_adjacency_matrix(g)  
-  g <- as.matrix(g) 
-  g <- snowboot::vertboot(g, boot_rep = B)
-  g <- sapply(1:B, function(x) edge_density(graph_from_adjacency_matrix(g[[x]])))
-  quantile(g, c(0.025, 0.5, 0.975))
-}
-
-# Calculate edge density 95% CI for each criteria
-edge_density_boot <- function(df, replications = 100, seed = 1234){
-  df_density <- df %>%
-    ungroup() %>%
-    select(criteria, from, to, weight = n, rank) %>%
-    group_by(criteria) %>%
-    nest() %>%
-    mutate(boot = map(data, function(g){
-      g <-  graph_from_data_frame(g, directed = F)
-      out <- boot_graph_ci(g, B=replications, seed=seed)
-      out["edge_density"] = edge_density(g)
-      out
-    })) %>%
-    select(-data) %>%
-    unnest_wider(boot)
-  return(df_density)
-}
-
-edge_density_boot(df_gpt4.0_codiag, replications = 1000)
-```
-
-```{r}
-edge_density_plot <- function(df){
-  df %>% 
-    format_criteria() %>% 
-    ggplot(aes(x = criteria))+
-    geom_point(aes(y=edge_density), color = "black")+
-    geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4)+
-    theme_bw()+
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x="", y="Edge density")
-}
-```
-```{r, fig.width=2, fig.height=4, message = F}
-models <- c("gpt3", "gpt4", "gpt4_icd")
-
-for (m in models){
-  path <- sprintf("data/network_analysis/edge_density_boot_%s.csv", m)
-  print(path)
-  plt <- read_csv(here(path)) %>% 
-    edge_density_plot()+
-    ggtitle(m)
-  print(plt)
-}
-
-```
-
-### Permutation testing of edge density significance
-```{r, eval = F}
-# Run in separate script source(here("scripts/network_analysis/edge_density_permutation.R"))
-library(here)
-source(here("utils/data_processing.R"))
-source(here("utils/figures.R"))
-library(future.apply)
-
-threads <- 48
-n_boot <- 500
-model <- "gpt4"
-
-read_path <- sprintf("data/processed_diagnoses/diagnoses_%s.csv.gz", model)
-df <- read_csv(here(read_path))
-df_codiag <- create_codiagnosis_df(df)
-
-df_density <- df_codiag %>%
-  ungroup() %>%
-  select(criteria, from, to, weight = n, rank) %>%
-  group_by(criteria) %>%
-  nest() %>%
-  mutate(data = map_dbl(data, function(g){
-    g <-  graph_from_data_frame(g, directed = F)
-    edge_density(g)
-  })) %>% 
-  deframe()
-
-
-difference_dist <- function(x){
-  d <- dist(x, method = "manhattan")
-  v <- as.dist(apply(combn(x, 2, simplify = T), 2, diff))
-  d[1:length(v)] <- v
-  broom::tidy(d)
-}
-
-criteria_levels <- c(
-  "eular_acr_sle",
-  "slicc_sle",
-  "mcas_consortium",
-  "mcas_alternative"
-)
-
-graph_permutation_diff <- function(){
-  t(combn(c(
-    "eular_acr_sle",
-    "mcas_alternative",
-    "mcas_consortium",
-    "slicc_sle"),
-    2)) %>% 
-    as.data.frame() %>% 
-    mutate(data = map2(V1, V2, function(x,y){
-      filter(df, criteria == x | criteria == y) %>% 
-        mutate(diagnosis = sample(diagnosis, replace = F)) %>% 
-        create_codiagnosis_df()
-    })) %>% 
-    mutate(data = map_dbl(data, function(d){
-      ungroup(d) %>%
-        select(criteria, from, to, weight = n, rank) %>% 
-        nest(.by = criteria) %>% 
-        mutate(data = map_dbl(data, ~edge_density(graph_from_data_frame(.)))) %>% 
-        deframe() %>% diff()
-    })) %>% 
-    unite(comparison, V1, V2, sep = "__") %>% 
-    deframe()
-}
-
-
-plan(multisession, workers = threads)
-permutation_data <- future_replicate(n = n_boot, graph_permutation_diff(), future.seed = 1234)
-
-permutation_data <- as.data.frame(permutation_data) %>% 
-  rownames_to_column("pair") %>% 
-  separate(pair, into = c("item1", "item2"), sep = "__") %>% 
-  mutate(data = map2(item1, item2, ~sort(factor(c(.x,.y), levels = criteria_levels)))) %>% 
-  unnest_wider(data, names_sep = "") %>% 
-  mutate(reverse = item1 != data1) %>% 
-  unite(pair, data1, data2, sep = "__") %>% 
-  select(!contains("item")) %>% 
-  pivot_longer(!c(pair, reverse), names_to = "i", values_to = "difference") %>% 
-  mutate(difference = ifelse(reverse, -difference, difference)) %>% 
-  select(-reverse)
-
-original_data <- difference_dist(df_density) %>% 
-  rename(difference = distance) %>% 
-  mutate_at(vars(c(item1, item2)), as.character) %>% 
-  mutate(data = map2(item1, item2, ~sort(factor(c(.x,.y), levels = criteria_levels)))) %>% 
-  unnest_wider(data, names_sep = "") %>% 
-  mutate(reverse = item1 != data1) %>% 
-  mutate(difference = ifelse(reverse, -difference, difference)) %>% 
-  unite(pair, data1, data2, sep = "__") %>% 
-  select(pair, difference)
-
-permutation_plot_raw <- ggplot(permutation_data, aes(x = difference))+
-  geom_histogram()+
-  geom_vline(data = original_data, aes(xintercept = difference))+
-  facet_wrap(~pair)+
-  theme_bw()
-
-permutation_plot_abs <- ggplot(permutation_data, aes(x = abs(difference)))+
-  geom_histogram()+
-  geom_vline(data = original_data, aes(xintercept = abs(difference)))+
-  facet_wrap(~pair)+
-  theme_bw()
-
-permutation_significance_abs <- permutation_data %>% 
-  summarise(permutation = list(difference), .by = pair) %>% 
-  left_join(original_data) %>% 
-  mutate(
-    abs_quantile = map2_dbl(difference, permutation, ~1-ecdf(abs(.y))(abs(.x)))
-  ) %>% 
-  select(pair, abs_quantile)
-
-output_list <- list(
-  "original_data" = original_data,
-  "permutation_data" = permutation_data,
-  "permutation_significance_abs" = permutation_significance_abs,
-  "permutation_plot_raw" = permutation_plot_raw,
-  "permutation_plot_abs" = permutation_plot_abs
-)
-
-write_path <- sprintf("data/network_analysis/edge_density_permutation_%s.RDS", model)
-saveRDS(output_list, here(write_path))
-```
-
-
-
-```{r}
-readRDS(here("data/network_analysis/edge_density_permutation_gpt4.RDS"))
-```
-
-- The observed difference in edge densities is greater that 95% of all randomly permuted differences (p < 0.05) for all but the comparison between the SLICC SLE criteria and the Consortium MCAS criteria
-
-```{r, fig.width=2, fig.height=4, message=F}
-# Combining permutation p-values with edge density mean-CI plot
-edge_density_sig_plot <- function(ci_df, permutation_df=NULL){
-  stat_test_template <- ci_df %>% 
-    format_criteria() %>% 
-    mutate(criteria = as.character(criteria)) %>% 
-    pivot_longer(-criteria, names_to = "name", values_to = "edge_density") %>% 
-    rstatix::t_test(edge_density ~ criteria) %>% 
-    rstatix::add_xy_position() %>% 
-    sort_paired_columns(prefix = "group")
-  
-  permutation_df <- permutation_df %>% 
-    separate(pair, into = c("group1", "group2"), sep = "__") %>%
-    rename(p = abs_quantile) %>% 
-    mutate(index = 1:n()) %>% 
-    pivot_longer(-c(p, index), names_to = "group", values_to = "criteria") %>% 
-    format_criteria() %>% 
-    pivot_wider(names_from = "group", values_from = "criteria") %>% 
-    select(-index) %>% 
-    sort_paired_columns(prefix = "group")
-  
-  stat_test <- stat_test_template %>% 
-    select(-p, -p.adj, -p.adj.signif) %>%
-    left_join(permutation_df, by = c("group1", "group2")) %>% 
-    mutate(p.adj = p.adjust(p, method = "BH")) %>% 
-    mutate(p.adj.signif = ifelse(p.adj <= 0.05, "*", "ns"))
-  
-  ci_df %>%
-    format_criteria() %>%
-    ggplot(aes(x = criteria))+
-    geom_point(aes(y=edge_density), color = "black")+
-    geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.4)+
-    ggpubr::stat_pvalue_manual(data = stat_test, hide.ns = T)+
-    theme_bw()+
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    labs(x="", y="Edge density")
-}
-
-plt_density_gpt4 <- edge_density_sig_plot(
-  ci_df = read_csv(here("data/network_analysis/edge_density_boot_gpt4.csv")),
-  permutation_df = readRDS(here("data/network_analysis/edge_density_permutation_gpt4.RDS")) %>% 
-    .$permutation_significance_abs 
-)
-
-plt_density_gpt4
-```
 
 # Plot centrality
 ```{r}
@@ -466,46 +230,139 @@ centrality_similarity <- function(data){
 centrality_similarity(df_centr_gpt4)
 ```
 ```{r}
-centrality_wrapper <- function(data){
-  make_codiagnosis_graph(data, n_diagnoses = 200) %>% 
+centrality_wrapper <- function(data, n_diag=NULL){
+  make_codiagnosis_graph(data, n_diagnoses = n_diag) %>% 
     calculate_subgraph_centrality() %>% 
     centrality_similarity()
 }
 
-listN(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
-                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag) %>% 
-  enframe(name = "model", value = "data") %>% 
-  mutate(data = map(data, centrality_wrapper)) %>% 
-  unnest(data) %>% 
-  summarise(cosine = mean(cosine), .by = c("V1", "V2")) %>% 
-  pivot_wider(names_from = "V2", values_from = "cosine") %>% 
-  column_to_rownames("V1") %>% 
-  as.matrix() %>% 
-  ComplexHeatmap::Heatmap()
+average_cosine_matrix <- listN(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag
+) %>%
+  enframe(name = "model", value = "data") %>%
+  mutate(data = map(data, centrality_wrapper)) %>%
+  unnest(data) %>%
+  dplyr::summarise(cosine = mean(cosine), .by = c("V1", "V2")) %>%
+  pivot_wider(names_from = "V2", values_from = "cosine") %>%
+  column_to_rownames("V1") %>%
+  as.matrix()
+
+average_cosine_matrix
+
+
 ```
-```{r}
-centrality_wrapper <- function(data){
-  # make_codiagnosis_graph(data, n_diagnoses = 200) %>% 
-  make_codiagnosis_graph(data) %>% 
-    calculate_subgraph_centrality()
-  # %>% 
-    # centrality_similarity()
+
+
+
+```{r, fig.width=5.5, fig.height=3.5}
+custom_heatmap <- function(data, 
+                           plot_title=NULL, 
+                           legend_title=NULL, 
+                           color_scale = NULL, 
+                           midpoint = NULL, 
+                           symmetric = T, 
+                           matrix_title_size=10,
+                           matrix_names_size=8,
+                           legend_title_size=10,
+                           legend_label_size=8,
+                           dendrograms=T,
+                           dendrogram_weight = unit(10, "mm"),
+                           legend_orientation = "vertical",
+                           legend_length=NULL,
+                           grid_lines=F
+                           ){
+  
+  # Determin midpoint of data
+  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
+  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
+  scale_mid <- scale_min + (scale_max - scale_min)/2
+  
+  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
+  
+  # Set default colorscales based on symmetry of data
+  if (is.null(color_scale) & symmetric){color_scale <- hcl.colors(3, "Earth")}
+  if (is.null(color_scale) & !symmetric){color_scale <- viridis::viridis(3)}
+  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
+  
+  # Legend parameters
+  legend_params <- list(
+      "title_gp" = grid::gpar(fontsize = legend_title_size, fontface = "bold"),
+      "labels_gp" = grid::gpar(fontsize = legend_label_size),
+      "direction" = legend_orientation
+      )
+  
+  # Heatmap parameters
+  heatmap_arguments <- list(
+    "matrix" = data,
+    "col" = color_function,
+    "row_names_gp" = grid::gpar(fontsize = matrix_names_size),
+    "column_names_gp" = grid::gpar(fontsize = matrix_names_size),
+    "show_column_dend"=dendrograms,
+    "show_row_dend"=dendrograms
+  )
+  
+  if(!is.null(legend_title)){heatmap_arguments[["name"]] <- legend_title}
+  if(grid_lines){heatmap_arguments[["rect_gp"]] <- grid::gpar(col = "black", lwd = 1)}
+  if(dendrograms){
+    heatmap_arguments[['column_dend_height']] <- dendrogram_weight
+    heatmap_arguments[['row_dend_width']] <- dendrogram_weight
+  }
+  
+  legend_side <- ifelse(legend_orientation=="vertical","right","bottom")
+  if(legend_orientation=="vertical" &!is.null(legend_length)){
+    legend_params[['legend_height']] <- legend_length}
+  if(legend_orientation=="horizontal" &!is.null(legend_length)){
+    legend_params[['legend_width']] <- legend_length}
+  # Function call
+  heatmap_arguments[["heatmap_legend_param"]] <- legend_params
+  ht <- do.call(Heatmap, heatmap_arguments)
+  draw(ht, heatmap_legend_side=legend_side, align_heatmap_legend = "global_center")
+  
 }
 
-cosine_data <- listN(df_gpt3.5_icd_codiag, df_gpt4.0_icd_codiag, df_claude3_haiku_t1.0_icd_codiag,
-                        df_claude3_opus_t1.0_icd_codiag, df_gemini1.0_pro_t1.0_icd_codiag) %>% 
-  enframe(name = "model", value = "data") %>% 
-  mutate(data = map(data, ~centrality_wrapper(.) %>% rownames_to_column("criteria"))) %>% 
-  unnest(data) %>% 
-  mutate_all(~replace_na(., 0)) %>% 
-  unite(sample, model, criteria, sep = "_") %>% 
-  column_to_rownames("sample") %>% 
-  t() %>% 
-  lsa::cosine()
-
-ComplexHeatmap::Heatmap(cosine_data)
+custom_heatmap(average_cosine_matrix, symmetric = F, legend_title = "Cosine similarity", grid_lines = T, dendrograms = F, legend_orientation = "horizontal", legend_length=unit(10, "cm"))
 ```
+
+
+```{r}
+individual_cosine_matrix <- combine_data_frames(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag,
+  additional_function = function(x){
+    x %>% 
+      make_codiagnosis_graph() %>% 
+      calculate_subgraph_centrality() %>% 
+      rownames_to_column("criteria") %>% 
+      pivot_longer(-criteria, names_to="diagnosis", values_to="centrality")
+  }
+) %>% 
+  unite(criteria, original_df, criteria, sep = "-") %>% 
+  pivot_wider(names_from = "diagnosis", values_from="centrality", values_fill=0) %>% 
+  column_to_rownames("criteria") %>% 
+  as.matrix() %>% 
+    t() %>% 
+    lsa::cosine() %>% 
+    as.data.frame() %>% 
+    rownames_to_column("V1") %>% 
+    pivot_longer(-V1, names_to = "V2", values_to = "cosine") %>% 
+  pivot_wider(names_from = "V2", values_from = "cosine") %>%
+  column_to_rownames("V1") %>%
+  as.matrix()
+
+individual_cosine_matrix[1:5, 1:5]
+```
+
 ```{r, fig.width=5.5, fig.height=3.5}
+library(ComplexHeatmap)
 custom_heatmap2 <- function(data, 
                            title, 
                            metric, 
@@ -532,7 +389,7 @@ custom_heatmap2 <- function(data,
 
   annotation_data <- data.frame(
   rownames = rownames(cosine_data),
-  model = str_extract(rownames(cosine_data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro"),
+  model = str_extract(rownames(cosine_data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro|gemini1.5_pro"),
   criteria = str_extract(rownames(cosine_data), "slicc_sle|eular_acr_sle|mcas_consortium|mcas_alternative")
 ) %>% 
   column_to_rownames("rownames") %>% 
@@ -540,7 +397,7 @@ custom_heatmap2 <- function(data,
   format_models()
 
   # model_colors <- brewer.pal(7, "Dark2")[-6]
-  model_colors <- colorspace::lighten(brewer.pal(5, "Dark2"), amount = -0.1)
+  model_colors <- colorspace::lighten(brewer.pal(6, "Dark2"), amount = -0.1)
   names(model_colors) <- unique(annotation_data$model)
   
   criteria_colors <- colorspace::lighten(brewer.pal(4, "Set1"), amount = 0.3)
@@ -552,18 +409,6 @@ custom_heatmap2 <- function(data,
     col = list(Model = model_colors, Criteria = criteria_colors)
   )
   
-  # Heatmap(
-  #   data,
-  #   name = "Distance",
-  #   top_annotation = col_annotation,
-  #   rect_gp = grid::gpar(col = "black", lwd = 1),
-  #   show_row_names = FALSE,
-  #   show_column_names = FALSE,
-  #   cluster_columns = TRUE,
-  #   cluster_rows = TRUE,
-  #   col = circlize::colorRamp2(c(min(distance_matrix), max(distance_matrix)), c("white", "red"))
-  # )
-  
   ComplexHeatmap::Heatmap(
     data,
     col = color_function,
@@ -573,19 +418,15 @@ custom_heatmap2 <- function(data,
     cluster_columns = TRUE,
     cluster_rows = TRUE,
     
-    # rect_gp = grid::gpar(col = "black", lwd = 1),
     column_title = title,
     name = metric,
-    # row_names_gp = grid::gpar(fontsize = font_size), 
-    # column_names_gp = grid::gpar(fontsize = font_size),
     column_dend_height  = dendrogram_weight,
     row_dend_width = dendrogram_weight,
-    # heatmap_legend_param = legend_params
   )
   
 }
   
-custom_heatmap2(cosine_data, 
+alt_heatmap <- custom_heatmap2(individual_cosine_matrix, 
                 color_scale = viridis::viridis(3), 
                 title = " ", 
                 metric = "Cosine\nsimilarity", 
@@ -593,181 +434,129 @@ custom_heatmap2(cosine_data,
                 font_size = 8)  
   
 
-
+alt_heatmap
 ```
-
+```{r, fig.width=6, fig.height=4}
+plt_alt <- plot_grid(grid::grid.grabExpr(ComplexHeatmap::draw(alt_heatmap)))
+plt_alt
+```
 ```{r}
-custom_heatmap <- function(data, 
-                           title, 
-                           metric, 
-                           color_scale = hcl.colors(3, "Earth"), 
-                           midpoint = NULL, 
-                           symmetric = T, 
-                           font_size=10,
-                           dendrogram_weight = unit(10, "mm"),
-                           legend_params = list(NULL)){
-  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
-  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
-  scale_mid <- scale_min + (scale_max - scale_min)/2
-  
-  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
-  
-  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
-  
-  legend_params <- append(
-    list(
-      title_gp = grid::gpar(fontsize = font_size),
-      labels_gp = grid::gpar(fontsize = font_size*0.8)), 
-    legend_params)
-  
-  ComplexHeatmap::Heatmap(
-    data,
-    col = color_function,
-    rect_gp = grid::gpar(col = "black", lwd = 1),
-    column_title = title,
-    name = metric,
-    row_names_gp = grid::gpar(fontsize = font_size), 
-    column_names_gp = grid::gpar(fontsize = font_size),
-    column_dend_height  = dendrogram_weight,
-    row_dend_width = dendrogram_weight,
-    heatmap_legend_param = legend_params
-  )
-}
+ggsave(here("figures/4_alt_heatmap.pdf"), plot=plt_alt, height = 4, width = 6)
 ```
 
-```{r}
-plt_heat_all %>% ComplexHeatmap::Heatmap()
-```
-
-
-```{r, fig.width=4, fig.height=3.5}
-cp_font <- 9
-plt_heat_all <- df_gpt4.0_codiag %>% 
-  make_codiagnosis_graph() %>% 
-  calculate_subgraph_centrality() %>% 
-  rownames_to_column("criteria") %>% 
-  format_criteria() %>% 
-  column_to_rownames("criteria") %>% 
-  as.matrix() %>% 
-  t() %>% 
-  lsa::cosine() %>% 
-  custom_heatmap(color_scale = viridis::viridis(3), title = " ", metric = "Cosine\nsimilarity", symmetric = F)
-plt_heat_all
-
-plt_heat_top <- df_centr_gpt4 %>% 
-  rownames_to_column("criteria") %>% 
-  format_criteria() %>% 
-  column_to_rownames("criteria") %>% 
-  as.matrix() %>% 
-  t() %>% 
-  lsa::cosine() %>% 
-  custom_heatmap(color_scale = viridis::viridis(3), title = " ", metric = "Cosine\nsimilarity", symmetric = F,
-                 font_size = 8
-                 )
-plt_heat_top
-```
 # Final plot
 
-```{r, fig.width=5, fig.height=6.75}
-set.seed(1234);plt_graph_gpt4 <- centrality_graph(
-  graph_top_gpt4, 
-  layout = "stress",
-  point_size = 2, 
-  border_size = 0.5,
-  edge_width = 0.5,
-  edge_alpha = 0.75)
+```{r, fig.width=3.5, fig.height=5.5}
+# n_diagnoses_bar <- 10
+# n_diagnoses_abundance <- 50
+# n_diagnoses_cumulative <- 50
 
+title_size <- 9
+label_size <- 6
+legend_x_pad <- 4
+legend_y_pad <- 2
 
-plt_fig <- cowplot::plot_grid(
-  cowplot::plot_grid(
-    NULL, plt_graph_gpt4, nrow=1, rel_widths=c(0.05,0.9), labels = c("A","")
-  ),
-  NULL,
-  cowplot::plot_grid(
-    plt_density_gpt4,
-    NULL,
-    grid::grid.grabExpr(ComplexHeatmap::draw(plt_heat_all)),
-    nrow = 1,
-    rel_widths = c(0.3,0.05,0.7),
-    labels = c("B","","C")
-  ),
-
-  ncol = 1,
-  rel_heights = c(1,0.05,0.8)
-)
-
-plt_fig 
-```
-
-```{r, fig.width=3.5, fig.height=6}
-set.seed(1234);plt_graph_gpt4 <- centrality_graph(
-  graph_top_gpt4, 
-  layout = "stress",
-  point_size = 1.25, 
-  border_size = 0.25,
-  edge_width = 0.5,
-  edge_alpha = 0.5, 
-  label_text_size = 9,
-  tick_text_size = 6,
-  highlight_stroke_multiplier = 3,
-  legend_height = unit(35, "pt"),
-  legend_width = unit(10, "pt")) 
-
-plt_density_gpt4 <- edge_density_sig_plot(
-  ci_df = read_csv(here("data/network_analysis/edge_density_boot_gpt4.csv")),
-  permutation_df = readRDS(here("data/network_analysis/edge_density_permutation_gpt4.RDS")) %>% 
-    .$permutation_significance_abs 
-) + theme(
-  axis.text.y = element_text(size=7), 
-  axis.title.y = element_text(size=9))
-
-plt_heat_all <- df_gpt4.0_codiag %>% 
-  make_codiagnosis_graph() %>% 
-  calculate_subgraph_centrality() %>% 
-  rownames_to_column("criteria") %>% 
-  format_criteria() %>% 
-  column_to_rownames("criteria") %>% 
-  as.matrix() %>% 
-  t() %>% 
-  lsa::cosine() %>% 
-  custom_heatmap(color_scale = viridis::viridis(3), 
-                 title = " ", 
-                 metric = "Cosine similarity", 
-                 symmetric = F, 
-                 font_size = 8,
-                 dendrogram_weight = unit(3, "mm"),
-                 legend_params = list(
-    legend_height = unit(5, 'cm'),
-    direction = "horizontal"
+apply_text_formatting <- list(theme(
+  axis.text = element_text(size = label_size),
+  axis.title = element_text(size = title_size),
+  legend.text = element_text(size = label_size-1),
+  strip.text = element_text(size = label_size+1),
+  legend.key.height = unit(0.4, 'cm'),
+  legend.box.background = element_rect(color = "black", size = 1),
+  legend.margin = margin(t = legend_y_pad, r = legend_x_pad, b = legend_y_pad, l = legend_x_pad*1.1),
+  legend.spacing.x = unit(0, 'cm'),                           # Horizontal spacing between legend items
+  # legend.spacing.y = unit(0, 'cm'),
+  # legend.box.spacing = unit(0, "cm")
   ))
+
+strip_margin <- 1
+strip_formatting <- list(theme(
+  strip.text.x = element_text(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin)), 
+  strip.text.y = element_text(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin))
+  # strip.background = element_rect(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin))
+))
+
+set.seed(1234)
+plt_graph_icd <-
+  multi_make_codiagnosis_graph(
+    threshold_method = "average",
+    top_n = 100,
+    layout = "stress",
+    df_gpt3.5_codiag,
+    df_gpt4.0_codiag,
+    df_claude3_haiku_t1.0_codiag,
+    df_claude3_opus_t1.0_codiag,
+    df_gemini1.0_pro_t1.0_codiag,
+    df_gemini1.5_pro_t1.0_codiag,
+    point_size = 1.25,
+    border_size = 0.25,
+    edge_width = 0.5,
+    edge_alpha = 0.5,
+    label_text_size = 9,
+    tick_text_size = 6,
+    highlight_stroke_multiplier = 3,
+    legend_height = unit(25, "pt"),
+    legend_width = unit(10, "pt")
+  ) 
+
+plt_edge_icd <- multi_edge_density_plot(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag
+)  +
+  apply_text_formatting +
+  theme(legend.position = "bottom", legend.direction = "horizontal") +
+  guides(color = guide_legend(override.aes = list(size = 1), ncol = 2))+
+  scale_y_continuous(expand = expansion(mult = c(0.1,0.1)))
+
+plt_heatmap_icd <-
+  custom_heatmap(
+    average_cosine_matrix,
+    symmetric = F,
+    legend_title = "Cosine similarity",
+    grid_lines = T,
+    dendrograms = F,
+    legend_orientation = "horizontal",
+    legend_length = unit(2, "cm"),
+    matrix_names_size = 6, 
+    legend_title_size = 7.5,
+    legend_label_size = 6
+  )
 
 
 plt_fig <- cowplot::plot_grid(
   NULL, 
   cowplot::plot_grid(
-    NULL, plt_graph_gpt4, nrow=1, rel_widths=c(0.05,0.9)
+    NULL, plt_graph_icd, nrow=1, rel_widths=c(0.05,0.9)
   ),
   NULL,
   cowplot::plot_grid(
-    plot_grid(NULL, plt_density_gpt4 ,rel_heights = c(0.1, 1), ncol = 1),
+    plot_grid(NULL, plt_edge_icd ,rel_heights = c(0.1, 1), ncol = 1),
     NULL,
-    grid::grid.grabExpr(ComplexHeatmap::draw(plt_heat_all, heatmap_legend_side = "bottom")),
+    cowplot::plot_grid(
+      NULL,
+      grid::grid.grabExpr(ComplexHeatmap::draw(plt_heatmap_icd, heatmap_legend_side = "bottom")),
+      NULL,
+      ncol = 1,
+      rel_heights = c(0.1, 1, 0.1)
+    ),
     nrow = 1,
-    rel_widths = c(0.4,0.05,0.7),
+    rel_widths = c(0.5, 0.1, 0.6),
     labels = c("B","","C"),
     axis = 'h', align = 'bt'
   ),
 
   ncol = 1,
-  rel_heights = c(0.05, 1, 0.01, 1),
+  rel_heights = c(0.05, 0.95, 0.01, 1),
   labels = c("A")
 )
 
 plt_fig 
 ```
-
-
 ```{r}
-ggsave(here("figures/5_Network_analysis.pdf"), plot=plt_fig, height = 6, width = 3.5)
+ggsave(here("figures/4_Network_analysis.pdf"), plot=plt_fig, height = 5.5, width = 3.5)
 ```
 
