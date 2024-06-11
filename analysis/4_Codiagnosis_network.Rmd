@@ -192,6 +192,8 @@ plt_edge_icd <- multi_edge_density_plot(
   df_gemini1.5_pro_t1.0_icd_codiag
 )  
 plt_edge_icd
+plt_edge_icd$data %>% summarise(mean(edge_density), .by="criteria")
+extract_ggpubr_pvalues(plt_edge_icd)
 ```
 
 
@@ -327,7 +329,41 @@ custom_heatmap <- function(data,
 
 custom_heatmap(average_cosine_matrix, symmetric = F, legend_title = "Cosine similarity", grid_lines = T, dendrograms = F, legend_orientation = "horizontal", legend_length=unit(10, "cm"))
 ```
-
+```{r}
+df_comp <- listN(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag
+) %>%
+  enframe(name = "model", value = "data") %>%
+  mutate(data = map(data, centrality_wrapper)) %>%
+  unnest(data)
+```
+```{r, fig.width=3.5, fig.height=4}
+cosine_similarity_compare <- function(df, pt_size=1,p_size=3){
+  # Format data
+  df <- df %>% 
+    unite(comp, V1, V2) %>% 
+    filter(comp %in% c("MCAS - Consortium_MCAS - Alternative", "SLE - EULAR-ACR_SLE - SLICC")) %>% 
+    mutate(comp = gsub("_", "\nvs. ", comp)) %>%  
+    format_models() 
+  
+  # Plot data
+  df %>% 
+    ggplot(aes(x = comp, y = cosine, color = model))+
+    geom_point(size=pt_size, position = position_dodge(width = 0.75))+
+    theme_bw() +
+    ggpubr::stat_compare_means(aes(group = comp), method = "wilcox.test", label = "p", vjust = 0.75, show.legend = F, size = p_size)+
+    theme(axis.text.x = element_text(angle =90, hjust =1)) +
+    labs(x=NULL, y="Cosine similarity") +
+    scale_color_brewer(palette = "Dark2") +
+    labs(color = "")
+}
+cosine_similarity_compare(df_comp)
+```
 
 ```{r}
 individual_cosine_matrix <- combine_data_frames(
@@ -362,71 +398,7 @@ individual_cosine_matrix[1:5, 1:5]
 ```
 
 ```{r, fig.width=5.5, fig.height=3.5}
-library(ComplexHeatmap)
-custom_heatmap2 <- function(data, 
-                           title, 
-                           metric, 
-                           color_scale = hcl.colors(3, "Earth"), 
-                           midpoint = NULL, 
-                           symmetric = T, 
-                           font_size=10,
-                           dendrogram_weight = unit(10, "mm"),
-                           legend_params = list(NULL)){
-  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
-  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
-  scale_mid <- scale_min + (scale_max - scale_min)/2
-  
-  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
-  
-  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
-  
-  # legend_params <- append(
-  #   list(
-  #     title_gp = grid::gpar(fontsize = font_size),
-  #     labels_gp = grid::gpar(fontsize = font_size*0.8)), 
-  #   legend_params)
-  
-
-  annotation_data <- data.frame(
-  rownames = rownames(cosine_data),
-  model = str_extract(rownames(cosine_data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro|gemini1.5_pro"),
-  criteria = str_extract(rownames(cosine_data), "slicc_sle|eular_acr_sle|mcas_consortium|mcas_alternative")
-) %>% 
-  column_to_rownames("rownames") %>% 
-  format_criteria() %>% 
-  format_models()
-
-  # model_colors <- brewer.pal(7, "Dark2")[-6]
-  model_colors <- colorspace::lighten(brewer.pal(6, "Dark2"), amount = -0.1)
-  names(model_colors) <- unique(annotation_data$model)
-  
-  criteria_colors <- colorspace::lighten(brewer.pal(4, "Set1"), amount = 0.3)
-  names(criteria_colors) <- unique(annotation_data$criteria)
-  
-  col_annotation <- HeatmapAnnotation(
-    Model = annotation_data$model,
-    Criteria = annotation_data$criteria,
-    col = list(Model = model_colors, Criteria = criteria_colors)
-  )
-  
-  ComplexHeatmap::Heatmap(
-    data,
-    col = color_function,
-    top_annotation = col_annotation,
-    show_row_names = FALSE,
-    show_column_names = FALSE,
-    cluster_columns = TRUE,
-    cluster_rows = TRUE,
-    
-    column_title = title,
-    name = metric,
-    column_dend_height  = dendrogram_weight,
-    row_dend_width = dendrogram_weight,
-  )
-  
-}
-  
-alt_heatmap <- custom_heatmap2(individual_cosine_matrix, 
+alt_heatmap <- model_criteria_heatmap(individual_cosine_matrix, 
                 color_scale = viridis::viridis(3), 
                 title = " ", 
                 metric = "Cosine\nsimilarity", 
@@ -437,7 +409,7 @@ alt_heatmap <- custom_heatmap2(individual_cosine_matrix,
 alt_heatmap
 ```
 ```{r, fig.width=6, fig.height=4}
-plt_alt <- plot_grid(grid::grid.grabExpr(ComplexHeatmap::draw(alt_heatmap)))
+plt_alt <- cowplot::plot_grid(grid::grid.grabExpr(ComplexHeatmap::draw(alt_heatmap)))
 plt_alt
 ```
 ```{r}
@@ -446,6 +418,7 @@ ggsave(here("figures/4_alt_heatmap.pdf"), plot=plt_alt, height = 4, width = 6)
 
 # Final plot
 
+### Version 1
 ```{r, fig.width=3.5, fig.height=5.5}
 # n_diagnoses_bar <- 10
 # n_diagnoses_abundance <- 50
@@ -453,21 +426,31 @@ ggsave(here("figures/4_alt_heatmap.pdf"), plot=plt_alt, height = 4, width = 6)
 
 title_size <- 9
 label_size <- 6
-legend_x_pad <- 4
-legend_y_pad <- 2
+legend_x_pad <- 0
+legend_y_pad <- 0
 
-apply_text_formatting <- list(theme(
-  axis.text = element_text(size = label_size),
-  axis.title = element_text(size = title_size),
-  legend.text = element_text(size = label_size-1),
-  strip.text = element_text(size = label_size+1),
-  legend.key.height = unit(0.4, 'cm'),
-  legend.box.background = element_rect(color = "black", size = 1),
-  legend.margin = margin(t = legend_y_pad, r = legend_x_pad, b = legend_y_pad, l = legend_x_pad*1.1),
-  legend.spacing.x = unit(0, 'cm'),                           # Horizontal spacing between legend items
-  # legend.spacing.y = unit(0, 'cm'),
-  # legend.box.spacing = unit(0, "cm")
-  ))
+apply_text_formatting <- list(
+  theme(
+    axis.text = element_text(size = label_size),
+    axis.title = element_text(size = title_size),
+    legend.text = element_text(size = label_size, margin=margin(0,0,0,r=1)),
+    strip.text = element_text(size = label_size + 1),
+    legend.key.height = unit(0.4, 'cm'),
+    legend.key.width = unit(0.4, 'cm'),
+    # legend.key = element_rect(size =  margin(0,0,0,0)),
+    legend.box.background = element_rect(color = "black", size = 1),
+    legend.margin = margin(
+      t = legend_y_pad,
+      r = legend_x_pad+2,
+      b = legend_y_pad,
+      l = legend_x_pad 
+    ),
+    legend.key.spacing.y = unit(-1.5, "pt"),
+    legend.box.spacing = unit(1.0,"pt"),
+    axis.text.x=element_text(angle=45,hjust=1)
+  )
+)
+
 
 strip_margin <- 1
 strip_formatting <- list(theme(
@@ -518,12 +501,13 @@ plt_heatmap_icd <-
     symmetric = F,
     legend_title = "Cosine similarity",
     grid_lines = T,
-    dendrograms = F,
+    dendrograms = T,
     legend_orientation = "horizontal",
     legend_length = unit(2, "cm"),
     matrix_names_size = 6, 
     legend_title_size = 7.5,
-    legend_label_size = 6
+    legend_label_size = 6,
+    dendrogram_weight = unit(2, "mm")
   )
 
 
@@ -534,7 +518,7 @@ plt_fig <- cowplot::plot_grid(
   ),
   NULL,
   cowplot::plot_grid(
-    plot_grid(NULL, plt_edge_icd ,rel_heights = c(0.1, 1), ncol = 1),
+    cowplot::plot_grid(NULL, plt_edge_icd ,rel_heights = c(0.1, 1), ncol = 1),
     NULL,
     cowplot::plot_grid(
       NULL,
@@ -556,7 +540,160 @@ plt_fig <- cowplot::plot_grid(
 
 plt_fig 
 ```
-```{r}
+
+### Version 2
+```{r, fig.width=3.5, fig.height=5.5}
+# n_diagnoses_bar <- 10
+# n_diagnoses_abundance <- 50
+# n_diagnoses_cumulative <- 50
+
+title_size <- 9
+label_size <- 6
+legend_x_pad <- 0
+legend_y_pad <- 0
+
+apply_text_formatting <- list(
+  theme(
+    axis.text = element_text(size = label_size),
+    axis.title = element_text(size = title_size),
+    legend.text = element_text(size = label_size, margin=margin(0,0,0,r=1)),
+    strip.text = element_text(size = label_size + 1),
+    legend.key.height = unit(0.4, 'cm'),
+    legend.key.width = unit(0.4, 'cm'),
+    # legend.key = element_rect(size =  margin(0,0,0,0)),
+    legend.box.background = element_rect(color = "black", size = 1),
+    legend.margin = margin(
+      t = legend_y_pad,
+      r = legend_x_pad+2,
+      b = legend_y_pad,
+      l = legend_x_pad 
+    ),
+    legend.key.spacing.y = unit(-1.5, "pt"),
+    legend.box.spacing = unit(1.0,"pt"),
+    axis.text.x=element_text(angle=90, vjust=0.5)
+  )
+)
+
+
+strip_margin <- 1
+strip_formatting <- list(theme(
+  strip.text.x = element_text(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin)), 
+  strip.text.y = element_text(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin))
+  # strip.background = element_rect(margin = margin(t = strip_margin, r = strip_margin, b = strip_margin, l = strip_margin))
+))
+
+set.seed(1234)
+plt_graph_icd <-
+  multi_make_codiagnosis_graph(
+    threshold_method = "average",
+    top_n = 100,
+    layout = "stress",
+    df_gpt3.5_codiag,
+    df_gpt4.0_codiag,
+    df_claude3_haiku_t1.0_codiag,
+    df_claude3_opus_t1.0_codiag,
+    df_gemini1.0_pro_t1.0_codiag,
+    df_gemini1.5_pro_t1.0_codiag,
+    point_size = 1.25,
+    border_size = 0.25,
+    edge_width = 0.5,
+    edge_alpha = 0.5,
+    label_text_size = 9,
+    tick_text_size = 6,
+    highlight_stroke_multiplier = 3,
+    legend_height = unit(25, "pt"),
+    legend_width = unit(10, "pt")
+  ) 
+
+plt_edge_icd <- multi_edge_density_plot(
+  df_gpt3.5_icd_codiag,
+  df_gpt4.0_icd_codiag,
+  df_claude3_haiku_t1.0_icd_codiag,
+  df_claude3_opus_t1.0_icd_codiag,
+  df_gemini1.0_pro_t1.0_icd_codiag,
+  df_gemini1.5_pro_t1.0_icd_codiag
+)  +
+  apply_text_formatting +
+  # theme(legend.position = "bottom", legend.direction = "horizontal") +
+  guides(color = guide_legend(override.aes = list(size = 1), ncol = 2))+
+  scale_y_continuous(expand = expansion(mult = c(0.1,0.1)))
+
+plt_cosine <- cosine_similarity_compare(df_comp, p_size = 2) +
+  apply_text_formatting
+
+plt_heatmap_icd <-
+  custom_heatmap(
+    average_cosine_matrix,
+    symmetric = F,
+    legend_title = "Cosine similarity",
+    grid_lines = T,
+    dendrograms = T,
+    legend_orientation = "horizontal",
+    legend_length = unit(2.5, "cm"),
+    matrix_names_size = 6, 
+    legend_title_size = 7.5,
+    legend_label_size = 6,
+    dendrogram_weight = unit(2.5, "mm")
+  )
+
+pd <- -1
+
+plt_fig <- cowplot::plot_grid(
+  #1
+  NULL, 
+  #2
+  cowplot::plot_grid(
+    NULL, plt_graph_icd, nrow=1, rel_widths=c(0.05,0.9)
+  ),
+  #3
+  NULL,
+  #4
+  cowplot::plot_grid(
+    #4.1
+    cowplot::plot_grid(
+      #4.1.1
+      plot_grid(
+        #4.1.1.1
+        plt_edge_icd+theme(legend.position = "none"),
+        #4.1.1.2
+        plt_cosine+theme(legend.position="none")+ylim(0.4,1), 
+        # rel_widths = c(10,9),
+        nrow=1,
+        align="h",axis="bt"
+        ),
+      #4.1.2
+      NA,
+      plot_grid(NULL,get_legend(plt_edge_icd),nrow=1,rel_widths=c(0.15,1)),
+      NA,
+      ncol=1,
+      rel_heights = c(1, 0.04, 0.1,0.1) #4.1._
+    ),
+    #4.2
+    cowplot::plot_grid(
+      #4.2.1
+      NULL,
+      #4.2.2
+      grid::grid.grabExpr(ComplexHeatmap::draw(plt_heatmap_icd, heatmap_legend_side = "bottom", padding = unit(c(0,0,0,-1), "mm"))),
+      #4.2.3
+      NULL,
+      ncol = 1,
+      rel_heights = c(0.1, 1, 0.1)
+    ),
+    nrow = 1,
+    rel_widths = c(0.6,  0.5), #4._
+    align = 'h', axis = 'bt'
+  ),
+
+  ncol = 1,
+  rel_heights = c(0.05, 0.95, 0.05, 1)
+)
+
+plt_fig <- cowplot::ggdraw(plt_fig)+cowplot::draw_plot_label(c("A","B","C","D"), x=c(0,0,0.25,0.52), y=c(1,rep(0.52,3)))
+plt_fig 
+```
+
+
+```{r, eval=F}
 ggsave(here("figures/4_Network_analysis.pdf"), plot=plt_fig, height = 5.5, width = 3.5)
 ```
 

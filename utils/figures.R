@@ -9,6 +9,9 @@ require(viridis)
 require(vegan)
 require(flextable)
 require(checkmate)
+require(ComplexHeatmap)
+require(cowplot)
+require(grid)
 require(here)
 
 source(here("utils/general.R"))
@@ -181,6 +184,21 @@ extract_ggpubr_pvalues <- function(plt){
     select(comparison, starts_with("p")) %>% 
     distinct()
 }
+
+################################################################################
+# Print a table with Elseviers plot dimension guidelines
+elsevier_fig_dims <- function(){
+  tribble(
+    ~"size", ~"mm", ~"pts", ~"300dpi_pixels", ~"500dpi_pixels", ~"1000dpi_pixels",
+    "Minimal size",	30,	85,	354,	591,	1181,
+    "Single column",	90,	255,	1063,	1772,	3543,
+    "1.5 column",	140,	397,	1654,	2756,	5512,
+    "Double column (full width)",	190,	539,	2244,	3740,	7480
+  ) %>% 
+    mutate(inch=round(mm*0.0393701, 1)) %>% 
+    select(size, mm, inch, everything())
+}
+
 #################### EMBEDDING FUNCTIONS #######################################
 ################################################################################
 # Plots cumulative proportion of variance explained by each component in PCA
@@ -607,10 +625,12 @@ calculate_distance <- function(df, method){
 }
 
 
-multi_diagnosis_similarity_heatmap <- function(method = "jaccard", show_dend=T,
+multi_diagnosis_similarity_heatmap <- function(..., method = "jaccard", show_dend=T,
+                                               dendrogram_weight = unit(10, "mm"),
                                                legend_label = NULL,legend_direction="vertical",
-                                               label_size=6, title_size=9, ...){
+                                               label_size=6, title_size=9){
   
+  # browser()
   df_list <- listN(...)
   
   # Input checks
@@ -640,7 +660,15 @@ multi_diagnosis_similarity_heatmap <- function(method = "jaccard", show_dend=T,
   
   sim_mtx <- 1-as.matrix(mtx_combined)
   if (is.null(legend_label)){legend_label <- sprintf("%s\nsimilarity", str_to_sentence(method))}
-  ComplexHeatmap::Heatmap(sim_mtx,
+  
+  legend_params <- list(
+    direction = legend_direction, 
+    title_gp  = grid::gpar(fontsize = title_size),
+    labels_gp = grid::gpar(fontsize = label_size),
+    legend_width = unit(3, "cm")
+  )
+  
+  heatmap_params <- list(matrix = sim_mtx,
                           name = legend_label,
                           col = viridis::viridis(100),
                           rect_gp = grid::gpar(col = "black", lwd = 1),
@@ -648,13 +676,80 @@ multi_diagnosis_similarity_heatmap <- function(method = "jaccard", show_dend=T,
                           column_names_gp = grid::gpar(fontsize = label_size),
                           show_row_dend = show_dend,
                           show_column_dend = show_dend,
-                          heatmap_legend_param = list(
-                            direction = legend_direction, 
-                            title_gp  = grid::gpar(fontsize = title_size),
-                            labels_gp = grid::gpar(fontsize = label_size),
-                            legend_width = unit(3, "cm")
-                          )
+                          heatmap_legend_param = legend_params
   )
+  
+  if(show_dend){
+    heatmap_params[['column_dend_height']] <- dendrogram_weight
+    heatmap_params[['row_dend_width']] <- dendrogram_weight
+  }
+  
+  do.call(Heatmap, heatmap_params)
+}
+
+################################################################################
+# Generalized heatmap for any distance matrix. Expects row and column names
+# to include both the model and the criteria being compared.
+# Will use the model and criteria name to create an annotation key
+
+model_criteria_heatmap <- function(data,
+                                      label_sep,
+                                      title, 
+                                      metric, 
+                                      color_scale = hcl.colors(3, "Earth"), 
+                                      midpoint = NULL, 
+                                      symmetric = T, 
+                                      font_size=10,
+                                      dendrogram_weight = unit(10, "mm"),
+                                      legend_params = list(NULL)){
+  # browser()
+  scale_max <- ifelse(symmetric,max(abs(data)),max(data))
+  scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
+  scale_mid <- scale_min + (scale_max - scale_min)/2
+  
+  midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
+  
+  color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
+  
+  annotation_data <- data.frame(
+    rownames = rownames(data),
+    model = str_extract(rownames(data), "gpt3.5|gpt4.0|claude3_haiku|claude3_opus|gemini1.0_pro|gemini1.5_pro"),
+    criteria = str_extract(rownames(data), "migraine|aha_kawasaki|slicc_sle|eular_acr_sle|mcas_consortium|mcas_alternative")
+  ) %>% 
+    column_to_rownames("rownames") %>% 
+    format_criteria() %>% 
+    format_models()
+  
+  # model_colors <- brewer.pal(7, "Dark2")[-6]
+  models <- unique(annotation_data$model)
+  model_colors <- colorspace::lighten(brewer.pal(length(models), "Dark2"), amount = -0.1)
+  names(model_colors) <- models
+  
+  criteria <- unique(annotation_data$criteria)
+  criteria_colors <- colorspace::lighten(brewer.pal(length(criteria), "Set1"), amount = 0.3)
+  names(criteria_colors) <- criteria
+  
+  col_annotation <- HeatmapAnnotation(
+    Model = annotation_data$model,
+    Criteria = annotation_data$criteria,
+    col = list(Model = model_colors, Criteria = criteria_colors)
+  )
+  
+  ComplexHeatmap::Heatmap(
+    data,
+    col = color_function,
+    top_annotation = col_annotation,
+    show_row_names = FALSE,
+    show_column_names = FALSE,
+    cluster_columns = TRUE,
+    cluster_rows = TRUE,
+    
+    column_title = title,
+    name = metric,
+    column_dend_height  = dendrogram_weight,
+    row_dend_width = dendrogram_weight,
+  )
+  
 }
 
 ################################################################################

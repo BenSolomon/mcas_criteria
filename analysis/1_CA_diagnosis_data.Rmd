@@ -8,6 +8,8 @@ library(readxl)
 library(here)
 ```
 
+# California data
+
 [Original CA state data available here](https://data.chhs.ca.gov/dataset/hospital-inpatient-diagnosis-procedure-and-external-cause-codes)
 
 ```{r}
@@ -133,6 +135,15 @@ disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome"),
 disease_plot("MASTOCYTOSIS") + ggtitle("Mastocytosis")
 )
 ```
+
+```{r}
+# Comparison of MCAS and mastocytosis
+cowplot::plot_grid(
+disease_plot("MAST CELL ACTIVATION") + ggtitle("Mast cell activation syndrome")+lims(x=c(2016,2022)),
+disease_plot("ANAPHYLAXIS") + ggtitle("Anaphylaxis")+lims(x=c(2016,2022))
+)
+```
+
 ```{r}
 points_to_inches <- function(points){points/72}
 
@@ -162,7 +173,7 @@ plt_icd_trend <- df %>%
   scale_color_brewer(palette = "Dark2", labels = c("Mast cell activation\nsyndrome", "Mastocytosis"))
 plt_icd_trend
 ```
-```{r}
+```{r, eval = F}
 ggsave(here("figures/1_CA_ICD_code_by_year.pdf"), plot=plt_icd_trend, height = 3.5, width = 3.5)
 ```
 
@@ -174,5 +185,53 @@ df %>%
   pivot_wider(names_from = "year", values_from = "count", values_fn = sum) %>% 
   mutate(across(contains("20"), ~./`2016`))
 ```
+
+# Social media
+
+### Google trends
+```{r}
+library("gtrendsR")
+```
+
+
+```{r}
+combined_gt <- gtrends(keyword = c("mastocytosis", "mast cell activation syndrome"), time="all", geo="US")
+```
+```{r, fig.height=3.5, fig.width=3.5}
+combined_gt$interest_over_time %>% 
+  # mutate(hits = as.numeric(ifelse(hits=="<1", "0", hits))) %>% 
+  mutate(year_month = lubridate::floor_date(date, "month")) %>% 
+    summarise(hits = sum(hits), .by = c("keyword", "year_month")) %>% 
+    ggplot(aes(x=year_month, y=hits, color = keyword))+
+    # geom_path(stat="identity", alpha=0.5)+
+  geom_point(size = 0.2, alpha = 0.5)+
+    stat_smooth()+
+    theme_bw() +
+    # scale_x_continuous(limits = c(2005, 2023)) +
+    theme(
+      axis.text.x = element_text(angle = 90),
+      legend.position = c(0.71, 0.9),
+      legend.text = element_text(size = 10),
+      legend.background = element_rect(fill=alpha("white",0.5)),
+      legend.title = element_blank()) +
+    # labs(x = "", y="ICD code count", color = "")+
+    scale_color_brewer(palette = "Dark2", labels = c("Mast cell activation\nsyndrome", "Mastocytosis")) +
+  scale_x_datetime(limits = c(
+    lubridate::as_datetime(lubridate::ymd("2010-01-01")),
+    lubridate::as_datetime(lubridate::ymd("2023-12-31")))) +
+  # ggtitle("Google trend data")+
+  labs(x=NULL,y="Relative search interest")+
+  guides(color = guide_legend(override.aes = list(fill = NA)))
+
+```
+
+```{r}
+lubridate::as_datetime(lubridate::ymd("2010-01-01"))
+```
+
+
+
+### Twitter
+
 
 

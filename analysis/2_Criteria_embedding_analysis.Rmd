@@ -250,7 +250,7 @@ listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>%
 calculate_centroids <- function(df){
   df %>% 
     rownames_to_column("feature") %>% 
-    right_join(df_criteria) %>% 
+    right_join(df_criteria, by = "feature") %>% 
     nest(.by = criteria) %>% 
     mutate(data = map(data, function(df){
       df %>% 
@@ -315,7 +315,7 @@ dist_wrapper <- function(data){
 dist_wrapper(pca_chatgpt)
 ```
 ```{r, fig.width=3.5, fig.height=4}
-centroid_similarity_plot <- function(...){
+centroid_similarity_plot <- function(..., pt_size=1){
   # Compile data
   df <- listN(...) %>% 
     lapply(., dist_wrapper) %>%  
@@ -332,346 +332,76 @@ centroid_similarity_plot <- function(...){
   # Plot data
   df %>% 
     ggplot(aes(x = comp, y = metric, color = model))+
-    geom_point(position = position_dodge(width = 0.75))+
+    geom_point(size=pt_size, position = position_dodge(width = 0.75))+
     theme_bw() +
-    ggpubr::stat_compare_means(aes(group = comp), method = "wilcox.test", label = "p", vjust = 1, show.legend = F, size = 3)+
+    ggpubr::stat_compare_means(aes(group = comp), method = "wilcox.test", label = "p", vjust = 0.75, show.legend = F, size = 3)+
     theme(axis.text.x = element_text(angle =90, hjust =1)) +
     labs(x=NULL, y="Cosine similarity") +
-    ylim(-0.1,1) +
+    ylim(-0.1,1.05) +
     scale_color_brewer(palette = "Set1") +
     labs(color = "")
 }
 
 
-centroid_similarity_plot(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) 
-```
-
-
-
-```{r}
-unique(df_criteria$criteria  )
-```
-
-### Multi model centroid heatmap
-
-```{r, fig.width=5.5, fig.height=3.5}
-# custom_heatmap2 <- function(data, 
-#                            title, 
-#                            metric, 
-#                            color_scale = hcl.colors(3, "Earth"), 
-#                            midpoint = NULL, 
-#                            symmetric = T, 
-#                            font_size=10,
-#                            dendrogram_weight = unit(10, "mm"),
-#                            legend_params = list(NULL)){
-#   scale_max <- ifelse(symmetric,max(abs(data)),max(data))
-#   scale_min <- ifelse(symmetric,-max(abs(data)),min(data))
-#   scale_mid <- scale_min + (scale_max - scale_min)/2
-#   
-#   midpoint <- ifelse(is.null(midpoint), scale_mid, midpoint)
-#   
-#   color_function <-circlize::colorRamp2(c(scale_min,midpoint,scale_max), color_scale)
-#   
-# 
-#   annotation_data <- data.frame(
-#   rownames = rownames(data),
-#   model = str_extract(rownames(data), "gpt|voyage|gemini|mistral"),
-#   criteria = str_extract(rownames(data), "Migraine - ICHD3|Kawasaki - AHA|SLE - EULAR-ACR|SLE - SLICC|MCAS - Consortium|MCAS - Alternative")
-# ) %>% 
-#   column_to_rownames("rownames")
-# 
-#   model_colors <- colorspace::lighten(brewer.pal(4, "Dark2"), amount = -0.1)
-#   names(model_colors) <- unique(annotation_data$model)
-#   
-#   criteria_colors <- colorspace::lighten(brewer.pal(6, "Set1"), amount = 0.3)
-#   names(criteria_colors) <- unique(annotation_data$criteria)
-#   
-#   col_annotation <- HeatmapAnnotation(
-#     Model = annotation_data$model,
-#     Criteria = annotation_data$criteria,
-#     col = list(Model = model_colors, Criteria = criteria_colors)
-#   )
-#   
-#   ComplexHeatmap::Heatmap(
-#     data,
-#     col = color_function,
-#     top_annotation = col_annotation,
-#     show_row_names = FALSE,
-#     show_column_names = FALSE,
-#     cluster_columns = TRUE,
-#     cluster_rows = TRUE,
-#     
-#     column_title = title,
-#     name = metric,
-#     column_dend_height  = dendrogram_weight,
-#     row_dend_width = dendrogram_weight,
-#   )
-#   
-# }
-#   
-# custom_heatmap2(cosine_data, 
-#                 color_scale = RColorBrewer::brewer.pal(5, "BrBG")[c(1,3,5)], 
-#                 title = " ", 
-#                 metric = "Cosine\nsimilarity", 
-#                 symmetric = T,
-#                 font_size = 8)  
-#   
-
-```
-### Average centroid heatmap
-```{r}
-# plt_3 <- as.data.frame(pca_embedding$x) %>% 
-#   calculate_centroids() %>% 
-#   custom_dist(method = "euclidean") %>% 
-#   # pheatmap::pheatmap(color = viridis::viridis(100, direction = -1))
-#   ComplexHeatmap::Heatmap(
-#     col = viridis::viridis(100, direction = -1), 
-#     name= "Euclidean distance",
-#     heatmap_legend_param = list(direction = "horizontal"),
-#     rect_gp = grid::gpar(col = "black", lwd = 1),
-#     row_names_gp = grid::gpar(fontsize = label_size),  # Adjust font size for row labels
-#     column_names_gp = grid::gpar(fontsize = label_size)  # Adjust font size for column labels
-#   )
-
+plt_similarity <- centroid_similarity_plot(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) 
+plt_similarity
 ```
 
 
 ```{r}
-centroid_heatmap <- function(label_size=6, title_size=9){
-listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>% 
-  lapply(., dist_wrapper) %>%  
-  mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
-  bind_rows() %>% 
-  unite(comp, V1, V2) %>% 
-  summarise(metric = mean(metric), .by = "comp") %>% 
-  separate(comp, into = c("V1", "V2"), sep = "_") %>% 
-  pivot_wider(names_from = "V2", values_from = "metric") %>% 
-  column_to_rownames("V1") %>% 
-  ComplexHeatmap::Heatmap(
-    col = viridis::viridis(100), 
-    name= "Cosine similarity",
-    heatmap_legend_param = list(
-      direction = "horizontal", 
+plt_similarity$data %>% summarise(mean(metric), .by = "comp")
+extract_ggpubr_pvalues(plt_similarity)
+```
+
+
+```{r}
+centroid_heatmap <-
+  function(label_size = 6,
+           title_size = 9,
+           dend_size = NULL) {
+    data <- listN(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) %>%
+      lapply(., dist_wrapper) %>%
+      mapply(function(x, y) {
+        mutate(x, model = y)
+      }, ., names(.), SIMPLIFY = F) %>%
+      bind_rows() %>%
+      unite(comp, V1, V2) %>%
+      summarise(metric = mean(metric), .by = "comp") %>%
+      separate(comp, into = c("V1", "V2"), sep = "_") %>%
+      pivot_wider(names_from = "V2", values_from = "metric") %>%
+      column_to_rownames("V1") %>% 
+      as.matrix()
+    
+    legend_param <- list(
+      direction = "horizontal",
       title_gp  = grid::gpar(fontsize = title_size),
-      labels_gp = gpar(fontsize = label_size)
-      ),
-    rect_gp = grid::gpar(col = "black", lwd = 1),
-    row_names_gp = grid::gpar(fontsize = label_size),  # Adjust font size for row labels
-    column_names_gp = grid::gpar(fontsize = label_size),
-    # row_names_gp = grid::gpar(fontsize = cp_font),  # Adjust font size for row labels
-  # column_names_gp = grid::gpar(fontsize = cp_font)
-  )
-}
+      labels_gp = grid::gpar(fontsize = label_size)
+    )
+    
+    heatmap_param <- list(
+      matrix = data,
+      col = viridis::viridis(100),
+      name = "Cosine similarity",
+      rect_gp = grid::gpar(col = "black", lwd = 1),
+      row_names_gp = grid::gpar(fontsize = label_size),
+      heatmap_legend_param = legend_param,
+      column_names_gp = grid::gpar(fontsize = label_size)
+    )
+    
+    if (!is.null(dend_size)){
+      heatmap_param[["row_dend_width"]] <- dend_size
+      heatmap_param[["column_dend_height"]] <- dend_size
+    }
+    
+    do.call(Heatmap, heatmap_param)
+  }
 
-centroid_heatmap()
+centroid_heatmap(dend_size = unit(20,"mm"))
 ```
 
-### Centroid distance heatmap
+# Final plot
 
-### Dendrogram significance
-```{r, fig.width=6, fig.height=6, message = F}
-# cosine <- function(x) {
-#   x <- as.matrix(x)
-#   y <- t(x) %*% x
-#   res <- 1 - y / (sqrt(diag(y)) %*% t(sqrt(diag(y))))
-#   res <- as.dist(res)
-#   attr(res, "method") <- "cosine"
-#   return(res)
-# }
-# 
-# 
-# pvclust_pca <- as.data.frame(pca_embedding$x) %>% 
-#   calculate_centroids() %>% 
-#   t() %>% 
-#   pvclust::pvclust(nboot = 500, method.dist = cosine, quiet = T)
-# plot(pvclust_pca)
-# pvclust::pvrect(pvclust_pca, alpha = 0.95)
-```
-
-
-# UMAP 
-```{r, message = F}
-# # names(umap::umap.defaults)
-# set.seed(1234)
-# umap_gpt <- umap::umap(df_embeddings)
-# # umap_cluster <- umap::umap(df_embeddings, n_components = 2)
-```
-
-### UMAP plot
-
-```{r, message = F}
-# # Plot UMAP of embeddings
-# umap_gpt$layout %>% 
-#   as.data.frame() %>% 
-#   rownames_to_column("feature") %>% 
-#   left_join(df_criteria) %>% 
-#   drop_na() %>% 
-#   ggplot(aes(x=V1, y=V2, color = criteria))+
-#   geom_point(size = 1) +
-#   theme_bw() +
-#   scale_color_brewer(palette = "Dark2")+
-#   scale_fill_brewer(palette = "Dark2")
-```
-
-# Final figure
-```{r, fig.width=6, fig.height=6, message=F}
-# plt_1 <- pca_embedding$x[,c(x,y)] %>% 
-#   as.data.frame() %>% 
-#   rownames_to_column("feature") %>% 
-#   left_join(df_criteria) %>% 
-#   drop_na() %>% 
-#   ggplot(aes(x=!!sym(x), y=!!sym(y), color = criteria))+
-#   geom_point(size = 0.5) +
-#   geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 3, shape = 21, color = "black", aes(fill = criteria))+
-#   # stat_ellipse(size = 2, type = "t", level = 0.95)+
-#   # facet_wrap(~criteria) +
-#   theme_bw()+
-#   scale_color_brewer(palette = "Dark2")+
-#   scale_fill_brewer(palette = "Dark2") +
-#   labs(fill = "", color = "")
-# 
-# plt_2 <- df_compare_euc %>% 
-#   ggplot(aes(x = criteria_pair, y = distance))+
-#   stat_summary(fun = mean, geom = "point", size = 1) +
-#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.5)+
-#   ggpubr::stat_pvalue_manual(
-#     ggpubr::compare_means(distance ~ criteria_pair, df_compare_euc, method = "wilcox.test"),
-#     label = "p = {p.adj}",
-#     y.position = 55.6,
-#     tip.length = 0.001
-#   )+
-#   theme_bw() +
-#   theme(axis.text.x = element_text(angle =90, hjust =1)) +
-#   labs(x="", y="Euclidean distance") +
-#   coord_cartesian(ylim=c(NA,55.75))
-# 
-# cp_font <- 9
-# plt_3 <- as.data.frame(pca_embedding$x) %>% 
-#   calculate_centroids() %>% 
-#   custom_dist(method = "euclidean") %>% 
-#   # pheatmap::pheatmap(color = viridis::viridis(100, direction = -1))
-#   ComplexHeatmap::Heatmap(
-#     col = viridis::viridis(100, direction = -1), 
-#     name= "Euclidean\ndistance",
-#     rect_gp = grid::gpar(col = "black", lwd = 1),
-#     row_names_gp = grid::gpar(fontsize = cp_font),  # Adjust font size for row labels
-#   column_names_gp = grid::gpar(fontsize = cp_font)  # Adjust font size for column labels
-#   )
-# 
-# # cowplot::plot_grid(
-# # cowplot::plot_grid(plt_1, plt_2, nrow = 1, rel_widths = c(0.7,0.3), align = "h", axis = "tb"),
-# # cowplot::plot_grid(NULL, plt_3$gtable, NULL, nrow =1, rel_widths = c(0.2, 0.6,0.15)),
-# # ncol = 1)
-# 
-# plt_fig <- cowplot::plot_grid(
-#   cowplot::plot_grid(
-#     NULL,
-#     plt_1,
-#     NULL,
-#     nrow = 1,
-#     rel_widths = c(0.1, 0.8, 0.1),
-#     align = "h",
-#     axis = "tb",
-#     labels = c("", "A", "")
-#   ),
-#   # cowplot::plot_grid(plt_2, NULL, plt_3$gtable, nrow =1, rel_widths = c(0.3, 0.1, 0.7), align = "h", axis = "tb", labels = c("B","C")),
-#   cowplot::plot_grid(
-#     plt_2,
-#     NULL,
-#     cowplot::plot_grid(
-#       grid::grid.grabExpr(ComplexHeatmap::draw(plt_3)),
-#       NULL,
-#       ncol = 1,
-#       rel_heights = c(0.9, 0.1)
-#     ),
-#     nrow = 1,
-#     rel_widths = c(0.3, 0.051, 0.7),
-#     labels = c("B", "", "C")
-#   ),
-#   ncol = 1,
-#   rel_heights = c(0.4, 0.6)
-# )
-# 
-# plt_fig
-```
-```{r}
-# ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 6, width = 6)
-```
-
-# Altenative layout
-```{r, fig.width=7, fig.height=3.5, message=F}
-# title_size <- 9
-# label_size <- 6
-# 
-# apply_text_formatting <- list(theme(
-#   axis.text = element_text(size = label_size),
-#   axis.title = element_text(size = title_size),
-#   legend.text = element_text(size = label_size),
-#   legend.key.height = unit(0.4, 'cm')
-#   ))
-# 
-# plt_1 <- pca_embedding$x[,c(x,y)] %>% 
-#   as.data.frame() %>% 
-#   rownames_to_column("feature") %>% 
-#   left_join(df_criteria) %>% 
-#   drop_na() %>% 
-#   ggplot(aes(x=!!sym(x), y=!!sym(y), color = criteria))+
-#   geom_point(size = 0.5) +
-#   geom_point(data = . %>% group_by(criteria) %>% summarise_at(vars(contains("PC")), mean), size = 3, shape = 21, color = "black", aes(fill = criteria))+
-#   theme_bw()+
-#   scale_color_brewer(palette = "Dark2")+
-#   scale_fill_brewer(palette = "Dark2") +
-#   labs(fill = "", color = "") +
-#   theme(legend.position = "bottom") +
-#   guides(color = guide_legend(ncol = 2))
-# 
-# plt_2 <- df_compare_euc %>% 
-#   ggplot(aes(x = criteria_pair, y = distance))+
-#   stat_summary(fun = mean, geom = "point", size = 1) +
-#   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.5)+
-#   ggpubr::stat_pvalue_manual(
-#     ggpubr::compare_means(distance ~ criteria_pair, df_compare_euc, method = "wilcox.test"),
-#     label = "p = {p.adj}",
-#     y.position = 55.6,
-#     tip.length = 0.001, label.size = 3
-#   )+
-#   theme_bw() +
-#   theme(axis.text.x = element_text(angle =90, hjust =1)) +
-#   labs(x="", y="Euclidean distance") +
-#   coord_cartesian(ylim=c(NA,55.75))
-# 
-# plt_3 <- as.data.frame(pca_embedding$x) %>% 
-#   calculate_centroids() %>% 
-#   custom_dist(method = "euclidean") %>% 
-#   # pheatmap::pheatmap(color = viridis::viridis(100, direction = -1))
-#   ComplexHeatmap::Heatmap(
-#     col = viridis::viridis(100, direction = -1), 
-#     name= "Euclidean distance",
-#     heatmap_legend_param = list(direction = "horizontal"),
-#     rect_gp = grid::gpar(col = "black", lwd = 1),
-#     row_names_gp = grid::gpar(fontsize = label_size),  # Adjust font size for row labels
-#     column_names_gp = grid::gpar(fontsize = label_size)  # Adjust font size for column labels
-#   )
-# 
-# plt_fig <- cowplot::plot_grid(
-#     plt_1 + apply_text_formatting,
-#     plt_2 + apply_text_formatting,
-#     grid::grid.grabExpr(ComplexHeatmap::draw(plt_3, heatmap_legend_side = 'bottom')),
-#     rel_widths = c(0.9, 0.5, 1),
-#     axis = 'bt',
-#     align = 'h',
-#     labels = LETTERS[1:3],
-#     nrow = 1
-# )
-# 
-# plt_fig
-```
-
-```{r}
-# ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 3.5, width = 7)
-```
-
-# Re layout
+### Alternative 1
 ```{r, fig.height=3.5, fig.width=7.5}
 title_size <- 9
 label_size <- 6
@@ -711,7 +441,7 @@ label_row <- cowplot::plot_grid(
   labels = c("A","","B","","C")
 )
 
-plt_fig <- plot_grid(
+plt_fig <- cowplot::plot_grid(
   label_row,
   plt_row,
   ncol = 1,
@@ -720,8 +450,191 @@ plt_fig <- plot_grid(
 
 plt_fig
 ```
-```{r}
-ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 3.5, width = 7.5)
+
+### Alternative 2
+```{r, fig.height=3.5, fig.width=5.5}
+title_size <- 9
+label_size <- 6
+legend_x_pad <- 4
+legend_y_pad <- 2
+
+apply_text_formatting <- list(
+  theme(
+    axis.text = element_text(size = label_size),
+    axis.title = element_text(size = title_size),
+    legend.text = element_text(size = label_size),
+    strip.text = element_text(size = label_size + 1),
+    legend.key.height = unit(0.4, 'cm'),
+    legend.box.background = element_rect(color = "black", size = 1),
+    legend.margin = margin(
+      t = legend_y_pad,
+      r = legend_x_pad,
+      b = legend_y_pad,
+      l = legend_x_pad * 1.1
+    ),
+    legend.spacing.x = unit(-0.15, 'cm'),
+    # Horizontal spacing between legend items
+    legend.spacing.y = unit(0, 'cm'),
+    # legend.box.spacing = unit(0, "cm")
+  )
+)
+
+
+plt_widths <- c(0.5, 0.01, 0.9)
+
+plt_row <- cowplot::plot_grid(
+  centroid_similarity_plot(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) +
+    theme(legend.position = "bottom", legend.direction = "horizontal") + guides(color = guide_legend(ncol = 1)) +
+    apply_text_formatting ,
+  NULL,
+  grid::grid.grabExpr(
+    ComplexHeatmap::draw(
+      centroid_heatmap(label_size = label_size, title_size = title_size, dend_size = unit(5,"mm")),
+      heatmap_legend_side = 'bottom'
+    )
+  ),
+  nrow = 1,
+  rel_widths = plt_widths
+)
+
+label_row <- cowplot::plot_grid(
+  NULL,
+  NULL,
+  NULL,
+  nrow = 1,
+  rel_widths = plt_widths,
+  labels = c("A", "", "B")
+)
+
+plt_fig <- cowplot::plot_grid(label_row,
+                     plt_row,
+                     ncol = 1,
+                     rel_heights = c(0.075, 1))
+
+plt_fig
+```
+```{r, fig.width=3.2,fig.height=6}
+title_size <- 10
+label_size <- 7
+legend_x_pad <- 4
+legend_y_pad <- 2
+
+apply_text_formatting <- list(
+  theme(
+    axis.text = element_text(size = label_size),
+    axis.title = element_text(size = title_size),
+    legend.text = element_text(size = label_size),
+    strip.text = element_text(size = label_size + 1),
+    legend.key.height = unit(0.4, 'cm'),
+    legend.box.background = element_rect(color = "black", size = 1),
+    legend.margin = margin(
+      t = legend_y_pad,
+      r = legend_x_pad,
+      b = legend_y_pad,
+      l = legend_x_pad * 1.1
+    ),
+    legend.spacing.x = unit(-0.15, 'cm'),
+    # Horizontal spacing between legend items
+    legend.spacing.y = unit(0, 'cm'),
+    # legend.box.spacing = unit(0, "cm")
+  )
+)
+
+plt_fig <- cowplot::plot_grid(
+  NULL,
+  centroid_similarity_plot(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) + labs(color = NULL) +
+    # theme(legend.position = "bottom", legend.direction = "horizontal") + guides(color = guide_legend(ncol = 1)) +
+    apply_text_formatting ,
+  grid::grid.grabExpr(
+    ComplexHeatmap::draw(
+      centroid_heatmap(
+        label_size = label_size,
+        title_size = title_size,
+        dend_size = unit(5, "mm")
+      ),
+      heatmap_legend_side = 'bottom'
+    )
+  ),
+  ncol = 1,
+  rel_heights = c(0.5, 4, 6),
+  labels = c("A", "", "B")
+)
+
+plt_fig
+```
+```{r, fig.height=3, fig.width=3.5}
+title_size <- 9
+label_size <- 6
+legend_x_pad <- 0
+legend_y_pad <- 0
+
+apply_text_formatting <- list(
+  theme(
+    axis.text = element_text(size = label_size),
+    axis.title = element_text(size = title_size),
+    legend.text = element_text(size = label_size, margin=margin(0,0,0,r=1)),
+    strip.text = element_text(size = label_size + 1),
+    legend.key.height = unit(0.4, 'cm'),
+    legend.key.width = unit(0.4, 'cm'),
+    # legend.key = element_rect(size =  margin(0,0,0,0)),
+    legend.box.background = element_rect(color = "black", size = 1),
+    legend.margin = margin(
+      t = legend_y_pad,
+      r = legend_x_pad+2,
+      b = legend_y_pad,
+      l = legend_x_pad-5 
+    ),
+    legend.key.spacing.y = unit(-1.5, "pt"),
+    legend.box.spacing = unit(0,"pt"),
+    axis.text.x=element_text(angle=45,hjust=1)
+  )
+)
+
+
+plt_dot <- cowplot::plot_grid(
+  NULL,
+  centroid_similarity_plot(pca_chatgpt, pca_voyage, pca_gemini, pca_mistral) +
+    theme(legend.position = "bottom", 
+          legend.direction = "horizontal"
+          ) + 
+    guides(color = guide_legend(ncol = 1)) +
+    apply_text_formatting,
+  ncol = 1,
+  rel_heights = c(1, 9)
+  # labels = c("A","")
+
+)
+
+plt_heat <- cowplot::plot_grid(
+  NULL,
+  grid::grid.grabExpr(
+    ComplexHeatmap::draw(
+      centroid_heatmap(
+        label_size = label_size,
+        title_size = title_size,
+        dend_size = unit(2.5, "mm")
+      ),
+      heatmap_legend_side = 'bottom'
+    )
+  ),
+  ncol=1,
+  rel_heights = c(0.6,9)
+  # labels = c("B","")
+)
+
+plt_fig <- cowplot::plot_grid(
+                     plt_dot,
+                     NULL,
+                     plt_heat,
+                     nrow = 1,
+                     rel_widths = c(4,0.5,7))
+
+plt_fig <- cowplot::ggdraw(plt_fig)+cowplot::draw_plot_label(c("A","B"), c(0,4/(4+0.5+7)))
+plt_fig
 ```
 
+
+```{r, eval = F}
+ggsave(here("figures/2_Criteria_embedding.pdf"), plot=plt_fig, height = 3, width = 3.5)
+```
 
