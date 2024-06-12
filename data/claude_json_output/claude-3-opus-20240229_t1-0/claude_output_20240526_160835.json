@@ -1,0 +1,967 @@
+[
+    {
+        "i": "8252",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "tongue erythema",
+            "fever",
+            "foot erythema",
+            "lip cracking"
+        ],
+        "diagnoses": [
+            "Scarlet fever",
+            "Kawasaki disease",
+            "Erythema multiforme",
+            "Stevens-Johnson syndrome",
+            "Toxic shock syndrome",
+            "Hand, foot and mouth disease",
+            "Measles",
+            "Erythema infectiosum (Fifth disease)",
+            "Systemic lupus erythematosus (SLE)",
+            "Drug reaction or hypersensitivity syndrome"
+        ]
+    },
+    {
+        "i": "8254",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "maculopapular rash",
+            "cervical lymphadenopathy",
+            "anemia",
+            "lip cracking"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "HIV/AIDS",
+            "Measles",
+            "Infectious mononucleosis",
+            "Kawasaki disease",
+            "Rubella",
+            "Scarlet fever",
+            "Erythema multiforme",
+            "Parvovirus B19 infection",
+            "Vitamin deficiencies (e.g., vitamin B12, folate, iron)"
+        ]
+    },
+    {
+        "i": "8266",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "cervical lymphadenopathy",
+            "anemia",
+            "lip erythema",
+            "maculopapular rash",
+            "foot erythema"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Infectious mononucleosis",
+            "Acute HIV infection",
+            "Kawasaki disease",
+            "Measles",
+            "Rubella",
+            "Scarlet fever",
+            "Erythema multiforme",
+            "Parvovirus B19 infection",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome"
+        ]
+    },
+    {
+        "i": "8277",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "periungal desquamation",
+            "thrombocytosis",
+            "hand erythema",
+            "foot edema"
+        ],
+        "diagnoses": [
+            "Kawasaki disease",
+            "Capillaritis",
+            "Dermatomyositis",
+            "Scleroderma",
+            "Systemic lupus erythematosus",
+            "Mixed connective tissue disease",
+            "Erythromelalgia",
+            "Cutaneous small vessel vasculitis",
+            "Erythema multiforme",
+            "Viral exanthem"
+        ]
+    },
+    {
+        "i": "8280",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "maculopapular rash",
+            "pyuria",
+            "fever",
+            "lip erythema"
+        ],
+        "diagnoses": [
+            "Kawasaki disease",
+            "Scarlet fever",
+            "Measles",
+            "Stevens-Johnson syndrome",
+            "Urinary tract infection",
+            "Systemic lupus erythematosus",
+            "Parvovirus B19 infection",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
+            "Acute poststreptococcal glomerulonephritis",
+            "Meningococcemia"
+        ]
+    },
+    {
+        "i": "8250",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "oral ulcers",
+            "annular rash",
+            "synovitis",
+            "fever",
+            "pleural effusion"
+        ],
+        "diagnoses": [
+            "Systemic Lupus Erythematosus (SLE)",
+            "Behcets Disease",
+            "Rheumatoid Arthritis",
+            "Adult-Onset Stills Disease",
+            "Reactive Arthritis",
+            "Sarcoidosis",
+            "Inflammatory Bowel Disease (IBD)",
+            "Sjogrens Syndrome",
+            "Dermatopolymyositis",
+            "Viral infections (e.g., Parvovirus B19, Hepatitis B or C)"
+        ]
+    },
+    {
+        "i": "8252",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "leukopenia",
+            "autoimmune hemolysis",
+            "arthropathy",
+            "proteinuria",
+            "synovitis"
+        ],
+        "diagnoses": [
+            "Systemic Lupus Erythematosus (SLE)",
+            "Rheumatoid Arthritis",
+            "Sj\u00f6grens Syndrome",
+            "Systemic Sclerosis (Scleroderma)",
+            "Mixed Connective Tissue Disease",
+            "Feltys Syndrome",
+            "Cryoglobulinemia",
+            "Polyarteritis Nodosa",
+            "Granulomatosis with Polyangiitis (Wegeners)",
+            "Drug-induced Lupus Erythematosus"
+        ]
+    },
+    {
+        "i": "8254",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "leukopenia",
+            "proteinuria",
+            "erythematous-violaceous",
+            "fever",
+            "synovitis"
+        ],
+        "diagnoses": [
+            "Systemic Lupus Erythematosus (SLE)",
+            "Rheumatoid Arthritis",
+            "Viral Infection (e.g., Parvovirus B19, HIV, CMV)",
+            "Henoch-Sch\u00f6nlein Purpura (HSP)",
+            "Drug-Induced Lupus Erythematosus (DILE)",
+            "Scleroderma (Systemic Sclerosis)",
+            "Mixed Connective Tissue Disease (MCTD)",
+            "Sj\u00f6grens Syndrome",
+            "Acute Post-Streptococcal Glomerulonephritis (APSGN)",
+            "Polyarteritis Nodosa (PAN)"
+        ]
+    },
+    {
+        "i": "8256",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "fever",
+            "synovitis",
+            "delirium",
+            "thrombocytopenia",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Viral infection (e.g., dengue fever, chikungunya)",
+            "Bacterial endocarditis",
+            "Adult-onset Stills disease",
+            "Leukemia or lymphoma",
+            "Sepsis",
+            "Disseminated intravascular coagulation (DIC)",
+            "Hemophagocytic lymphohistiocytosis (HLH)",
+            "Medication reaction or toxicity"
+        ]
+    },
+    {
+        "i": "8257",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "fever",
+            "alopecia",
+            "nephritis",
+            "synovitis",
+            "proteinuria"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Granulomatosis with polyangiitis (Wegeners granulomatosis)",
+            "Polyarteritis nodosa",
+            "Sarcoidosis",
+            "Drug-induced lupus erythematosus",
+            "Viral infections (e.g., parvovirus B19, cytomegalovirus, Epstein-Barr virus)",
+            "Immunoglobulin A vasculitis (Henoch-Sch\u00f6nlein purpura)",
+            "Acute post-streptococcal glomerulonephritis",
+            "Cryoglobulinemic vasculitis",
+            "Beh\u00e7ets disease"
+        ]
+    },
+    {
+        "i": "8258",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "leukopenia",
+            "fever",
+            "delirium",
+            "synovitis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Adult-onset Stills disease (AOSD)",
+            "Rheumatoid arthritis (RA) with systemic involvement",
+            "Viral infections (e.g., HIV, CMV, EBV)",
+            "Sepsis",
+            "Hemophagocytic lymphohistiocytosis (HLH)",
+            "Acute leukemia",
+            "Felty syndrome",
+            "Drug-induced lupus erythematosus (DILE)",
+            "Whipples disease"
+        ]
+    },
+    {
+        "i": "8259",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "thrombocytopenia",
+            "seizure",
+            "arthropathy",
+            "proteinuria",
+            "acute pericarditis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Antiphospholipid syndrome",
+            "Thrombotic thrombocytopenic purpura",
+            "Hemolytic uremic syndrome",
+            "Viral infections (e.g., HIV, hepatitis, CMV, EBV)",
+            "Bacterial endocarditis",
+            "Disseminated intravascular coagulation",
+            "Autoimmune disorders (e.g., rheumatoid arthritis, vasculitis)",
+            "Hematologic malignancies (e.g., leukemia, lymphoma)",
+            "Medication-induced (e.g., heparin, quinine, certain antibiotics)"
+        ]
+    },
+    {
+        "i": "8260",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "leukopenia",
+            "acute pericarditis",
+            "arthropathy",
+            "proteinuria"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Viral infection (e.g., parvovirus B19, HIV, hepatitis B or C)",
+            "Malignancy (e.g., leukemia, lymphoma)",
+            "Drug-induced lupus",
+            "Sarcoidosis",
+            "Sj\u00f6gren syndrome",
+            "Mixed connective tissue disease",
+            "Vasculitis (e.g., polyarteritis nodosa)",
+            "Tuberculosis"
+        ]
+    },
+    {
+        "i": "8262",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "pleural effusion",
+            "fever",
+            "autoimmune hemolysis",
+            "pericardial effusion",
+            "erythematous-violaceous"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Rheumatoid arthritis",
+            "Viral infection (e.g., Epstein-Barr virus, cytomegalovirus)",
+            "Malignancy (e.g., lymphoma, leukemia)",
+            "Tuberculosis",
+            "Mixed connective tissue disease",
+            "Sj\u00f6grens syndrome",
+            "Bacterial endocarditis",
+            "Sarcoidosis",
+            "Autoimmune hepatitis"
+        ]
+    },
+    {
+        "i": "8264",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "acute pericarditis",
+            "delirium",
+            "fever",
+            "synovitis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatic fever",
+            "Bacterial endocarditis",
+            "Viral infection (e.g., Coxsackievirus, Adenovirus, Influenza)",
+            "Uremic syndrome",
+            "Acute rheumatic heart disease",
+            "Sepsis",
+            "Tuberculous pericarditis",
+            "Lyme disease",
+            "Malignancy (e.g., lymphoma, leukemia)"
+        ]
+    },
+    {
+        "i": "8266",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "nephritis",
+            "fever",
+            "delirium",
+            "thrombocytopenia"
+        ],
+        "diagnoses": [
+            "Thrombotic thrombocytopenic purpura (TTP)",
+            "Hemolytic uremic syndrome (HUS)",
+            "Systemic lupus erythematosus (SLE)",
+            "Sepsis",
+            "Leptospirosis",
+            "Malaria",
+            "Hantavirus infection",
+            "Dengue fever",
+            "Viral hemorrhagic fevers (e.g., Ebola, Marburg, Lassa fever)",
+            "Disseminated intravascular coagulation (DIC)"
+        ]
+    },
+    {
+        "i": "8267",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "pericardial effusion",
+            "thrombocytopenia",
+            "autoimmune hemolysis",
+            "nephritis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Antiphospholipid syndrome (APS)",
+            "Sjogren syndrome",
+            "Rheumatoid arthritis",
+            "Viral infections (e.g., HIV, hepatitis, parvovirus B19)",
+            "Drug-induced lupus erythematosus (DILE)",
+            "Mixed connective tissue disease (MCTD)",
+            "Undifferentiated connective tissue disease (UCTD)",
+            "Vasculitis (e.g., granulomatosis with polyangiitis)",
+            "Chronic lymphocytic leukemia (CLL)"
+        ]
+    },
+    {
+        "i": "8270",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "nephritis",
+            "oral ulcers",
+            "pleural effusion",
+            "thrombocytopenia",
+            "acute pericarditis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Behcets disease",
+            "Granulomatosis with polyangiitis (GPA)",
+            "Sarcoidosis",
+            "Rheumatoid arthritis",
+            "Viral infections (e.g., HIV, Epstein-Barr virus)",
+            "Bacterial infections (e.g., tuberculosis, streptococcal infection)",
+            "Medication-induced lupus",
+            "Vasculitis (e.g., polyarteritis nodosa)",
+            "Malignancy (e.g., lymphoma)"
+        ]
+    },
+    {
+        "i": "8272",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "thrombocytopenia",
+            "alopecia",
+            "fever",
+            "psoriasiform rash",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Adult-onset Stills disease (AOSD)",
+            "Rheumatoid arthritis",
+            "Drug-induced lupus erythematosus",
+            "Psoriatic arthritis",
+            "Vasculitis (e.g., polyarteritis nodosa, microscopic polyangiitis)",
+            "Lymphoma (e.g., Hodgkins lymphoma, non-Hodgkins lymphoma)",
+            "Sarcoidosis",
+            "Viral infections (e.g., parvovirus B19, HIV, hepatitis C)",
+            "Idiopathic thrombocytopenic purpura (ITP) with concurrent autoimmune conditions"
+        ]
+    },
+    {
+        "i": "8273",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "alopecia",
+            "pericardial effusion",
+            "fever",
+            "pleural effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Tuberculosis",
+            "Lymphoma",
+            "Rheumatoid arthritis",
+            "Sarcoidosis",
+            "Hypothyroidism",
+            "Congestive heart failure",
+            "Metastatic cancer",
+            "Pericarditis",
+            "Pleurisy"
+        ]
+    },
+    {
+        "i": "8275",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "fever",
+            "acute pericarditis",
+            "autoimmune hemolysis",
+            "seizure"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Viral infection (e.g., Epstein-Barr virus, cytomegalovirus, parvovirus B19)",
+            "Bacterial infection (e.g., Streptococcus pneumoniae, Staphylococcus aureus)",
+            "Acute rheumatic fever",
+            "Drug-induced lupus erythematosus",
+            "Autoimmune disorders (e.g., rheumatoid arthritis, scleroderma, dermatomyositis)",
+            "Malignancy (e.g., lymphoma, leukemia)",
+            "Sarcoidosis",
+            "Familial Mediterranean fever",
+            "Behcets disease"
+        ]
+    },
+    {
+        "i": "8277",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "annular rash",
+            "psychosis",
+            "autoimmune hemolysis",
+            "pericardial effusion",
+            "leukopenia"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Drug-induced lupus erythematosus (DILE)",
+            "Acute HIV infection",
+            "Sarcoidosis",
+            "Subacute cutaneous lupus erythematosus (SCLE)",
+            "Paraneoplastic syndrome secondary to lymphoma",
+            "Dermatomyositis",
+            "Mixed connective tissue disease (MCTD)",
+            "Cryoglobulinemia",
+            "Acute viral infection (e.g., EBV, CMV, parvovirus B19)"
+        ]
+    },
+    {
+        "i": "8281",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "leukopenia",
+            "proteinuria",
+            "malar rash",
+            "arthropathy",
+            "synovitis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Viral infections (e.g., HIV, parvovirus B19)",
+            "Drug-induced lupus",
+            "Mixed connective tissue disease",
+            "Sj\u00f6grens syndrome",
+            "Scleroderma",
+            "Vasculitis (e.g., granulomatosis with polyangiitis)",
+            "Chronic kidney disease",
+            "Leukemia or lymphoma"
+        ]
+    },
+    {
+        "i": "8282",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "arthropathy",
+            "thrombocytopenia",
+            "fever",
+            "pleural effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Rheumatoid arthritis",
+            "Adult-onset Stills disease",
+            "Viral infection (e.g., dengue fever, chikungunya)",
+            "Lymphoma",
+            "Leukemia",
+            "Infective endocarditis",
+            "Tuberculosis",
+            "Connective tissue disease (e.g., mixed connective tissue disease, Sj\u00f6grens syndrome)",
+            "Sepsis"
+        ]
+    },
+    {
+        "i": "8263",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "migratory edema",
+            "blood pressure lability",
+            "easy bleeding",
+            "",
+            "Irritated eyes",
+            "lymphadenitis"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Hereditary angioedema",
+            "Lymphoma",
+            "Sj\u00f6gren syndrome",
+            "Acute viral syndrome",
+            "Allergic reaction",
+            "Lymphatic filariasis",
+            "Kawasaki disease",
+            "Nephrotic syndrome",
+            "Serum sickness"
+        ]
+    },
+    {
+        "i": "8270",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "chemical sensitivities",
+            "rashes",
+            "difficulty focusing vision",
+            "striae",
+            "irritability"
+        ],
+        "diagnoses": [
+            "Cushings syndrome",
+            "Multiple chemical sensitivity (MCS)",
+            "Systemic lupus erythematosus (SLE)",
+            "Fibromyalgia",
+            "Chronic fatigue syndrome (CFS)",
+            "Scleroderma",
+            "Hypothyroidism",
+            "Dermatomyositis",
+            "Mixed connective tissue disease (MCTD)",
+            "Anxiety disorders"
+        ]
+    },
+    {
+        "i": "8273",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "Fatigue",
+            "increased susceptibility to infection",
+            "lymphadenitis",
+            "fibrosis",
+            "Hypersensitivity reactions"
+        ],
+        "diagnoses": [
+            "Sarcoidosis",
+            "Systemic lupus erythematosus (SLE)",
+            "Human immunodeficiency virus (HIV) infection",
+            "Tuberculosis",
+            "Chronic fatigue syndrome (CFS)",
+            "Lymphoma",
+            "Epstein-Barr virus (EBV) infection",
+            "Chronic granulomatous disease (CGD)",
+            "Drug-induced hypersensitivity syndrome (DIHS)",
+            "Cystic fibrosis"
+        ]
+    },
+    {
+        "i": "8274",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "Lymphadenopathy",
+            "chronic kidney disease",
+            "Hypersensitivity reactions",
+            "increased immunoglobulins",
+            "poor healing"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Sjogrens syndrome",
+            "HIV/AIDS",
+            "Lymphoma",
+            "Multiple myeloma",
+            "Chronic lymphocytic leukemia (CLL)",
+            "Sarcoidosis",
+            "IgG4-related disease",
+            "Cryoglobulinemia",
+            "Chronic infections (e.g., tuberculosis, fungal infections)"
+        ]
+    },
+    {
+        "i": "8277",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "postural orthostatic tachycardia syndrome",
+            "Polycythemia",
+            "joint pain",
+            "pallor",
+            "osteoporosis"
+        ],
+        "diagnoses": [
+            "Systemic mastocytosis",
+            "Myeloproliferative neoplasms",
+            "Chronic kidney disease",
+            "Anemia",
+            "Connective tissue disorders (e.g., Ehlers-Danlos syndrome, Marfan syndrome)",
+            "Pheochromocytoma",
+            "Hyperparathyroidism",
+            "Vitamin D deficiency",
+            "Rheumatoid arthritis",
+            "Systemic lupus erythematosus"
+        ]
+    },
+    {
+        "i": "8265",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "nasal congestion",
+            "conjunctival injections",
+            "hives",
+            "vomiting"
+        ],
+        "diagnoses": [
+            "Allergic reaction",
+            "Viral infection (e.g., influenza, common cold)",
+            "Food allergy",
+            "Drug allergy",
+            "Anaphylaxis",
+            "Acute sinusitis",
+            "Gastroenteritis",
+            "Urticaria (hives) due to various causes",
+            "Atopic dermatitis with secondary infection",
+            "Vasomotor rhinitis"
+        ]
+    },
+    {
+        "i": "8278",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "incontinence",
+            "syncope",
+            "hypotension"
+        ],
+        "diagnoses": [
+            "Orthostatic hypotension",
+            "Dehydration",
+            "Urinary tract infection",
+            "Autonomic dysfunction",
+            "Medication side effects (e.g., diuretics, antihypertensives)",
+            "Neurogenic bladder",
+            "Benign prostatic hyperplasia (in men)",
+            "Pelvic floor disorders",
+            "Cardiac arrhythmias",
+            "Vasovagal syncope"
+        ]
+    },
+    {
+        "i": "8253",
+        "criteria": "migraine",
+        "symptoms": [
+            "weakness",
+            "aphasia",
+            "headache",
+            "dysphagia"
+        ],
+        "diagnoses": [
+            "Stroke",
+            "Brain tumor",
+            "Multiple sclerosis",
+            "Myasthenia gravis",
+            "Encephalitis",
+            "Meningitis",
+            "Parkinsons disease",
+            "Bells palsy",
+            "Guillain-Barr\u00e9 syndrome",
+            "Amyotrophic lateral sclerosis (ALS)"
+        ]
+    },
+    {
+        "i": "8255",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "pleural effusion",
+            "thrombocytopenia",
+            "hemolytic anemia",
+            "proteinuria"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Thrombotic thrombocytopenic purpura (TTP)",
+            "Hemolytic uremic syndrome (HUS)",
+            "Antiphospholipid syndrome (APS)",
+            "Lymphoma",
+            "Multiple myeloma",
+            "Chronic lymphocytic leukemia (CLL)",
+            "Viral infections (e.g., HIV, CMV, EBV)",
+            "Connective tissue disorders (e.g., rheumatoid arthritis, scleroderma)",
+            "Medication-induced (e.g., heparin-induced thrombocytopenia, certain antibiotics)"
+        ]
+    },
+    {
+        "i": "8258",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "hemolytic anemia",
+            "thrombocytopenia",
+            "proteinuria",
+            "pleural effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Thrombotic thrombocytopenic purpura",
+            "Hemolytic uremic syndrome",
+            "Antiphospholipid syndrome",
+            "Paroxysmal nocturnal hemoglobinuria",
+            "Evans syndrome",
+            "Autoimmune hemolytic anemia",
+            "Disseminated intravascular coagulation",
+            "Hemophagocytic lymphohistiocytosis",
+            "Connective tissue disorders"
+        ]
+    },
+    {
+        "i": "8260",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "lymphopenia",
+            "nasal ulcers",
+            "proteinuria",
+            "thrombocytopenia"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Lymphoma",
+            "Leukemia",
+            "HIV/AIDS",
+            "Viral infections (e.g., CMV, EBV)",
+            "Aplastic anemia",
+            "Myelodysplastic syndromes",
+            "Rheumatoid arthritis",
+            "Immunodeficiency disorders",
+            "Drug-induced lupus"
+        ]
+    },
+    {
+        "i": "8265",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "nonscarring alopecia",
+            "lymphopenia",
+            "pericardial effusion",
+            "synovitis",
+            "leukopenia"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Dermatomyositis",
+            "Scleroderma",
+            "Sj\u00f6gren syndrome",
+            "Mixed connective tissue disease",
+            "Felty syndrome",
+            "Drug-induced lupus",
+            "Viral pericarditis",
+            "Idiopathic pericarditis"
+        ]
+    },
+    {
+        "i": "8269",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "nasal ulcers",
+            "hemolytic anemia",
+            "proteinuria",
+            "leukopenia",
+            "chilblain"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Granulomatosis with polyangiitis (Wegeners granulomatosis)",
+            "Cryoglobulinemic vasculitis",
+            "Microscopic polyangiitis",
+            "Goodpasture syndrome",
+            "Behcets disease",
+            "Sjogrens syndrome",
+            "Hydralazine-induced lupus",
+            "Procainamide-induced lupus",
+            "Mixed connective tissue disease (MCTD)"
+        ]
+    },
+    {
+        "i": "8270",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "leukopenia",
+            "pericardial effusion",
+            "hemolytic anemia",
+            "lymphopenia"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Viral infections (e.g., HIV, EBV, CMV)",
+            "Hematologic malignancies (e.g., leukemia, lymphoma)",
+            "Autoimmune lymphoproliferative syndrome (ALPS)",
+            "Rheumatoid arthritis",
+            "Tuberculosis",
+            "Sarcoidosis",
+            "Sj\u00f6grens syndrome",
+            "Drug-induced lupus",
+            "Aplastic anemia"
+        ]
+    },
+    {
+        "i": "8273",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "proteinuria",
+            "lymphopenia",
+            "toxic epidermal necrolysis",
+            "hemolytic anemia"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "HIV/AIDS",
+            "Stevens-Johnson syndrome/toxic epidermal necrolysis",
+            "Thrombotic thrombocytopenic purpura",
+            "Lymphoma",
+            "Autoimmune hemolytic anemia",
+            "Chronic lymphocytic leukemia",
+            "Multiple myeloma",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
+            "Paroxysmal nocturnal hemoglobinuria"
+        ]
+    },
+    {
+        "i": "8274",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "nasal ulcers",
+            "hemolytic anemia",
+            "leukopenia",
+            "toxic epidermal necrolysis"
+        ],
+        "diagnoses": [
+            "Stevens-Johnson syndrome",
+            "Lupus erythematosus",
+            "Behcet syndrome",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS)",
+            "Granulomatosis with polyangiitis (Wegener granulomatosis)",
+            "Aplastic anemia",
+            "Paraneoplastic pemphigus",
+            "Microscopic polyangiitis",
+            "Acute retroviral syndrome",
+            "Erythema multiforme major"
+        ]
+    },
+    {
+        "i": "8277",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "proteinuria",
+            "toxic epidermal necrolysis",
+            "thrombocytopenia",
+            "postinflammatory dyspigmentation"
+        ],
+        "diagnoses": [
+            "Stevens-Johnson syndrome/toxic epidermal necrolysis (SJS/TEN)",
+            "Systemic lupus erythematosus (SLE)",
+            "Thrombotic thrombocytopenic purpura (TTP)",
+            "Hemolytic uremic syndrome (HUS)",
+            "Drug-induced hypersensitivity syndrome (DIHS)/Drug reaction with eosinophilia and systemic symptoms (DRESS)",
+            "Acute cutaneous lupus erythematosus (ACLE)",
+            "Idiopathic thrombocytopenic purpura (ITP)",
+            "Vasculitis (e.g., ANCA-associated vasculitis, Henoch-Schonlein purpura)",
+            "Paraneoplastic syndrome secondary to an underlying malignancy",
+            "Sepsis with associated disseminated intravascular coagulation (DIC)"
+        ]
+    },
+    {
+        "i": "8279",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "nonscarring alopecia",
+            "pericarditis",
+            "lymphopenia",
+            "discoid rash"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Lupus erythematosus",
+            "Dermatomyositis",
+            "Sarcoidosis",
+            "Rheumatoid arthritis",
+            "Scleroderma",
+            "Sj\u00f6grens syndrome",
+            "Mixed connective tissue disease",
+            "Vasculitis",
+            "Autoimmune disorders"
+        ]
+    },
+    {
+        "i": "8281",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "pleural effusion",
+            "proteinuria",
+            "synovitis",
+            "delirium"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Rheumatoid arthritis",
+            "Sjogren syndrome",
+            "Mixed connective tissue disease",
+            "Granulomatosis with polyangiitis (Wegener granulomatosis)",
+            "Sarcoidosis",
+            "Amyloidosis",
+            "Paraneoplastic syndrome",
+            "Lymphoma",
+            "Multiple myeloma"
+        ]
+    }
+]

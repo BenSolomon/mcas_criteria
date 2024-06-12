@@ -1,0 +1,269 @@
+[
+    {
+        "i": "9999",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "diffuse erythematous rash",
+            "thrombocytosis",
+            "oropharyngeal erythema"
+        ],
+        "diagnoses": [
+            "Scarlet fever",
+            "Kawasaki disease",
+            "Toxic shock syndrome",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS)",
+            "Stevens-Johnson syndrome/Toxic epidermal necrolysis (SJS/TEN)",
+            "Systemic lupus erythematosus (SLE)",
+            "Juvenile idiopathic arthritis (systemic onset)",
+            "Infectious mononucleosis",
+            "Parvovirus B19 infection (Fifth disease)",
+            "Human immunodeficiency virus (HIV) infection (acute)"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "aha_kawasaki",
+        "symptoms": [
+            "fever",
+            "oropharyngeal erythema",
+            "lip erythema",
+            "cervical lymphadenopathy"
+        ],
+        "diagnoses": [
+            "Infectious mononucleosis",
+            "Streptococcal pharyngitis",
+            "Viral pharyngitis",
+            "Coxsackievirus infection (Hand, foot, and mouth disease)",
+            "Herpangina",
+            "Acute HIV infection",
+            "Measles",
+            "Rubella",
+            "Scarlet fever",
+            "Kawasaki disease"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "malar rash",
+            "delirium",
+            "synovitis",
+            "fever",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Adult-onset Stills disease",
+            "Mixed connective tissue disease",
+            "Drug-induced lupus",
+            "Infectious causes (e.g., viral infections, bacterial infections)",
+            "Malignancy (e.g., lymphoma, leukemia)",
+            "Rheumatic fever",
+            "Sj\u00f6grens syndrome with systemic involvement",
+            "Vasculitis (e.g., granulomatosis with polyangiitis, microscopic polyangiitis)",
+            "Antiphospholipid syndrome"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "eular_acr_sle",
+        "symptoms": [
+            "proteinuria",
+            "autoimmune hemolysis",
+            "thrombocytopenia",
+            "pericardial effusion"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus (SLE)",
+            "Antiphospholipid syndrome",
+            "Catastrophic antiphospholipid syndrome (CAPS)",
+            "Mixed connective tissue disease (MCTD)",
+            "Drug-induced lupus",
+            "Infections (e.g., HIV, hepatitis C, Epstein-Barr virus)",
+            "Malignancies (e.g., lymphoma)",
+            "Thrombotic thrombocytopenic purpura (TTP)",
+            "Hemolytic uremic syndrome (HUS)",
+            "Evans syndrome"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "Lymphadenopathy",
+            "Fatigue",
+            "hyperglycemia",
+            "obsessive-compulsive behavior",
+            "laryngitis"
+        ],
+        "diagnoses": [
+            "HIV/AIDS",
+            "Lymphoma",
+            "Leukemia",
+            "Mononucleosis",
+            "Autoimmune disorders (e.g., lupus, rheumatoid arthritis)",
+            "Tuberculosis",
+            "Syphilis",
+            "Diabetes (can cause fatigue and hyperglycemia, but not usually the other symptoms)",
+            "Thyroid disorders",
+            "Anxiety/Depression (can worsen obsessive-compulsive behavior)"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "mcas_alternative",
+        "symptoms": [
+            "hemorrhoids",
+            "tags",
+            "tinnitus",
+            "Polycythemia",
+            "joint pain"
+        ],
+        "diagnoses": [
+            "Hemorrhoids",
+            "Tinnitus",
+            "Polycythemia Vera",
+            "Osteoarthritis",
+            "Rheumatoid Arthritis",
+            "Psoriatic Arthritis",
+            "Gout",
+            "Fibromyalgia",
+            "Systemic Lupus Erythematosus",
+            "Multiple Sclerosis"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "syncope",
+            "conjunctival injections",
+            "hives",
+            "hypoxia"
+        ],
+        "diagnoses": [
+            "Anaphylaxis",
+            "Systemic mastocytosis",
+            "Hereditary angioedema",
+            "Cholinergic urticaria",
+            "Vasovagal syncope (neurocardiogenic syncope)",
+            "Drug reaction with eosinophilia and systemic symptoms (DRESS syndrome)",
+            "Systemic lupus erythematosus (SLE)",
+            "Sarcoidosis",
+            "Infectious mononucleosis",
+            "Acute generalized exanthematous pustulosis (AGEP)"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "mcas_consortium",
+        "symptoms": [
+            "sneezing",
+            "diarrhea",
+            "incontinence",
+            "hypotension",
+            "pruritis"
+        ],
+        "diagnoses": [
+            "Food poisoning",
+            "Gastroenteritis (Stomach flu)",
+            "Viral infection",
+            "Anaphylaxis (severe allergic reaction)",
+            "Inflammatory bowel disease (IBD)",
+            "Irritable bowel syndrome (IBS)",
+            "Medication side effects",
+            "Parasite infection",
+            "Dehydration",
+            "Underlying medical condition (e.g., diabetes, thyroid disease)"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "migraine",
+        "symptoms": [
+            "vomiting",
+            "weakness",
+            "dysphagia",
+            "parasthesia"
+        ],
+        "diagnoses": [
+            "Guillain-Barre Syndrome",
+            "Multiple Sclerosis",
+            "Myasthenia Gravis",
+            "Stroke",
+            "Botulism",
+            "Diabetic Neuropathy",
+            "Brain Tumor",
+            "Amyotrophic Lateral Sclerosis (ALS)",
+            "Lambert-Eaton Myasthenic Syndrome",
+            "Infectious Encephalitis"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "migraine",
+        "symptoms": [
+            "phonophobia",
+            "scintillation"
+        ],
+        "diagnoses": [
+            "Migraine with aura",
+            "Vestibular migraine",
+            "Occipital lobe epilepsy",
+            "Retinal migraine",
+            "Transient ischemic attack (TIA)",
+            "Optic neuritis",
+            "Multiple sclerosis",
+            "Brain tumor",
+            "Meningitis",
+            "Posterior reversible encephalopathy syndrome (PRES)"
+        ]
+    },
+    {
+        "i": "9999",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "leukopenia",
+            "nonscarring alopecia",
+            "proteinuria",
+            "arthropathy",
+            "telangiectasias"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Scleroderma (systemic sclerosis)",
+            "Dermatomyositis",
+            "Mixed connective tissue disease",
+            "Sj\u00f6grens syndrome",
+            "Undifferentiated connective tissue disease",
+            "Drug-induced lupus",
+            "Viral infections (e.g., HIV, Epstein-Barr virus)",
+            "Lymphoma",
+            "Leukemia"
+        ]
+    },
+    {
+        "i": "10000",
+        "criteria": "slicc_sle",
+        "symptoms": [
+            "pleural effusion",
+            "lymphopenia",
+            "thrombocytopenia",
+            "pericardial effusion",
+            "verrucous rash"
+        ],
+        "diagnoses": [
+            "Systemic lupus erythematosus",
+            "Tuberculosis",
+            "Malignancy (e.g., lymphoma, leukemia)",
+            "HIV infection",
+            "Sarcoidosis",
+            "Heart failure",
+            "Infections (e.g., viral, bacterial, fungal)",
+            "Pulmonary embolism",
+            "Drug reactions",
+            "Rheumatoid arthritis"
+        ]
+    }
+]

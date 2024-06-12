@@ -1,4674 +1,872 @@
 [
-    {
-        "i": "6039",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "hand erythema",
-            "foot erythema",
-            "oropharyngeal erythema",
-            "leukocytosis",
-            "cervical lymphadenopathy"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Streptococcal pharyngitis",
-            "Toxic shock syndrome",
-            "Measles",
-            "Erythema multiforme",
-            "Stevens-Johnson syndrome",
-            "Erythema infectiosum (fifth disease)",
-            "Systemic lupus erythematosus",
-            "Dermatomyositis"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "lip cracking",
-            "pyuria",
-            "periungal desquamation",
-            "diffuse erythematous rash"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Measles",
-            "Infectious mononucleosis",
-            "Systemic lupus erythematosus (SLE)",
-            "Streptococcal pharyngitis",
-            "Cytomegalovirus (CMV) infection",
-            "Adenovirus infection",
-            "Stevens-Johnson syndrome",
-            "Acute retroviral syndrome (HIV seroconversion illness)"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "lip cracking",
-            "foot erythema",
-            "conjunctivitis",
-            "tongue erythema"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Stevens-Johnson syndrome",
-            "Erythema multiforme",
-            "Scarlet fever",
-            "Staphylococcal scalded skin syndrome",
-            "Vitamin B deficiency",
-            "Drug reaction",
-            "Erythroderma",
-            "Toxic shock syndrome",
-            "Systemic lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "erythema multiforme",
-            "lip cracking",
-            "oropharyngeal erythema"
-        ],
-        "diagnoses": [
-            "Stevens-Johnson syndrome",
-            "Mycoplasma pneumoniae infection",
-            "Infectious mononucleosis",
-            "Erythema multiforme",
-            "Scarlet fever",
-            "Kawasaki disease",
-            "Measles",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Herpes simplex virus infection",
-            "Systemic lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "diffuse erythematous rash",
-            "pyuria",
-            "leukocytosis"
-        ],
-        "diagnoses": [
-            "Acute interstitial nephritis",
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Urinary tract infection",
-            "Sepsis",
-            "Streptococcal toxic shock syndrome",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS)",
-            "Staphylococcal scalded skin syndrome",
-            "Systemic lupus erythematosus",
-            "Acute poststreptococcal glomerulonephritis"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "lip cracking",
-            "conjunctivitis",
-            "oropharyngeal erythema",
-            "fever",
-            "pyuria"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Measles",
-            "Stevens-Johnson syndrome",
-            "Toxic shock syndrome",
-            "Erythema multiforme",
-            "Scarlet fever",
-            "Epstein-Barr virus infection",
-            "Adenovirus infection",
-            "Urinary tract infection",
-            "Viral conjunctivitis"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "fever",
-            "pyuria",
-            "lip cracking",
-            "periungal desquamation",
-            "leukocytosis"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Urinary tract infection",
-            "Sepsis",
-            "Vasculitis",
-            "Stevens-Johnson syndrome",
-            "Scarlet fever",
-            "Streptococcal infection",
-            "Meningococcemia",
-            "Staphylococcal scalded skin syndrome",
-            "Acute rheumatic fever"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "fever",
-            "pyuria",
-            "cervical lymphadenopathy"
-        ],
-        "diagnoses": [
-            "Urinary tract infection",
-            "Pyelonephritis",
-            "Cervical lymphadenitis",
-            "Infectious mononucleosis",
-            "Cytomegalovirus infection",
-            "HIV infection",
-            "Toxoplasmosis",
-            "Cat-scratch disease",
-            "Tuberculosis",
-            "Lymphoma"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "hand edema",
-            "conjunctivitis",
-            "fever",
-            "periungal desquamation"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Staphylococcal scalded skin syndrome",
-            "Cellulitis",
-            "Stevens-Johnson syndrome",
-            "Erythema multiforme",
-            "Measles",
-            "Toxic shock syndrome",
-            "Atopic dermatitis with secondary infection",
-            "Drug reaction"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "pyuria",
-            "foot edema",
-            "fever",
-            "lip erythema"
-        ],
-        "diagnoses": [
-            "Poststreptococcal glomerulonephritis",
-            "Systemic lupus erythematosus",
-            "Kawasaki disease",
-            "Acute interstitial nephritis",
-            "Sepsis",
-            "Nephrotic syndrome",
-            "Infective endocarditis",
-            "Henoch-Schonlein purpura",
-            "Rheumatic fever",
-            "Polyarteritis nodosa"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "fever",
-            "pyuria",
-            "conjunctivitis",
-            "foot erythema",
-            "oropharyngeal erythema"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Streptococcal pharyngitis",
-            "Scarlet fever",
-            "Adenovirus infection",
-            "Stevens-Johnson syndrome",
-            "Urinary tract infection",
-            "Erythema multiforme",
-            "Measles",
-            "Leptospirosis",
-            "Scombroid food poisoning"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "conjunctivitis",
-            "pyuria",
-            "thrombocytosis",
-            "cervical lymphadenopathy"
-        ],
-        "diagnoses": [
-            "Urinary tract infection",
-            "Acute bacterial conjunctivitis",
-            "Kawasaki disease",
-            "Reactive lymphadenopathy",
-            "Epstein-Barr virus infection",
-            "Adenovirus infection",
-            "Cytomegalovirus infection",
-            "Toxoplasmosis",
-            "Leptospirosis",
-            "Systemic lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "fever",
-            "cervical lymphadenopathy",
-            "diffuse erythematous rash",
-            "conjunctivitis"
-        ],
-        "diagnoses": [
-            "Measles",
-            "Rubella",
-            "Roseola infantum",
-            "Scarlet fever",
-            "Infectious mononucleosis",
-            "Kawasaki disease",
-            "Adenovirus infection",
-            "Acute HIV infection",
-            "Erythema infectiosum (Fifth disease)",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "fever",
-            "erythema multiforme"
-        ],
-        "diagnoses": [
-            "{diagnosis:Infectious mononucleosis",
-            "info:Caused by Epstein-Barr virus",
-            "often presents with fever",
-            "lymphadenopathy",
-            "and skin rash.}",
-            "{diagnosis:Stevens-Johnson syndrome",
-            "info:Severe skin reaction that can involve fever and target lesions",
-            "often drug-induced.}",
-            "{diagnosis:Kawasaki disease",
-            "info:Acute febrile illness of childhood with lymphadenopathy and mucocutaneous changes.}",
-            "{diagnosis:Streptococcal pharyngitis",
-            "info:Bacterial throat infection that can present with fever",
-            "lymphadenopathy",
-            "and rash.}",
-            "{diagnosis:Viral exanthem",
-            "info:Various viral illnesses can cause fever",
-            "lymphadenopathy and skin eruptions.}",
-            "{diagnosis:Rubella",
-            "info:Viral illness with fever",
-            "lymphadenopathy",
-            "and characteristic red maculopapular rash.}",
-            "{diagnosis:Measles",
-            "info:Highly contagious viral disease with fever",
-            "cough",
-            "conjunctivitis & morbilliform rash.}",
-            "{diagnosis:Sarcoidosis",
-            "info:Multisystem granulomatous disorder that can involve lymph nodes and cause skin findings.}",
-            "{diagnosis:HIV acute seroconversion",
-            "info:Acute HIV infection can present with fever",
-            "lymphadenopathy",
-            "and mucocutaneous lesions.}",
-            "{diagnosis:Lymphoma",
-            "info:Group of blood cancers that develop in the lymph system. constitutional symptoms are common.}"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "leukocytosis",
-            "conjunctivitis",
-            "diffuse erythematous rash",
-            "lip cracking",
-            "hand edema"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Measles",
-            "Stevens-Johnson syndrome",
-            "Toxic shock syndrome",
-            "Erythema multiforme",
-            "Streptococcal pharyngitis with rash",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Staphylococcal scalded skin syndrome",
-            "Viral exanthem (e.g.",
-            "adenovirus",
-            "enterovirus",
-            "parvovirus B19)"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "oropharyngeal erythema",
-            "fever",
-            "tongue erythema",
-            "pyuria"
-        ],
-        "diagnoses": [
-            "Streptococcal pharyngitis",
-            "Infectious mononucleosis",
-            "Herpangina",
-            "Acute pharyngitis",
-            "Hand",
-            "foot and mouth disease",
-            "Viral pharyngitis",
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Urinary tract infection",
-            "Measles"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "hand erythema",
-            "hand edema",
-            "foot edema",
-            "fever"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Acute rheumatic fever",
-            "Systemic lupus erythematosus (SLE)",
-            "Juvenile idiopathic arthritis",
-            "Scarlet fever",
-            "Lymphoma",
-            "Mononucleosis",
-            "Measles",
-            "Rubella",
-            "Lyme disease"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "thrombocytosis",
-            "conjunctivitis",
-            "fever",
-            "anemia"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Acute lymphoblastic leukemia",
-            "Infectious mononucleosis",
-            "Systemic lupus erythematosus",
-            "Juvenile idiopathic arthritis",
-            "Lymphoma",
-            "Viral infection (e.g.",
-            "measles",
-            "rubella",
-            "adenovirus)",
-            "Bacterial infection (e.g.",
-            "streptococcal",
-            "staphylococcal)",
-            "Rheumatoid arthritis",
-            "Sarcoidosis"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "periungal desquamation",
-            "foot erythema",
-            "fever",
-            "cervical lymphadenopathy",
-            "thrombocytosis"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Stevens-Johnson syndrome/Toxic epidermal necrolysis",
-            "Staphylococcal scalded skin syndrome",
-            "Erythema multiforme",
-            "Measles",
-            "Parvovirus B19 infection",
-            "Systemic juvenile idiopathic arthritis",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Streptococcal toxic shock syndrome"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "foot edema",
-            "pyuria",
-            "fever",
-            "cervical lymphadenopathy"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Nephrotic syndrome",
-            "Lymphoma",
-            "Acute pyelonephritis",
-            "Congestive heart failure",
-            "Cirrhosis with ascites",
-            "Deep vein thrombosis",
-            "Tuberculosis",
-            "Streptococcal infection",
-            "Filariasis"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "lip erythema",
-            "conjunctivitis",
-            "foot erythema",
-            "anemia",
-            "leukocytosis"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Systemic lupus erythematosus (SLE)",
-            "Stevens-Johnson syndrome",
-            "Erythema multiforme",
-            "Viral infection (e.g.",
-            "measles",
-            "rubella",
-            "adenovirus)",
-            "Drug reaction (e.g.",
-            "DRESS syndrome)",
-            "Toxic shock syndrome",
-            "Scarlet fever",
-            "Erythroderma (generalized exfoliative dermatitis)",
-            "Graft-versus-host disease (GVHD)"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "pyuria",
-            "maculopapular rash",
-            "conjunctivitis",
-            "erythema multiforme"
-        ],
-        "diagnoses": [
-            "Stevens-Johnson syndrome",
-            "Toxic epidermal necrolysis",
-            "Kawasaki disease",
-            "Measles",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Erythema multiforme major",
-            "Viral exanthem with secondary bacterial infection",
-            "Mycoplasma pneumoniae infection",
-            "Urinary tract infection with systemic reaction",
-            "Behcets disease"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "leukocytosis",
-            "fever",
-            "thrombocytosis",
-            "pyuria"
-        ],
-        "diagnoses": [
-            "Acute bacterial lymphadenitis",
-            "Lymphoma (Hodgkins or Non-Hodgkins)",
-            "Mononucleosis",
-            "Cat scratch disease",
-            "Tuberculosis",
-            "Toxoplasmosis",
-            "Acute pyelonephritis",
-            "Systemic lupus erythematosus (SLE)",
-            "Sarcoidosis",
-            "Kawasaki disease"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "hand edema",
-            "diffuse erythematous rash",
-            "erythema multiforme",
-            "fever"
-        ],
-        "diagnoses": [
-            "Stevens-Johnson syndrome",
-            "Toxic epidermal necrolysis",
-            "Kawasaki disease",
-            "Erythema multiforme major",
-            "Viral exanthem",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Staphylococcal scalded skin syndrome",
-            "Cellulitis",
-            "Vasculitis",
-            "Acute cutaneous lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "diffuse erythematous rash",
-            "anemia",
-            "oropharyngeal erythema",
-            "conjunctivitis"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Measles",
-            "Scarlet fever",
-            "Erythema multiforme",
-            "Stevens-Johnson syndrome",
-            "Toxic shock syndrome",
-            "Systemic lupus erythematosus (SLE)",
-            "Juvenile idiopathic arthritis",
-            "Viral exanthem (e.g.",
-            "rubella",
-            "parvovirus B19",
-            "enterovirus)",
-            "Drug reaction (e.g.",
-            "DRESS syndrome",
-            "serum sickness-like reaction)"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "pyuria",
-            "hand edema",
-            "diffuse erythematous rash",
-            "leukocytosis",
-            "conjunctivitis"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus (SLE)",
-            "Kawasaki Disease",
-            "Polyarteritis Nodosa (PAN)",
-            "Acute Poststreptococcal Glomerulonephritis (PSGN)",
-            "Urinary Tract Infection (UTI) with Sepsis",
-            "Drug Reaction with Eosinophilia and Systemic Symptoms (DRESS) Syndrome",
-            "Granulomatosis with Polyangiitis (GPA) (formerly known as Wegeners Granulomatosis)",
-            "Nephrotic Syndrome (e.g.",
-            "Minimal Change Disease",
-            "Membranous Nephropathy)",
-            "Measles",
-            "Serum Sickness"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "thrombocytosis",
-            "fever",
-            "leukocytosis"
-        ],
-        "diagnoses": [
-            "Lymphoma",
-            "Leukemia",
-            "Infectious mononucleosis",
-            "Tuberculosis",
-            "HIV/AIDS",
-            "Systemic lupus erythematosus",
-            "Sarcoidosis",
-            "Toxoplasmosis",
-            "Cytomegalovirus infection",
-            "Hypereosinophilic syndrome"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "fever",
-            "pyuria",
-            "lip cracking",
-            "tongue erythema",
-            "conjunctivitis"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Streptococcal infection",
-            "Staphylococcal infection",
-            "Viral infection",
-            "Stevens-Johnson syndrome",
-            "Urinary tract infection",
-            "Pyelonephritis",
-            "Erythema multiforme",
-            "Scarlet fever",
-            "Measles"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "cervical lymphadenopathy",
-            "conjunctivitis"
-        ],
-        "diagnoses": [
-            "Infectious mononucleosis",
-            "Measles",
-            "Rubella",
-            "Adenovirus infection",
-            "Cytomegalovirus infection",
-            "Toxoplasmosis",
-            "Kawasaki disease",
-            "Acute bacterial conjunctivitis",
-            "Cat-scratch disease",
-            "HIV infection"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "diffuse erythematous rash",
-            "erythema multiforme",
-            "anemia",
-            "lip erythema",
-            "tongue erythema"
-        ],
-        "diagnoses": [
-            "Stevens-Johnson syndrome",
-            "Toxic epidermal necrolysis",
-            "Erythema multiforme major",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Staphylococcal scalded skin syndrome",
-            "Viral exanthem",
-            "Acute cutaneous lupus erythematosus",
-            "Paraneoplastic pemphigus"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "tongue erythema",
-            "conjunctivitis",
-            "oropharyngeal erythema",
-            "periungal desquamation"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Stevens-Johnson syndrome",
-            "Erythema multiforme",
-            "Measles",
-            "Toxic shock syndrome",
-            "Staphylococcal scalded skin syndrome",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Erythema infectiosum (fifth disease)",
-            "Systemic lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "oropharyngeal erythema",
-            "conjunctivitis",
-            "periungal desquamation",
-            "pyuria",
-            "fever"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Scarlet fever",
-            "Streptococcal pharyngitis",
-            "Adenovirus infection",
-            "Stevens-Johnson syndrome",
-            "Measles",
-            "Leptospirosis",
-            "Erythema multiforme",
-            "Urinary tract infection",
-            "Viral exanthem"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "conjunctivitis",
-            "pyuria",
-            "cervical lymphadenopathy",
-            "fever",
-            "hand erythema"
-        ],
-        "diagnoses": [
-            "Kawasaki disease",
-            "Adenoviral conjunctivitis",
-            "Measles",
-            "Epstein-Barr virus (EBV) infection",
-            "Systemic lupus erythematosus (SLE)",
-            "Urinary tract infection (UTI)",
-            "Juvenile idiopathic arthritis (JIA)",
-            "Bacterial conjunctivitis",
-            "Scarlet fever",
-            "Reactive arthritis"
-        ]
-    },
-    {
-        "i": "6039",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "nephritis",
-            "thrombocytopenia",
-            "malar rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Thrombotic thrombocytopenic purpura",
-            "Hemolytic uremic syndrome",
-            "Viral infections (e.g.",
-            "measles",
-            "rubella",
-            "parvovirus B19)",
-            "Bacterial infections (e.g.",
-            "endocarditis",
-            "sepsis)",
-            "Hantavirus infection",
-            "Goodpasture syndrome",
-            "Granulomatosis with polyangiitis (formerly Wegener granulomatosis)",
-            "Cryoglobulinemia",
-            "Drug-induced lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "proteinuria",
-            "atrophic scarring",
-            "discoid rash",
-            "pericardial effusion",
-            "nephritis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Lupus nephritis",
-            "Discoid lupus erythematosus",
-            "Mixed connective tissue disease",
-            "Scleroderma renal crisis",
-            "Subacute cutaneous lupus erythematosus",
-            "Rheumatoid vasculitis",
-            "Sjogren syndrome",
-            "Goodpasture syndrome",
-            "ANCA-associated vasculitis"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "thrombocytopenia",
-            "atrophic scarring",
-            "nephritis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Scleroderma",
-            "Antiphospholipid syndrome (APS)",
-            "Hemolytic uremic syndrome (HUS)",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Goodpasture syndrome",
-            "Cryoglobulinemia",
-            "Sarcoidosis",
-            "Sj\u00f6grens syndrome"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "leukopenia",
-            "nephritis",
-            "autoimmune hemolysis",
-            "erythematous-violaceous"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Autoimmune disorders (e.g.",
-            "Sj\u00f6grens syndrome",
-            "scleroderma)",
-            "Viral infections (e.g.",
-            "parvovirus B19",
-            "Epstein-Barr virus",
-            "cytomegalovirus)",
-            "Hematologic malignancies (e.g.",
-            "leukemia",
-            "lymphoma)",
-            "Drug-induced lupus erythematosus",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Autoimmune hepatitis",
-            "Mixed connective tissue disease",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Cryoglobulinemia"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "nephritis",
-            "atrophic scarring",
-            "acute pericarditis",
-            "arthropathy"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus",
-            "Rheumatic Fever",
-            "Vasculitis",
-            "Sarcoidosis",
-            "Behcets Disease",
-            "Familial Mediterranean Fever",
-            "Granulomatosis with Polyangiitis (Wegeners)",
-            "Polyarteritis Nodosa",
-            "Cryoglobulinemia",
-            "IgA Vasculitis (Henoch-Schonlein Purpura)"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "leukopenia",
-            "pleural effusion",
-            "thrombocytopenia",
-            "pericardial effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Lymphoma (Hodgkins or Non-Hodgkins)",
-            "Tuberculosis",
-            "Viral infections (e.g.",
-            "HIV",
-            "EBV",
-            "CMV)",
-            "Acute myeloid leukemia (AML)",
-            "Chronic lymphocytic leukemia (CLL)",
-            "Myelodysplastic syndromes (MDS)",
-            "Aplastic anemia",
-            "Hypothyroidism"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "arthropathy",
-            "seizure",
-            "nephritis",
-            "pleural effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Goodpasture syndrome",
-            "Granulomatosis with polyangiitis (Wegeners)",
-            "Polyarteritis nodosa",
-            "Sarcoidosis",
-            "Multiple myeloma",
-            "Lymphoma",
-            "Tuberculosis",
-            "Amyloidosis"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "discoid rash",
-            "pleural effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Tuberculosis",
-            "Sarcoidosis",
-            "Lymphoma",
-            "Dermatomyositis",
-            "Subacute cutaneous lupus erythematosus",
-            "Pneumonia with atypical manifestations",
-            "Acute HIV infection",
-            "Drug-induced lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "autoimmune hemolysis",
-            "leukopenia",
-            "psoriasiform rash",
-            "fever",
-            "pericardial effusion"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus (SLE)",
-            "Rheumatoid Arthritis",
-            "Stills Disease (Adult-onset Stills Disease)",
-            "Dermatomyositis",
-            "Scleroderma (Systemic Sclerosis)",
-            "Sj\u00f6grens Syndrome",
-            "Vasculitis (e.g.",
-            "Polyarteritis Nodosa",
-            "Granulomatosis with Polyangiitis)",
-            "Beh\u00e7ets Disease",
-            "Sarcoidosis",
-            "Drug-induced Lupus"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "erythematous-violaceous",
-            "maculopapular rash",
-            "fever",
-            "delirium",
-            "arthropathy"
-        ],
-        "diagnoses": [
-            "Meningococcemia",
-            "Systemic lupus erythematosus (SLE)",
-            "Rocky Mountain spotted fever",
-            "Disseminated gonococcal infection",
-            "Acute rheumatic fever",
-            "Adult-onset Stills disease",
-            "Secondary syphilis",
-            "Lyme disease",
-            "Ehrlichiosis",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "atrophic scarring",
-            "pericardial effusion",
-            "pleural effusion",
-            "synovitis",
-            "fever"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Tuberculosis",
-            "Sarcoidosis",
-            "Familial Mediterranean fever",
-            "Adult-onset Stills disease",
-            "Malignancy (lymphoma",
-            "leukemia)",
-            "Viral infections (e.g.",
-            "parvovirus B19",
-            "HIV)",
-            "Bacterial endocarditis",
-            "Connective tissue diseases (e.g.",
-            "scleroderma",
-            "dermatomyositis)"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "autoimmune hemolysis",
-            "fever",
-            "synovitis"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus (SLE)",
-            "Rheumatoid Arthritis",
-            "Stills Disease",
-            "Mixed Connective Tissue Disease (MCTD)",
-            "Sj\u00f6grens Syndrome",
-            "Viral Infection (e.g.",
-            "Parvovirus B19",
-            "EBV",
-            "CMV)",
-            "Lymphoproliferative Disorders",
-            "Drug-Induced Lupus Erythematosus",
-            "Cryoglobulinemia",
-            "Autoimmune Lymphoproliferative Syndrome (ALPS)"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "thrombocytopenia",
-            "nephritis",
-            "malar rash",
-            "proteinuria",
-            "acute pericarditis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Lupus nephritis",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Viral pericarditis (e.g.",
-            "Coxsackie virus",
-            "influenza)",
-            "Uremic pericarditis",
-            "Drug-induced lupus erythematosus",
-            "Antiphospholipid syndrome",
-            "Sj\u00f6gren syndrome",
-            "Mixed connective tissue disease (MCTD)"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "arthropathy",
-            "fever",
-            "synovitis",
-            "proteinuria"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Reactive arthritis",
-            "Psoriatic arthritis",
-            "Juvenile idiopathic arthritis",
-            "Viral arthritis (e.g. parvovirus B19",
-            "hepatitis B",
-            "rubella)",
-            "Bacterial endocarditis",
-            "Henoch-Sch\u00f6nlein purpura",
-            "Multicentric reticulohistiocytosis",
-            "Whipple disease"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "synovitis",
-            "annular rash"
-        ],
-        "diagnoses": [
-            "Acute rheumatic fever",
-            "Systemic lupus erythematosus (SLE)",
-            "Lyme disease",
-            "Adult-onset Stills disease",
-            "Rheumatoid arthritis",
-            "Viral infections (e.g.",
-            "parvovirus B19",
-            "rubella",
-            "hepatitis B",
-            "hepatitis C)",
-            "Reactive arthritis",
-            "Serum sickness",
-            "Erythema multiforme",
-            "Sarcoidosis"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "nephritis",
-            "malar rash",
-            "arthropathy",
-            "pleural effusion",
-            "psoriasiform rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Sjogren syndrome",
-            "Mixed connective tissue disease (MCTD)",
-            "Vasculitis (e.g.",
-            "granulomatosis with polyangiitis)",
-            "Adult-onset Still disease",
-            "Psoriatic arthritis",
-            "Sarcoidosis",
-            "Viral infections (e.g.",
-            "parvovirus B19)",
-            "Drug-induced lupus"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "psoriasiform rash",
-            "arthropathy",
-            "proteinuria",
-            "nephritis",
-            "psychosis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Psoriatic arthritis",
-            "Lupus nephritis",
-            "Sarcoidosis",
-            "Reiters syndrome (Reactive arthritis)",
-            "IgA nephropathy",
-            "Goodpasture syndrome",
-            "Scleroderma",
-            "Henoch-Sch\u00f6nlein purpura (IgA vasculitis)",
-            "Granulomatosis with polyangiitis (Wegeners granulomatosis)"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "pericardial effusion",
-            "seizure",
-            "fever",
-            "thrombocytopenia",
-            "proteinuria"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Viral infection (e.g.",
-            "HIV",
-            "EBV",
-            "CMV)",
-            "Bacterial infection (e.g.",
-            "tuberculosis",
-            "endocarditis)",
-            "Malignancy (e.g.",
-            "lymphoma",
-            "leukemia)",
-            "Rheumatoid arthritis",
-            "Vasculitis (e.g.",
-            "granulomatosis with polyangiitis)",
-            "Chronic kidney disease",
-            "Nephrotic syndrome",
-            "Hemolytic uremic syndrome (HUS)",
-            "Thrombotic thrombocytopenic purpura (TTP)"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "synovitis",
-            "psychosis",
-            "proteinuria",
-            "pleural effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Sarcoidosis",
-            "Sj\u00f6grens syndrome",
-            "Beh\u00e7ets disease",
-            "Vasculitis (e.g.",
-            "granulomatosis with polyangiitis)",
-            "Adult-onset Stills disease",
-            "Tuberculosis",
-            "Lymphoma",
-            "Familial Mediterranean fever"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "erythematous-violaceous",
-            "leukopenia",
-            "follicular hyperkeratosis"
-        ],
-        "diagnoses": [
-            "Acute retroviral syndrome",
-            "Mycosis fungoides",
-            "Cutaneous T-cell lymphoma (CTCL)",
-            "Dengue fever",
-            "Cytomegalovirus (CMV) infection",
-            "Epstein-Barr virus (EBV) infection",
-            "Rubella (German measles)",
-            "Rubeola (Measles)",
-            "Cutaneous leishmaniasis",
-            "Pityriasis rubra pilaris"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "acute pericarditis",
-            "leukopenia",
-            "annular rash",
-            "proteinuria",
-            "psychosis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Viral pericarditis (e.g.",
-            "Coxsackievirus",
-            "Echovirus",
-            "HIV",
-            "Influenza)",
-            "Rheumatic fever",
-            "Drug-induced lupus erythematosus (e.g.",
-            "hydralazine",
-            "procainamide",
-            "isoniazid)",
-            "Acute rheumatic pericarditis",
-            "Sarcoidosis",
-            "Acute myeloid leukemia with leukopenia and pericarditis",
-            "Acute pericarditis due to bacterial infection (e.g.",
-            "Mycobacterium tuberculosis",
-            "Streptococcus pneumoniae)",
-            "Paraneoplastic syndrome with pericarditis and leukopenia",
-            "Autoimmune disorders (e.g.",
-            "mixed connective tissue disease",
-            "dermatomyositis)"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "malar rash",
-            "fever",
-            "psychosis",
-            "synovitis",
-            "pleural effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Drug-induced lupus",
-            "Viral infection (e.g.",
-            "parvovirus B19",
-            "hepatitis B/C",
-            "HIV)",
-            "Bacterial infection (e.g.",
-            "endocarditis",
-            "tuberculosis)",
-            "Vasculitis (e.g.",
-            "granulomatosis with polyangiitis)",
-            "Sarcoidosis",
-            "Malignancy (e.g.",
-            "lymphoma",
-            "leukemia)",
-            "Adult-onset Stills disease",
-            "Connective tissue disease (e.g.",
-            "mixed connective tissue disease",
-            "Sj\u00f6grens syndrome)"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "pleural effusion",
-            "fever",
-            "arthropathy",
-            "proteinuria"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Tuberculosis",
-            "Malignancy (e.g.",
-            "lymphoma",
-            "lung cancer)",
-            "Familial Mediterranean fever",
-            "Streptococcal infection (e.g.",
-            "post-streptococcal glomerulonephritis)",
-            "Adult-onset Stills disease",
-            "Sarcoidosis",
-            "Granulomatosis with polyangiitis (Wegeners granulomatosis)",
-            "Churg-Strauss syndrome (Eosinophilic granulomatosis with polyangiitis)"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "nephritis",
-            "pericardial effusion",
-            "annular rash",
-            "delirium"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Viral infection (e.g.",
-            "Epstein-Barr virus",
-            "cytomegalovirus)",
-            "Uremic syndrome",
-            "Drug-induced lupus erythematosus",
-            "Acute post-streptococcal glomerulonephritis",
-            "Bacterial endocarditis",
-            "Polyarteritis nodosa",
-            "Granulomatosis with polyangiitis (Wegener granulomatosis)",
-            "Sarcoidosis",
-            "Malignancy (e.g.",
-            "lymphoma)"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "fever",
-            "nephritis",
-            "dyspigmentation",
-            "arthropathy",
-            "leukopenia"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus (SLE)",
-            "Viral Infection (e.g.",
-            "Parvovirus B19",
-            "Epstein-Barr Virus",
-            "Cytomegalovirus)",
-            "Juvenile Idiopathic Arthritis",
-            "Drug-Induced Lupus Erythematosus",
-            "Mixed Connective Tissue Disease",
-            "Acute Post-Streptococcal Glomerulonephritis",
-            "Familial Mediterranean Fever",
-            "Henoch-Sch\u00f6nlein Purpura",
-            "Cryoglobulinemia",
-            "Sj\u00f6grens Syndrome"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "discoid rash",
-            "pericardial effusion",
-            "acute pericarditis",
-            "arthropathy",
-            "synovitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Viral pericarditis (e.g.",
-            "coxsackievirus",
-            "echovirus",
-            "adenovirus)",
-            "Bacterial pericarditis (e.g.",
-            "tuberculosis",
-            "streptococcus)",
-            "Drug-induced lupus erythematosus",
-            "Mixed connective tissue disease",
-            "Dermatomyositis",
-            "Systemic sclerosis (scleroderma)",
-            "Sj\u00f6grens syndrome",
-            "Reactive arthritis (formerly Reiters syndrome)"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "synovitis",
-            "pleural effusion",
-            "fever"
-        ],
-        "diagnoses": [
-            "Rheumatoid arthritis",
-            "Systemic lupus erythematosus (SLE)",
-            "Bacterial pneumonia",
-            "Tuberculosis",
-            "Familial Mediterranean fever",
-            "Adult-onset Stills disease",
-            "Viral infection (e.g.",
-            "influenza",
-            "COVID-19)",
-            "Malignancy (e.g.",
-            "lung cancer",
-            "lymphoma)",
-            "Sarcoidosis",
-            "Septic arthritis"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "malar rash",
-            "autoimmune hemolysis",
-            "seizure",
-            "pericardial effusion",
-            "fever"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Autoimmune disease",
-            "unspecified",
-            "Acute disseminated encephalomyelitis (ADEM)",
-            "Viral infection with systemic manifestations",
-            "Drug-induced lupus erythematosus (DILE)",
-            "Rheumatoid arthritis with extra-articular manifestations",
-            "Mixed connective tissue disease (MCTD)",
-            "Antiphospholipid syndrome (APS)",
-            "Sj\u00f6grens syndrome with systemic manifestations",
-            "Vasculitis",
-            "unspecified"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "seizure",
-            "nephritis",
-            "maculopapular rash",
-            "acute pericarditis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Polyarteritis nodosa",
-            "Granulomatosis with polyangiitis (Wegeners)",
-            "Rheumatic fever",
-            "Henoch-Sch\u00f6nlein purpura",
-            "Beh\u00e7ets disease",
-            "Sarcoidosis",
-            "IgA vasculitis",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Acute poststreptococcal glomerulonephritis"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "leukopenia",
-            "thrombocytopenia",
-            "synovitis",
-            "nephritis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Viral infections (e.g.",
-            "parvovirus B19",
-            "hepatitis C",
-            "HIV)",
-            "Bone marrow disorders (e.g.",
-            "aplastic anemia",
-            "myelodysplastic syndrome)",
-            "Medication side effects (e.g.",
-            "chemotherapy",
-            "immunosuppressants)",
-            "Sj\u00f6grens syndrome",
-            "Connective tissue diseases (e.g.",
-            "scleroderma",
-            "mixed connective tissue disease)",
-            "Vasculitis (e.g.",
-            "ANCA-associated vasculitis)",
-            "Thyroid disorders (e.g.",
-            "hyperthyroidism",
-            "hypothyroidism)",
-            "Hematologic malignancies (e.g.",
-            "leukemia",
-            "lymphoma)"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "proteinuria",
-            "discoid rash",
-            "follicular hyperkeratosis",
-            "alopecia",
-            "acute pericarditis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Dermatomyositis",
-            "Scleroderma",
-            "Mixed connective tissue disease",
-            "Discoid lupus erythematosus",
-            "Keratosis follicularis spinulosa decalvans",
-            "Chronic kidney disease",
-            "Nephrotic syndrome",
-            "Sarcoidosis",
-            "Amyloidosis"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "psychosis",
-            "proteinuria",
-            "synovitis",
-            "annular rash",
-            "leukopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Drug-induced lupus erythematosus",
-            "Granulomatosis with polyangiitis (Wegeners)",
-            "Goodpasture syndrome",
-            "Sarcoidosis",
-            "Beh\u00e7ets disease",
-            "Acute poststreptococcal glomerulonephritis",
-            "IgA vasculitis (Henoch-Sch\u00f6nlein purpura)",
-            "Cryoglobulinemia",
-            "Acute rheumatic fever"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "psychosis",
-            "pericardial effusion",
-            "autoimmune hemolysis",
-            "fever"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Sarcoidosis",
-            "Lymphoma",
-            "Infectious endocarditis",
-            "Tuberculosis",
-            "HIV/AIDS",
-            "Rheumatoid arthritis",
-            "Antiphospholipid syndrome",
-            "Drug-induced lupus",
-            "Acute rheumatic fever"
-        ]
-    },
-    {
-        "i": "6039",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Irritated eyes",
-            "warts",
-            "rashes",
-            "tinnitus",
-            "Depression"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Sarcoidosis",
-            "Lyme disease",
-            "Human papillomavirus (HPV) infection",
-            "Eczema",
-            "Psoriasis",
-            "Allergic reaction",
-            "Menieres disease",
-            "Acoustic neuroma",
-            "Medication side effects"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "chemical sensitivities",
-            "striae",
-            "angioedema",
-            "Depression",
-            "decreased immunoglobulins"
-        ],
-        "diagnoses": [
-            "Cushings syndrome",
-            "Systemic lupus erythematosus (SLE)",
-            "Adrenal insufficiency",
-            "Connective tissue disorder",
-            "Immunodeficiency disorder",
-            "Chronic fatigue syndrome",
-            "Mast cell activation syndrome",
-            "Autoimmune disorder",
-            "Ehlers-Danlos syndrome",
-            "Sarcoidosis"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "vulvodynia",
-            "delayed puberty",
-            "episodic weakness",
-            "arteriovenous malformations",
-            "glycemic lability"
-        ],
-        "diagnoses": [
-            "Rett syndrome",
-            "Antiphospholipid syndrome",
-            "Neurogenic bladder dysfunction",
-            "Thyrotoxic periodic paralysis",
-            "Systemic lupus erythematosus",
-            "Pudendal neuralgia",
-            "Ehlers-Danlos syndrome",
-            "Multiple sclerosis",
-            "Adrenal insufficiency",
-            "Pelvic congestion syndrome"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Lymphadenopathy",
-            "dysosmia",
-            "epistaxis",
-            "cough",
-            "decreased libido"
-        ],
-        "diagnoses": [
-            "Acute viral upper respiratory tract infection",
-            "Infectious mononucleosis",
-            "Influenza",
-            "Lymphoma",
-            "Acute sinusitis",
-            "Nasopharyngeal carcinoma",
-            "Tuberculosis",
-            "COVID-19",
-            "HIV/AIDS",
-            "Sarcoidosis"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "hyperthyroidism",
-            "glycemic lability",
-            "difficulty focusing vision",
-            "diarrhea",
-            "mood lability"
-        ],
-        "diagnoses": [
-            "Graves disease",
-            "Thyrotoxicosis",
-            "Hyperthyroidism due to thyroiditis",
-            "Thyroid storm",
-            "Autoimmune polyglandular syndrome",
-            "Toxic multinodular goiter",
-            "Hyperparathyroidism",
-            "Diabetes mellitus",
-            "Thyroid cancer",
-            "Pheochromocytoma"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Abnormal electrolytes",
-            "Lymphadenopathy",
-            "irritability",
-            "coryza",
-            "attention deficit"
-        ],
-        "diagnoses": [
-            "Acute viral upper respiratory tract infection",
-            "Infectious mononucleosis",
-            "Influenza",
-            "Lymphoma",
-            "Attention deficit hyperactivity disorder (ADHD)",
-            "Acute sinusitis",
-            "Cytomegalovirus (CMV) infection",
-            "HIV infection",
-            "Leukemia",
-            "Hyperthyroidism"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "memory problems",
-            "increased immunoglobulins",
-            "constipation",
-            "dyspnea with normal pulmonary function tests",
-            "coryza"
-        ],
-        "diagnoses": [
-            "Multiple myeloma",
-            "Amyloidosis",
-            "Chronic sinusitis",
-            "Alzheimers disease",
-            "Vascular dementia",
-            "Hypothyroidism",
-            "Vitamin B12 deficiency",
-            "Depression",
-            "Irritable bowel syndrome",
-            "Chronic fatigue syndrome"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "mood lability",
-            "atherosclerosis",
-            "Irritated eyes",
-            "Depression",
-            "cysts"
-        ],
-        "diagnoses": [
-            "Bipolar disorder",
-            "Atherosclerotic cardiovascular disease",
-            "Conjunctivitis",
-            "Major depressive disorder",
-            "Polycystic ovary syndrome (PCOS)",
-            "Cyclothymic disorder",
-            "Carotid artery disease",
-            "Blepharitis",
-            "Persistent depressive disorder (dysthymia)",
-            "Sebaceous cysts"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "sweats",
-            "Lymphadenopathy",
-            "epistaxis",
-            "restless legs",
-            "increased susceptibility to infection"
-        ],
-        "diagnoses": [
-            "Lymphoma",
-            "Leukemia",
-            "HIV/AIDS",
-            "Myelodysplastic syndromes",
-            "Autoimmune disorders (e.g.",
-            "lupus",
-            "rheumatoid arthritis)",
-            "Chronic infections (e.g.",
-            "tuberculosis",
-            "hepatitis)",
-            "Benign disorders of lymph nodes (e.g.",
-            "Kikuchi disease",
-            "Castleman disease)",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Restless legs syndrome",
-            "Medication side effects"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "increased appetite",
-            "diarrhea",
-            "attention deficit",
-            "palpitations",
-            "anemia"
-        ],
-        "diagnoses": [
-            "Hyperthyroidism",
-            "Irritable bowel syndrome (IBS)",
-            "Anxiety disorders",
-            "Attention deficit hyperactivity disorder (ADHD)",
-            "Chronic fatigue syndrome (CFS)",
-            "Celiac disease",
-            "Parasitic infections (e.g.",
-            "Giardiasis)",
-            "Iron deficiency anemia",
-            "Menopause",
-            "Diabetes mellitus"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "dyshydrotic eczema",
-            "warts",
-            "angioedema",
-            "hemorrhoids",
-            "tinnitus"
-        ],
-        "diagnoses": [
-            "Atopic dermatitis",
-            "Contact dermatitis",
-            "Lichen planus",
-            "Psoriasis",
-            "Systemic lupus erythematosus",
-            "Chronic idiopathic urticaria",
-            "Mastocytosis",
-            "Hypothyroidism",
-            "Menieres disease",
-            "Acoustic neuroma"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "infertility",
-            "onychodystrophy",
-            "Lymphadenopathy",
-            "Depression",
-            "Sinutitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "HIV/AIDS",
-            "Hypothyroidism",
-            "Celiac disease",
-            "Zinc deficiency",
-            "Iron deficiency anemia",
-            "Chronic fatigue syndrome",
-            "Sarcoidosis",
-            "Sjogrens syndrome",
-            "Vitamin B12 deficiency"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "bronchitis",
-            "pseudoseizures",
-            "obstructive sleep apnea",
-            "Polycythemia",
-            "miscarriage"
-        ],
-        "diagnoses": [
-            "Chronic obstructive pulmonary disease (COPD)",
-            "Asthma",
-            "Obstructive sleep apnea syndrome",
-            "Polycythemia vera",
-            "Recurrent pregnancy loss",
-            "Psychogenic non-epileptic seizures (PNES)",
-            "Pulmonary hypertension",
-            "Cardiac arrhythmia",
-            "Hypothyroidism",
-            "Anemia"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "thrombocytosis",
-            "attention deficit",
-            "mood lability",
-            "hypoferritinemia",
-            "migratory pruritus"
-        ],
-        "diagnoses": [
-            "Iron deficiency anemia",
-            "Attention-deficit/hyperactivity disorder (ADHD)",
-            "Bipolar disorder",
-            "Essential thrombocythemia",
-            "Polycythemia vera",
-            "Chronic myeloid leukemia",
-            "Myeloproliferative neoplasm",
-            "unclassifiable",
-            "Generalized anxiety disorder",
-            "Borderline personality disorder",
-            "Scabies"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "attention deficit",
-            "physical sensitivities",
-            "glycemic lability",
-            "tinnitus",
-            "obsessive-compulsive behavior"
-        ],
-        "diagnoses": [
-            "Attention-deficit/hyperactivity disorder (ADHD)",
-            "Autism spectrum disorder (ASD)",
-            "Sensory processing disorder",
-            "Reactive hypoglycemia",
-            "Obsessive-compulsive disorder (OCD)",
-            "Anxiety disorders",
-            "M\u00e9ni\u00e8res disease",
-            "Migraine",
-            "Temporomandibular joint disorder (TMJ)",
-            "Chronic fatigue syndrome (CFS)"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "laryngitis",
-            "migratory abdominal pain",
-            "plethora",
-            "Dyspepsia",
-            "increased immunoglobulins"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Multicentric Castleman disease",
-            "Multiple myeloma",
-            "Waldenstr\u00f6m macroglobulinemia",
-            "Chronic lymphocytic leukemia",
-            "Acute intermittent porphyria",
-            "Hypereosinophilic syndrome",
-            "Beh\u00e7et disease",
-            "Hereditary angioedema",
-            "Chronic hepatitis C"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "decreased libido",
-            "attention deficit",
-            "striae",
-            "migratory edema",
-            "difficulty focusing vision"
-        ],
-        "diagnoses": [
-            "Cushing Syndrome",
-            "Hypothyroidism",
-            "Depression",
-            "Chronic fatigue syndrome",
-            "Premenstrual syndrome (PMS)",
-            "Fibromyalgia",
-            "Anemia",
-            "Sleep apnea",
-            "Diabetes mellitus",
-            "Vitamin D deficiency"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Dyspepsia",
-            "physical sensitivities",
-            "cough",
-            "congestion",
-            "dry eyes"
-        ],
-        "diagnoses": [
-            "Gastroesophageal reflux disease (GERD)",
-            "Allergic rhinitis",
-            "Upper respiratory tract infection",
-            "Chronic sinusitis",
-            "Asthma",
-            "Fibromyalgia",
-            "Irritable bowel syndrome (IBS)",
-            "Anxiety disorder",
-            "Chronic fatigue syndrome",
-            "Vitamin D deficiency"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "chest pain",
-            "epistaxis",
-            "otitis media",
-            "Irritated eyes",
-            "anxiety"
-        ],
-        "diagnoses": [
-            "Acute sinusitis",
-            "Allergic rhinitis",
-            "Viral upper respiratory infection",
-            "Hypertension",
-            "Acute bronchitis",
-            "Generalized anxiety disorder",
-            "Acute coronary syndrome",
-            "Pneumonia",
-            "Gastroesophageal reflux disease",
-            "Panic disorder"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "increased susceptibility to infection",
-            "periodontal disease",
-            "coryza",
-            "blepharospasm",
-            "tags"
-        ],
-        "diagnoses": [
-            "Chronic granulomatous disease",
-            "Ch\u00e9diak-Higashi syndrome",
-            "Hyperimmunoglobulin E syndrome",
-            "Severe combined immunodeficiency (SCID)",
-            "Common variable immunodeficiency",
-            "Leukocyte adhesion deficiency",
-            "Papillon-Lef\u00e8vre syndrome",
-            "Cyclic neutropenia",
-            "Beh\u00e7et disease",
-            "Sj\u00f6gren syndrome"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Irritated eyes",
-            "Presyncope",
-            "chest pain",
-            "wheezing",
-            "anxiety"
-        ],
-        "diagnoses": [
-            "Anxiety disorder",
-            "Acute bronchitis",
-            "Anaphylaxis",
-            "Asthma exacerbation",
-            "Panic attack",
-            "Acute coronary syndrome",
-            "Pulmonary embolism",
-            "Pneumonia",
-            "Allergic reaction",
-            "Hypoglycemia"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Presyncope",
-            "sensory neuropathies",
-            "thrombocytopenia",
-            "thromboembolic disease",
-            "vascular anomalies",
-            "decreased immunoglobulins"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Antiphospholipid syndrome (APS)",
-            "Vasculitis (e.g.",
-            "polyarteritis nodosa",
-            "Churg-Strauss syndrome)",
-            "Paraneoplastic syndromes",
-            "Sj\u00f6grens syndrome",
-            "HIV/AIDS",
-            "Primary immunodeficiency disorders (e.g.",
-            "common variable immunodeficiency)",
-            "Lymphoproliferative disorders (e.g.",
-            "lymphoma",
-            "chronic lymphocytic leukemia)",
-            "Myelodysplastic syndromes",
-            "Amyloidosis"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Polycythemia",
-            "Oral pain",
-            "osteopenia",
-            "plethora",
-            "dyshydrotic eczema"
-        ],
-        "diagnoses": [
-            "Polycythemia vera",
-            "Myeloproliferative neoplasm",
-            "Dehydration",
-            "Vitamin D deficiency",
-            "Hyperparathyroidism",
-            "Oral cancer",
-            "Periodontal disease",
-            "Dental abscess",
-            "Hand eczema",
-            "Atopic dermatitis"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "glycemic lability",
-            "wheezing",
-            "insomnia",
-            "hypertension",
-            "postural orthostatic tachycardia syndrome"
-        ],
-        "diagnoses": [
-            "Type 1 diabetes mellitus",
-            "Type 2 diabetes mellitus",
-            "Asthma",
-            "Chronic obstructive pulmonary disease (COPD)",
-            "Obstructive sleep apnea",
-            "Restless leg syndrome",
-            "Anxiety disorders",
-            "Postural orthostatic tachycardia syndrome (POTS)",
-            "Hyperthyroidism",
-            "Pheochromocytoma"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Headache",
-            "hyperglycemia",
-            "Oitis externa",
-            "blepharospasm",
-            "Lymphadenopathy"
-        ],
-        "diagnoses": [
-            "Type 2 diabetes mellitus",
-            "Acute sinusitis",
-            "Acute otitis externa",
-            "Meningitis",
-            "Hypertension",
-            "Migraine",
-            "Brain tumor",
-            "Hyperthyroidism",
-            "Trigeminal neuralgia",
-            "Temporomandibular joint disorder"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "bloating",
-            "glycemic lability",
-            "pneumonia",
-            "bronchitis",
-            "Oitis externa"
-        ],
-        "diagnoses": [
-            "Cystic fibrosis",
-            "Primary immunodeficiency disorder",
-            "Chronic obstructive pulmonary disease (COPD)",
-            "Diabetes mellitus",
-            "Gastrointestinal infection",
-            "Irritable bowel syndrome (IBS)",
-            "Asthma",
-            "Celiac disease",
-            "Gastroesophageal reflux disease (GERD)",
-            "Inflammatory bowel disease (IBD)"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Lymphadenopathy",
-            "leukocytosis",
-            "Bone pain",
-            "decreased immunoglobulins",
-            "monocytosis"
-        ],
-        "diagnoses": [
-            "Chronic lymphocytic leukemia (CLL)",
-            "Lymphoma (Hodgkin or Non-Hodgkin)",
-            "Waldenstr\u00f6m macroglobulinemia",
-            "Multiple myeloma",
-            "Hairy cell leukemia",
-            "Myelodysplastic syndromes (MDS)",
-            "Acute lymphoblastic leukemia (ALL)",
-            "Acute myeloid leukemia (AML)",
-            "Bone marrow infiltration by solid tumors",
-            "Chronic myelomonocytic leukemia (CMML)"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "difficulty focusing vision",
-            "Oral pain",
-            "decreased appetite",
-            "cough",
-            "malabsorption"
-        ],
-        "diagnoses": [
-            "Oral candidiasis",
-            "Vitamin A deficiency",
-            "Viral upper respiratory tract infection",
-            "Oral herpes simplex virus infection",
-            "Bacterial pneumonia",
-            "Influenza",
-            "Acute sinusitis",
-            "Anemia due to chronic disease",
-            "Periodontal disease",
-            "Acute bronchitis"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "word-finding difficulty",
-            "lymphadenitis",
-            "difficulty focusing vision",
-            "blood pressure lability",
-            "Irritated eyes"
-        ],
-        "diagnoses": [
-            "Sarcoidosis",
-            "Systemic lupus erythematosus (SLE)",
-            "Lymphoma",
-            "Multiple sclerosis (MS)",
-            "Thyroid disorders (hyperthyroidism or hypothyroidism)",
-            "Sjogrens syndrome",
-            "Lyme disease",
-            "Vasculitis",
-            "Tuberculosis",
-            "HIV/AIDS"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Oitis externa",
-            "takotsubo cardiomyopathy",
-            "migratory patchy macular erythema",
-            "angioedema",
-            "post-nasal drip"
-        ],
-        "diagnoses": [
-            "Vasculitis",
-            "Mast cell activation syndrome",
-            "Hereditary angioedema",
-            "Systemic lupus erythematosus",
-            "Sarcoidosis",
-            "Eosinophilic granulomatosis with polyangiitis (Churg-Strauss syndrome)",
-            "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome",
-            "Hyper IgE syndrome",
-            "Cryopyrin-associated periodic syndrome (CAPS)",
-            "Mastocytosis"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "non-restorative sleep",
-            "restless legs",
-            "leukoplakia",
-            "dysgeusia",
-            "hearing loss"
-        ],
-        "diagnoses": [
-            "Obstructive Sleep Apnea",
-            "Restless Legs Syndrome",
-            "Oral Leukoplakia",
-            "Vitamin B12 Deficiency",
-            "Sensorineural Hearing Loss",
-            "Periodic Limb Movement Disorder",
-            "Burning Mouth Syndrome",
-            "Oral Candidiasis",
-            "M\u00e9ni\u00e8res Disease",
-            "Zinc Deficiency"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "difficulty focusing vision",
-            "Polycythemia",
-            "malabsorption",
-            "laryngitis",
-            "lymphadenitis"
-        ],
-        "diagnoses": [
-            "Vitamin B12 deficiency",
-            "Folate deficiency anemia",
-            "Celiac disease",
-            "Inflammatory bowel disease (Crohns or ulcerative colitis)",
-            "Chronic infections (e.g.",
-            "tuberculosis",
-            "HIV)",
-            "Lymphoma",
-            "Autoimmune disorders (e.g.",
-            "lupus",
-            "rheumatoid arthritis)",
-            "Myeloproliferative disorders (e.g.",
-            "polycythemia vera)",
-            "Thyroid disorders (hypothyroidism or hyperthyroidism)",
-            "Chronic liver disease (e.g.",
-            "cirrhosis)"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "Oral pain",
-            "decreased immunoglobulins",
-            "tags",
-            "hyperferritinemia",
-            "tinnitus"
-        ],
-        "diagnoses": [
-            "Hemochromatosis",
-            "Immunodeficiency disorder",
-            "Oral cancer",
-            "Amyloidosis",
-            "Sarcoidosis",
-            "Sj\u00f6gren syndrome",
-            "Systemic lupus erythematosus (SLE)",
-            "Chronic fatigue syndrome",
-            "Celiac disease",
-            "Vasculitis"
-        ]
-    },
-    {
-        "i": "6039",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "hypotension",
-            "diarrhea",
-            "incontinence",
-            "rhinorrhea",
-            "syncope"
-        ],
-        "diagnoses": [
-            "Autonomic neuropathy",
-            "Multiple system atrophy",
-            "Acute gastroenteritis",
-            "Sepsis",
-            "Adrenal insufficiency",
-            "Diabetic autonomic neuropathy",
-            "Parkinsons disease",
-            "Dehydration",
-            "Vasovagal syncope",
-            "Side effects of medications (e.g.",
-            "antihypertensives",
-            "diuretics)"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "diarrhea",
-            "conjunctival injections",
-            "syncope",
-            "nasal congestion",
-            "pruritis"
-        ],
-        "diagnoses": [
-            "Viral gastroenteritis",
-            "Allergic reaction",
-            "Food poisoning",
-            "Influenza",
-            "Vasovagal syncope",
-            "Medication side effects",
-            "Bacterial conjunctivitis",
-            "Dehydration",
-            "Bacterial gastroenteritis",
-            "Hay fever (allergic rhinitis)"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "pruritis",
-            "syncope",
-            "wheezing",
-            "rhinorrhea"
-        ],
-        "diagnoses": [
-            "Allergic reaction",
-            "Anaphylaxis",
-            "Asthma exacerbation",
-            "Atopic dermatitis",
-            "Vasovagal syncope",
-            "Hypersensitivity reaction",
-            "Urticaria",
-            "Hay fever (allergic rhinitis)",
-            "Medication adverse reaction",
-            "Anxiety or panic attack"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "hypoxia",
-            "conjunctival injections",
-            "hypotension",
-            "incontinence",
-            "syncope"
-        ],
-        "diagnoses": [
-            "Sepsis",
-            "Anaphylaxis",
-            "Pulmonary embolism",
-            "Cardiogenic shock",
-            "Severe dehydration",
-            "Toxic shock syndrome",
-            "Adrenal crisis",
-            "Severe pneumonia",
-            "Acute heart failure",
-            "Hypovolemic shock"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "vomiting",
-            "flushing",
-            "abdominal cramps",
-            "sneezing",
-            "hypotension"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Carcinoid syndrome",
-            "Food poisoning",
-            "Vasovagal syncope",
-            "Mastocytosis",
-            "Pheochromocytoma",
-            "Serotonin syndrome",
-            "Hereditary angioedema",
-            "Dumping syndrome",
-            "Acute intermittent porphyria"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "abdominal cramps",
-            "pruritis",
-            "hypotension",
-            "nasal congestion",
-            "wheezing"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Mastocytosis",
-            "Carcinoid syndrome",
-            "Hereditary angioedema",
-            "Mast cell activation syndrome",
-            "Systemic lupus erythematosus",
-            "Vasculitis",
-            "Sepsis",
-            "Scombroid food poisoning",
-            "Acute intermittent porphyria"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "flushing",
-            "hypotension",
-            "syncope",
-            "diarrhea"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Carcinoid syndrome",
-            "Mastocytosis",
-            "Pheochromocytoma",
-            "Neuroendocrine tumors",
-            "Hereditary angioedema",
-            "Vasoactive intestinal peptide (VIP)-secreting tumor",
-            "Medullary thyroid carcinoma",
-            "Mast cell activation syndrome",
-            "Idiopathic systemic capillary leak syndrome"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "diarrhea",
-            "syncope",
-            "laryngeal edema",
-            "dyspnea"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Angioedema",
-            "Acute allergic reaction",
-            "Sepsis",
-            "Dehydration",
-            "Hypotension",
-            "Laryngeal obstruction",
-            "Asthma exacerbation",
-            "Heart failure",
-            "Pulmonary embolism"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "incontinence",
-            "hives",
-            "hypotension"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Hereditary angioedema",
-            "Acquired angioedema",
-            "Systemic mastocytosis",
-            "Urticaria pigmentosa",
-            "Mast cell activation syndrome",
-            "Medication reaction (e.g. ACE inhibitors",
-            "NSAIDs)",
-            "Idiopathic angioedema",
-            "Vasovagal syncope",
-            "Sepsis"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "diarrhea",
-            "rhinorrhea",
-            "hypotension",
-            "abdominal cramps"
-        ],
-        "diagnoses": [
-            "Viral gastroenteritis",
-            "Food poisoning",
-            "Travelers diarrhea",
-            "Clostridium difficile infection",
-            "Acute appendicitis",
-            "Influenza",
-            "Sepsis",
-            "Inflammatory bowel disease (Crohns disease or ulcerative colitis)",
-            "Salmonella infection",
-            "Campylobacter infection"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "flushing",
-            "vomiting",
-            "sneezing",
-            "nasal congestion"
-        ],
-        "diagnoses": [
-            "Carcinoid syndrome",
-            "Anaphylaxis",
-            "Common cold",
-            "Influenza",
-            "Gastroenteritis",
-            "Sinusitis",
-            "Food poisoning",
-            "Medication reaction",
-            "Alcohol flush reaction",
-            "Rhinitis"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "vomiting",
-            "hives"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Acute allergic reaction",
-            "Angioedema",
-            "Urticaria",
-            "Food allergy",
-            "Drug allergy",
-            "Hereditary angioedema",
-            "Scombroid food poisoning",
-            "Mastocytosis",
-            "Serum sickness"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "sneezing",
-            "dyspnea",
-            "hypotension"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Angioedema",
-            "Hereditary angioedema",
-            "Acquired angioedema",
-            "ACE inhibitor-induced angioedema",
-            "Allergic reaction",
-            "Drug-induced angioedema",
-            "Idiopathic angioedema",
-            "Exercise-induced anaphylaxis",
-            "Systemic mastocytosis"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "sneezing",
-            "wheezing",
-            "incontinence",
-            "diarrhea",
-            "hives"
-        ],
-        "diagnoses": [
-            "Allergic reaction or anaphylaxis",
-            "Asthma exacerbation",
-            "Viral infection (e.g.",
-            "influenza)",
-            "Food allergy or intolerance",
-            "Urinary tract infection",
-            "Irritable bowel syndrome (IBS)",
-            "Inflammatory bowel disease (IBD)",
-            "Chronic obstructive pulmonary disease (COPD)",
-            "Atopic dermatitis or eczema",
-            "Medication side effects"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "syncope",
-            "diarrhea",
-            "hypoxia",
-            "abdominal cramps"
-        ],
-        "diagnoses": [
-            "Gastrointestinal infection",
-            "Dehydration",
-            "Celiac disease",
-            "Inflammatory bowel disease (Crohns disease or ulcerative colitis)",
-            "Food poisoning",
-            "Vasovagal syncope",
-            "Cardiac arrhythmia",
-            "Pulmonary embolism",
-            "Anemia",
-            "Medication side effects"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "incontinence",
-            "hypotension"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Angiotensin-converting enzyme (ACE) inhibitor-induced angioedema",
-            "Hereditary angioedema",
-            "Autonomic dysfunction",
-            "Spinal cord injury",
-            "Multiple system atrophy",
-            "Sepsis",
-            "Systemic mastocytosis",
-            "Urinary tract infection (UTI) with sepsis",
-            "Acute kidney injury"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "rhinorrhea",
-            "diarrhea",
-            "nasal congestion",
-            "flushing",
-            "hypoxia"
-        ],
-        "diagnoses": [
-            "Carcinoid syndrome",
-            "Serotonin syndrome",
-            "Influenza",
-            "Respiratory syncytial virus (RSV) infection",
-            "Viral gastroenteritis",
-            "Food poisoning",
-            "Anaphylaxis",
-            "Mastocytosis",
-            "Pheochromocytoma",
-            "Sepsis"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "vomiting",
-            "diarrhea",
-            "hypotension",
-            "dyspnea",
-            "nasal congestion"
-        ],
-        "diagnoses": [
-            "Viral gastroenteritis",
-            "Food poisoning",
-            "Sepsis",
-            "Dehydration",
-            "Anaphylaxis",
-            "Influenza",
-            "Pneumonia",
-            "Clostridium difficile colitis",
-            "Acute pancreatitis",
-            "Diabetic ketoacidosis"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "abdominal cramps",
-            "diarrhea",
-            "conjunctival injections",
-            "syncope",
-            "incontinence"
-        ],
-        "diagnoses": [
-            "Acute gastroenteritis",
-            "Inflammatory bowel disease (Crohns disease or ulcerative colitis)",
-            "Food poisoning",
-            "Viral conjunctivitis",
-            "Travelers diarrhea",
-            "Neurocardiogenic syncope",
-            "Urinary tract infection",
-            "Gastrointestinal infection (e.g.",
-            "Salmonella",
-            "Shigella",
-            "Campylobacter)",
-            "Irritable bowel syndrome",
-            "Dehydration"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "nasal congestion",
-            "flushing",
-            "angioedema",
-            "wheezing",
-            "abdominal cramps"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Systemic mastocytosis",
-            "Hereditary angioedema",
-            "Carcinoid syndrome",
-            "Scombroid fish poisoning",
-            "Pheochromocytoma",
-            "Food allergy",
-            "Drug allergy",
-            "Eosinophilic gastroenteritis",
-            "Mast cell activation syndrome"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "sneezing",
-            "flushing",
-            "incontinence",
-            "syncope",
-            "abdominal cramps"
-        ],
-        "diagnoses": [
-            "Mast cell activation syndrome",
-            "Carcinoid syndrome",
-            "Pheochromocytoma",
-            "Irritable bowel syndrome",
-            "Generalized anxiety disorder",
-            "Postural orthostatic tachycardia syndrome (POTS)",
-            "Panic disorder",
-            "Multiple system atrophy",
-            "Urinary tract infection",
-            "Vasovagal syncope"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "abdominal cramps",
-            "dyspnea",
-            "incontinence",
-            "rhinorrhea"
-        ],
-        "diagnoses": [
-            "Irritable bowel syndrome",
-            "Urinary tract infection",
-            "Gastroenteritis",
-            "Asthma",
-            "Chronic obstructive pulmonary disease (COPD)",
-            "Food allergy or intolerance",
-            "Anxiety disorder",
-            "Pelvic floor dysfunction",
-            "Seasonal allergies (hay fever)",
-            "Inflammatory bowel disease (Crohns or ulcerative colitis)"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "vomiting",
-            "hypotension",
-            "sneezing",
-            "pruritis"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Sepsis",
-            "Medication reaction or side effect",
-            "Systemic mastocytosis",
-            "Carcinoid syndrome",
-            "Pheochromocytoma",
-            "Mast cell activation syndrome",
-            "Vasovagal syncope",
-            "Dehydration",
-            "Autonomic dysfunction"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "rhinorrhea",
-            "hypotension",
-            "abdominal cramps",
-            "vomiting"
-        ],
-        "diagnoses": [
-            "Viral gastroenteritis",
-            "Food poisoning",
-            "Acute pancreatitis",
-            "Appendicitis",
-            "Diabetic ketoacidosis",
-            "Sepsis",
-            "Adrenal crisis",
-            "Anaphylaxis",
-            "Hemorrhagic shock",
-            "Cyclic vomiting syndrome"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "rhinorrhea",
-            "diarrhea",
-            "hypoxia",
-            "hypotension",
-            "vomiting"
-        ],
-        "diagnoses": [
-            "Sepsis",
-            "Pneumonia",
-            "Influenza",
-            "COVID-19",
-            "Gastrointestinal infection",
-            "Dehydration",
-            "Anaphylaxis",
-            "Pulmonary embolism",
-            "Diabetic ketoacidosis",
-            "Acute respiratory distress syndrome (ARDS)"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "diarrhea",
-            "abdominal cramps",
-            "vomiting",
-            "hypoxia",
-            "hypotension"
-        ],
-        "diagnoses": [
-            "Gastroenteritis",
-            "Food poisoning",
-            "Viral infection (e.g. norovirus",
-            "rotavirus)",
-            "Bacterial infection (e.g. E. coli",
-            "Salmonella)",
-            "Parasitic infection (e.g. Giardia)",
-            "Inflammatory bowel disease (IBD) flare",
-            "Sepsis",
-            "Intestinal obstruction",
-            "Appendicitis",
-            "Pancreatitis"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "hypotension",
-            "syncope",
-            "flushing",
-            "conjunctival injections"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Carcinoid syndrome",
-            "Pheochromocytoma",
-            "Systemic mastocytosis",
-            "Vasovagal syncope",
-            "Orthostatic hypotension",
-            "Sepsis",
-            "Adrenal insufficiency",
-            "Hypovolemic shock",
-            "Medication side effects (e.g.",
-            "vasodilators",
-            "antihypertensives)"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "angioedema",
-            "hives",
-            "abdominal cramps",
-            "incontinence",
-            "diarrhea"
-        ],
-        "diagnoses": [
-            "Anaphylaxis",
-            "Food allergy",
-            "Medication allergy",
-            "Hereditary angioedema",
-            "Mastocytosis",
-            "Inflammatory bowel disease (Crohns disease or ulcerative colitis)",
-            "Parasitic infection (e.g.",
-            "giardiasis)",
-            "Irritable bowel syndrome",
-            "Celiac disease",
-            "Carcinoid syndrome"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "syncope",
-            "incontinence",
-            "flushing"
-        ],
-        "diagnoses": [
-            "Autonomic dysfunction",
-            "Multiple system atrophy",
-            "Carcinoid syndrome",
-            "Pheochromocytoma",
-            "Diabetic autonomic neuropathy",
-            "Spinal cord injury",
-            "Parkinsons disease",
-            "Neurocardiogenic syncope",
-            "Dehydration",
-            "Medullary thyroid cancer"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "syncope",
-            "rhinorrhea",
-            "vomiting",
-            "nasal congestion"
-        ],
-        "diagnoses": [
-            "Viral upper respiratory infection",
-            "Vasovagal syncope",
-            "Vestibular neuronitis",
-            "Migraine",
-            "Acute sinusitis",
-            "Orthostatic hypotension",
-            "Labyrinthitis",
-            "Dehydration",
-            "Anxiety disorder",
-            "Anemia"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "flushing",
-            "angioedema",
-            "diarrhea",
-            "incontinence"
-        ],
-        "diagnoses": [
-            "Carcinoid syndrome",
-            "Systemic mastocytosis",
-            "VIPoma",
-            "Hereditary angioedema",
-            "Serotonin syndrome",
-            "Anaphylaxis",
-            "Medullary thyroid cancer",
-            "Zollinger-Ellison syndrome",
-            "Pheochromocytoma",
-            "ACE inhibitor-induced angioedema"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "hypotension",
-            "incontinence",
-            "vomiting",
-            "dyspnea"
-        ],
-        "diagnoses": [
-            "Urinary tract infection",
-            "Dehydration",
-            "Sepsis",
-            "Congestive heart failure",
-            "Pneumonia",
-            "Chronic kidney disease",
-            "Adrenal insufficiency",
-            "Diabetic ketoacidosis",
-            "Gastrointestinal bleeding",
-            "Acute kidney injury"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "abdominal cramps",
-            "incontinence",
-            "diarrhea",
-            "pruritis"
-        ],
-        "diagnoses": [
-            "Irritable bowel syndrome",
-            "Inflammatory bowel disease (Crohns disease or ulcerative colitis)",
-            "Celiac disease",
-            "Food allergy or intolerance",
-            "Intestinal parasitic infection (e.g.",
-            "giardiasis)",
-            "Bacterial gastroenteritis",
-            "Viral gastroenteritis",
-            "Lactose intolerance",
-            "Fecal incontinence due to muscle or nerve damage",
-            "Pinworm infection"
-        ]
-    },
-    {
-        "i": "6039",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "headache",
-            "diplopia",
-            "phonophobia",
-            "nausea"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Brain tumor",
-            "Tension headache",
-            "Viral meningitis",
-            "Idiopathic intracranial hypertension",
-            "Cluster headache",
-            "Multiple sclerosis",
-            "Vestibular migraine",
-            "Stroke",
-            "Cerebral venous sinus thrombosis"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "migraine",
-        "symptoms": [
-            "phonophobia",
-            "aphasia",
-            "ataxia",
-            "dysphagia",
-            "weakness"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Multiple Sclerosis",
-            "Brain Tumor",
-            "Myasthenia Gravis",
-            "Guillain-Barr\u00e9 Syndrome",
-            "Encephalitis",
-            "Parkinsons Disease",
-            "Creutzfeldt-Jakob Disease",
-            "Amyotrophic Lateral Sclerosis (ALS)",
-            "Neurosarcoidosis"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "migraine",
-        "symptoms": [
-            "dysphagia",
-            "scintillation",
-            "parasthesia",
-            "headache",
-            "numbness"
-        ],
-        "diagnoses": [
-            "Multiple Sclerosis",
-            "Transient Ischemic Attack (TIA)",
-            "Cervical Spondylosis",
-            "Vitamin B12 Deficiency",
-            "Migraine",
-            "Stroke",
-            "Brain Tumor",
-            "Guillain-Barr\u00e9 Syndrome",
-            "Myasthenia Gravis",
-            "Amyotrophic Lateral Sclerosis (ALS)"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "vomiting",
-            "scotoma"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Brain tumor",
-            "Stroke",
-            "Multiple sclerosis",
-            "Hyponatremia",
-            "Hypokalemia",
-            "Diabetic ketoacidosis",
-            "Addison disease",
-            "Carbon monoxide poisoning",
-            "Wernicke encephalopathy"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "diplopia",
-            "photophobia",
-            "tinnitus"
-        ],
-        "diagnoses": [
-            "Multiple sclerosis",
-            "Myasthenia gravis",
-            "Brain tumor",
-            "Migraines",
-            "Meningitis",
-            "Stroke",
-            "Vestibular neuritis",
-            "Lyme disease",
-            "Intracranial hypertension",
-            "Guillain-Barr\u00e9 syndrome"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "scintillation",
-            "hearing loss",
-            "dysphagia"
-        ],
-        "diagnoses": [
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Stroke",
-            "Myasthenia gravis",
-            "Amyotrophic lateral sclerosis (ALS)",
-            "Brainstem lesion",
-            "Cerebellopontine angle tumor (e.g. acoustic neuroma)",
-            "Guillain-Barre syndrome",
-            "Cervical spondylosis with myelopathy",
-            "Paraneoplastic syndrome"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "migraine",
-        "symptoms": [
-            "parasthesia",
-            "weakness",
-            "headache",
-            "phonophobia"
-        ],
-        "diagnoses": [
-            "Migraine",
-            "Tension headache",
-            "Multiple sclerosis",
-            "Vitamin B12 deficiency",
-            "Cervical spondylosis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Transient ischemic attack (TIA)",
-            "Brain tumor",
-            "Anxiety disorder",
-            "Hypothyroidism"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "scintillation",
-            "hearing loss",
-            "parasthesia",
-            "diplopia"
-        ],
-        "diagnoses": [
-            "Multiple sclerosis",
-            "Vitamin B12 deficiency",
-            "Transient ischemic attack (TIA)",
-            "Migraine with aura",
-            "Brain tumor",
-            "Stroke",
-            "Lyme disease",
-            "Vestibular neuritis",
-            "Acoustic neuroma",
-            "Menieres disease"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "migraine",
-        "symptoms": [
-            "headache",
-            "phonophobia",
-            "nausea",
-            "parasthesia"
-        ],
-        "diagnoses": [
-            "Migraine",
-            "Cerebral venous sinus thrombosis",
-            "Vestibular migraine",
-            "Meningitis",
-            "Transient ischemic attack",
-            "Brain tumor",
-            "Stroke",
-            "Multiple sclerosis",
-            "Hyponatremia",
-            "Carbon monoxide poisoning"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "migraine",
-        "symptoms": [
-            "ataxia",
-            "weakness",
-            "hearing loss",
-            "parasthesia"
-        ],
-        "diagnoses": [
-            "Multiple sclerosis",
-            "Vitamin B12 deficiency",
-            "Brainstem stroke",
-            "Acoustic neuroma",
-            "Cerebellar ataxia",
-            "Vertebrobasilar insufficiency",
-            "Guillain-Barr\u00e9 syndrome",
-            "Thiamine deficiency",
-            "Spinocerebellar ataxia",
-            "Charcot-Marie-Tooth disease"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "headache",
-            "parasthesia"
-        ],
-        "diagnoses": [
-            "Multiple sclerosis",
-            "Vitamin B12 deficiency",
-            "Migraine with aura",
-            "Tension headache",
-            "Cervical spondylosis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Hypoglycemia",
-            "Hypokalemia",
-            "Cerebrovascular accident (stroke)",
-            "Hypothyroidism"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "migraine",
-        "symptoms": [
-            "tinnitus",
-            "scintillation",
-            "headache",
-            "vomiting"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Vestibular migraine",
-            "Meniere disease",
-            "Intracranial hypertension",
-            "Acoustic neuroma",
-            "Labyrinthitis",
-            "Multiple sclerosis",
-            "Vertebrobasilar insufficiency",
-            "Meningitis",
-            "Brain tumor"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "migraine",
-        "symptoms": [
-            "vertigo",
-            "numbness",
-            "weakness",
-            "dysarthria",
-            "headache"
-        ],
-        "diagnoses": [
-            "Stroke or transient ischemic attack (TIA)",
-            "Multiple sclerosis (MS)",
-            "Vestibular neuritis or labyrinthitis",
-            "Migraine with aura",
-            "Brain tumor",
-            "Cervical spondylosis or cervical radiculopathy",
-            "Vitamin B12 deficiency",
-            "Lyme disease",
-            "Acoustic neuroma",
-            "Basilar artery migraine"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "scintillation",
-            "headache",
-            "vertigo",
-            "vomiting"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Vestibular migraine",
-            "Transient ischemic attack (TIA)",
-            "Benign paroxysmal positional vertigo (BPPV)",
-            "Labyrinthitis or vestibular neuritis",
-            "Menieres disease",
-            "Stroke (cerebrovascular accident)",
-            "Dehydration",
-            "Brain tumor",
-            "Concussion or traumatic brain injury"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "migraine",
-        "symptoms": [
-            "phonophobia",
-            "vertigo",
-            "numbness",
-            "scotoma",
-            "ataxia"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Vestibular migraine",
-            "Transient ischemic attack (TIA)",
-            "Multiple sclerosis (MS)",
-            "Vertebrobasilar insufficiency",
-            "Acoustic neuroma",
-            "Menieres disease",
-            "Labyrinthitis",
-            "Stroke (cerebellar or brainstem)",
-            "Vestibular schwannoma"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "migraine",
-        "symptoms": [
-            "headache",
-            "weakness",
-            "dysphagia",
-            "scotoma"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Myasthenia gravis",
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Intracerebral hemorrhage",
-            "Meningitis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Amyotrophic lateral sclerosis (ALS)"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "migraine",
-        "symptoms": [
-            "headache",
-            "diplopia",
-            "weakness"
-        ],
-        "diagnoses": [
-            "Brain tumor",
-            "Migraine with aura",
-            "Multiple sclerosis (MS)",
-            "Myasthenia gravis",
-            "Stroke",
-            "Meningitis",
-            "Intracranial aneurysm",
-            "Cerebral venous sinus thrombosis",
-            "Wernickes encephalopathy",
-            "Idiopathic intracranial hypertension"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "migraine",
-        "symptoms": [
-            "dysphagia",
-            "aphasia",
-            "nausea",
-            "weakness"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Myasthenia gravis",
-            "Parkinsons disease",
-            "Amyotrophic lateral sclerosis (ALS)",
-            "Guillain-Barr\u00e9 syndrome",
-            "Esophageal disorders (e.g.",
-            "achalasia",
-            "esophageal stricture)",
-            "Neuromuscular junction disorders",
-            "Muscular dystrophy"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "migraine",
-        "symptoms": [
-            "dysarthria",
-            "dysphagia",
-            "vertigo",
-            "headache",
-            "scintillation"
-        ],
-        "diagnoses": [
-            "Brainstem stroke",
-            "Multiple sclerosis",
-            "Transient ischemic attack (TIA)",
-            "Vestibular migraine",
-            "Cerebellar tumor",
-            "Wernickes encephalopathy",
-            "Vertebrobasilar insufficiency",
-            "Chiari malformation",
-            "Myasthenia gravis",
-            "Lyme disease"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "migraine",
-        "symptoms": [
-            "scintillation",
-            "parasthesia",
-            "aphasia",
-            "vertigo"
-        ],
-        "diagnoses": [
-            "Transient ischemic attack (TIA)",
-            "Migraine with aura",
-            "Multiple sclerosis (MS)",
-            "Stroke",
-            "Brain tumor",
-            "Vestibular neuritis",
-            "Menieres disease",
-            "Epilepsy",
-            "Peripheral neuropathy",
-            "Anxiety disorder"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "migraine",
-        "symptoms": [
-            "numbness",
-            "weakness",
-            "headache",
-            "dysphagia",
-            "tinnitus"
-        ],
-        "diagnoses": [
-            "Multiple sclerosis",
-            "Stroke",
-            "Brain tumor",
-            "Myasthenia gravis",
-            "Vestibular schwannoma (acoustic neuroma)",
-            "Botulism",
-            "Vitamin B12 deficiency",
-            "Cervical spondylosis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Lyme disease"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "migraine",
-        "symptoms": [
-            "phonophobia",
-            "headache",
-            "weakness",
-            "aphasia",
-            "dysphagia"
-        ],
-        "diagnoses": [
-            "Migraine",
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Myasthenia gravis",
-            "Meningitis",
-            "Encephalitis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Amyotrophic lateral sclerosis (ALS)",
-            "Cerebral palsy"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "migraine",
-        "symptoms": [
-            "photophobia",
-            "dysphagia",
-            "vomiting",
-            "phonophobia",
-            "parasthesia"
-        ],
-        "diagnoses": [
-            "Migraine",
-            "Meningitis",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Stroke",
-            "Cervical spondylosis",
-            "Esophageal stricture",
-            "Gastroesophageal reflux disease (GERD)",
-            "Myasthenia gravis",
-            "Peripheral neuropathy"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "migraine",
-        "symptoms": [
-            "nausea",
-            "headache",
-            "scintillation"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Tension headache",
-            "Viral gastroenteritis",
-            "Dehydration",
-            "Vestibular migraine",
-            "Meningitis",
-            "Concussion",
-            "Intracranial hemorrhage",
-            "Hypertensive emergency",
-            "Carbon monoxide poisoning"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "migraine",
-        "symptoms": [
-            "aphasia",
-            "scotoma",
-            "headache",
-            "numbness",
-            "weakness"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Ischemic stroke",
-            "Brain tumor",
-            "Multiple sclerosis (MS)",
-            "Seizure disorder",
-            "Cerebral vasculitis",
-            "Hypertensive encephalopathy",
-            "Wernickes encephalopathy (thiamine deficiency)",
-            "Central nervous system infection (e.g.",
-            "meningitis",
-            "encephalitis)"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "migraine",
-        "symptoms": [
-            "scintillation",
-            "aphasia",
-            "numbness",
-            "weakness"
-        ],
-        "diagnoses": [
-            "Transient ischemic attack (TIA)",
-            "Migraine with aura",
-            "Stroke",
-            "Multiple sclerosis",
-            "Brain tumor",
-            "Complex migraine",
-            "Hypoglycemia",
-            "Seizure disorder",
-            "Hyponatremia (low blood sodium)",
-            "Cerebral vasculitis"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "migraine",
-        "symptoms": [
-            "nausea",
-            "scotoma",
-            "aphasia",
-            "weakness",
-            "headache"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Encephalitis",
-            "Meningitis",
-            "Epilepsy",
-            "Hypertensive emergency",
-            "Carbon monoxide poisoning"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "migraine",
-        "symptoms": [
-            "dysphagia",
-            "aphasia",
-            "diplopia"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Myasthenia gravis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Amyotrophic lateral sclerosis (ALS)",
-            "Parkinsons disease",
-            "Botulism",
-            "Lyme disease",
-            "Wernickes encephalopathy"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "migraine",
-        "symptoms": [
-            "headache",
-            "ataxia",
-            "scintillation",
-            "hearing loss"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Brain tumor",
-            "Multiple sclerosis",
-            "Meningitis",
-            "Vestibular neuritis",
-            "Labyrinthitis",
-            "Menieres disease",
-            "Migraine with aura",
-            "Vertebrobasilar insufficiency",
-            "Acoustic neuroma"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "migraine",
-        "symptoms": [
-            "scintillation",
-            "numbness",
-            "aphasia",
-            "tinnitus",
-            "photophobia"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Multiple sclerosis (MS)",
-            "Stroke",
-            "Seizure disorder",
-            "Brain tumor",
-            "Vestibular migraine",
-            "Menieres disease",
-            "Hypoglycemia",
-            "Hyponatremia"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "migraine",
-        "symptoms": [
-            "parasthesia",
-            "headache",
-            "scintillation",
-            "phonophobia"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Occipital neuralgia",
-            "Multiple sclerosis (MS)",
-            "Seizure disorder",
-            "Cervical radiculopathy",
-            "Brain tumor",
-            "Stroke",
-            "Hypoparathyroidism",
-            "Lyme disease"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "migraine",
-        "symptoms": [
-            "scintillation",
-            "parasthesia",
-            "weakness",
-            "numbness"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Transient ischemic attack (TIA)",
-            "Multiple sclerosis (MS)",
-            "Stroke",
-            "Cervical radiculopathy",
-            "Peripheral neuropathy",
-            "Brain tumor",
-            "Seizure disorder",
-            "Vitamin B12 deficiency",
-            "Hypokalemia"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "migraine",
-        "symptoms": [
-            "dysphagia",
-            "numbness",
-            "phonophobia",
-            "aphasia"
-        ],
-        "diagnoses": [
-            "Stroke",
-            "Multiple sclerosis",
-            "Migraine",
-            "Brain tumor",
-            "Myasthenia gravis",
-            "Amyotrophic lateral sclerosis (ALS)",
-            "Parkinsons disease",
-            "Guillain-Barr\u00e9 syndrome",
-            "Transient ischemic attack (TIA)",
-            "Cervical spondylosis"
-        ]
-    },
-    {
-        "i": "6039",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "oral ulcers",
-            "thrombocytopenia",
-            "arthropathy",
-            "nonscarring alopecia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Behcets disease",
-            "Thrombotic thrombocytopenic purpura",
-            "Dermatomyositis",
-            "Systemic sclerosis",
-            "Antiphospholipid syndrome",
-            "Cytomegalovirus infection",
-            "HIV/AIDS",
-            "Medications (e.g.",
-            "methotrexate",
-            "NSAIDs)",
-            "Vitamin B12 or folate deficiency"
-        ]
-    },
-    {
-        "i": "6040",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nonscarring alopecia",
-            "telangiectasias",
-            "leukopenia",
-            "pericarditis",
-            "hemolytic anemia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Dermatomyositis",
-            "Mixed connective tissue disease (MCTD)",
-            "Systemic sclerosis (scleroderma)",
-            "Antiphospholipid syndrome (APS)",
-            "Sj\u00f6grens syndrome",
-            "Rheumatoid arthritis",
-            "Autoimmune hepatitis",
-            "Sarcoidosis",
-            "Drug-induced lupus erythematosus (DILE)"
-        ]
-    },
-    {
-        "i": "6041",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "pericarditis",
-            "oral ulcers",
-            "hemolytic anemia",
-            "telangiectasias",
-            "nonscarring alopecia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Behcets disease",
-            "Dermatomyositis",
-            "Scleroderma",
-            "Vasculitis",
-            "Sarcoidosis",
-            "Antiphospholipid syndrome",
-            "Paraneoplastic syndrome",
-            "Atopic dermatitis",
-            "Stevens-Johnson syndrome"
-        ]
-    },
-    {
-        "i": "6042",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "pericarditis",
-            "hemolytic anemia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Viral infections (e.g.",
-            "parvovirus B19",
-            "EBV",
-            "CMV",
-            "HIV)",
-            "Bacterial infections (e.g.",
-            "mycoplasma pneumoniae",
-            "tuberculosis)",
-            "Autoimmune disorders",
-            "Malignancies (e.g.",
-            "leukemia",
-            "lymphoma)",
-            "Sarcoidosis",
-            "Drug-induced lupus",
-            "Hypothyroidism",
-            "Sickle cell disease"
-        ]
-    },
-    {
-        "i": "6043",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "lymphopenia",
-            "hemolytic anemia",
-            "proteinuria",
-            "oral ulcers"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Autoimmune lymphoproliferative syndrome (ALPS)",
-            "HIV/AIDS",
-            "Aplastic anemia",
-            "Sj\u00f6grens syndrome",
-            "Celiac disease",
-            "Beh\u00e7ets disease",
-            "Chronic lymphocytic leukemia (CLL)",
-            "Sarcoidosis"
-        ]
-    },
-    {
-        "i": "6044",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "hemolytic anemia",
-            "nonscarring alopecia",
-            "chilblain",
-            "leukopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Antiphospholipid syndrome",
-            "Autoimmune hemolytic anemia",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Hypothyroidism",
-            "Raynauds phenomenon",
-            "Alopecia areata",
-            "Drug-induced lupus erythematosus",
-            "Vitamin B12 deficiency",
-            "Celiac disease"
-        ]
-    },
-    {
-        "i": "6045",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "pericarditis",
-            "nasal ulcers",
-            "telangiectasias",
-            "thrombocytopenia",
-            "postinflammatory dyspigmentation"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Vasculitis",
-            "Granulomatosis with polyangiitis (Wegeners)",
-            "Behcets disease",
-            "Cryoglobulinemia",
-            "Churg-Strauss syndrome",
-            "Microscopic polyangiitis",
-            "Antiphospholipid syndrome",
-            "Sarcoidosis",
-            "Hypocomplementemic urticarial vasculitis"
-        ]
-    },
-    {
-        "i": "6046",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "leukopenia",
-            "verrucous rash",
-            "peripheral neuropathy",
-            "pericarditis",
-            "nonscarring alopecia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "HIV/AIDS",
-            "Syphilis",
-            "Sarcoidosis",
-            "Rheumatoid arthritis",
-            "Sj\u00f6grens syndrome",
-            "Dermatomyositis",
-            "Lymphoma",
-            "Tuberculosis",
-            "Vitamin B12 deficiency"
-        ]
-    },
-    {
-        "i": "6047",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "chilblain",
-            "nonscarring alopecia",
-            "oral ulcers",
-            "proteinuria"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Chilblain lupus erythematosus",
-            "Behcets disease",
-            "Dermatomyositis",
-            "Scleroderma",
-            "Systemic sclerosis",
-            "Sj\u00f6grens syndrome",
-            "Cryoglobulinemia",
-            "Cutaneous small vessel vasculitis",
-            "Mixed connective tissue disease"
-        ]
-    },
-    {
-        "i": "6048",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "proteinuria",
-            "synovitis",
-            "lymphopenia",
-            "hemolytic anemia",
-            "discoid rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Sj\u00f6grens syndrome",
-            "Mixed connective tissue disease",
-            "Vasculitis",
-            "Cryoglobulinemia",
-            "Sarcoidosis",
-            "Lymphoma",
-            "Multiple myeloma",
-            "Reactive arthritis"
-        ]
-    },
-    {
-        "i": "6049",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nonscarring alopecia",
-            "bullous rash",
-            "arthropathy",
-            "thrombocytopenia",
-            "pericardial effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Dermatomyositis",
-            "Rheumatoid arthritis",
-            "Scleroderma",
-            "Sj\u00f6grens syndrome",
-            "Mixed connective tissue disease",
-            "Vasculitis",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Paraneoplastic syndromes",
-            "Acute leukemia"
-        ]
-    },
-    {
-        "i": "6050",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "hemolytic anemia",
-            "thrombocytopenia",
-            "lymphopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Antiphospholipid syndrome (APS)",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Autoimmune lymphoproliferative syndrome (ALPS)",
-            "Hemophagocytic lymphohistiocytosis (HLH)",
-            "Paroxysmal nocturnal hemoglobinuria (PNH)",
-            "Aplastic anemia",
-            "HIV/AIDS",
-            "Myelodysplastic syndromes (MDS)",
-            "Chronic lymphocytic leukemia (CLL)"
-        ]
-    },
-    {
-        "i": "6051",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "proteinuria",
-            "synovitis",
-            "panniculitis",
-            "pleural effusion"
-        ],
-        "diagnoses": [
-            "Systemic Lupus Erythematosus",
-            "Rheumatoid Arthritis",
-            "Sarcoidosis",
-            "Sj\u00f6grens Syndrome",
-            "Mixed Connective Tissue Disease",
-            "Systemic Sclerosis (Scleroderma)",
-            "Granulomatosis with Polyangiitis (Wegeners)",
-            "Polyarteritis Nodosa",
-            "Dermatomyositis",
-            "Systemic Vasculitis"
-        ]
-    },
-    {
-        "i": "6052",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "annular polycyclic rash",
-            "chilblain",
-            "synovitis",
-            "toxic epidermal necrolysis",
-            "nonscarring alopecia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Sarcoidosis",
-            "Behcets disease",
-            "Stevens-Johnson syndrome",
-            "Dermatomyositis",
-            "Cutaneous vasculitis",
-            "Rheumatoid arthritis",
-            "Lyme disease",
-            "Chilblain lupus erythematosus",
-            "Subacute cutaneous lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6053",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "arthropathy",
-            "proteinuria",
-            "postinflammatory dyspigmentation",
-            "malar rash",
-            "myelitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Mixed connective tissue disease",
-            "Sjogren syndrome",
-            "Scleroderma",
-            "Rheumatoid arthritis",
-            "Dermatomyositis",
-            "Viral infection (e.g. parvovirus B19",
-            "hepatitis B or C)",
-            "Sarcoidosis",
-            "Psoriatic arthritis",
-            "Reactive arthritis"
-        ]
-    },
-    {
-        "i": "6054",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "synovitis",
-            "oral ulcers",
-            "hemolytic anemia",
-            "peripheral neuropathy"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Behcets disease",
-            "Rheumatoid arthritis",
-            "Sjogrens syndrome",
-            "Systemic sclerosis (scleroderma)",
-            "Mixed connective tissue disease",
-            "Vasculitis (e.g.",
-            "polyarteritis nodosa",
-            "granulomatosis with polyangiitis)",
-            "Sarcoidosis",
-            "Vitamin B12 deficiency",
-            "Celiac disease"
-        ]
-    },
-    {
-        "i": "6055",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "lichen planus",
-            "lymphopenia",
-            "cranial neuropathy",
-            "nonscarring alopecia",
-            "leukopenia"
-        ],
-        "diagnoses": [
-            "Lupus erythematosus",
-            "Human immunodeficiency virus (HIV) infection",
-            "Sarcoidosis",
-            "Dermatomyositis",
-            "Sj\u00f6gren syndrome",
-            "Lichen planopilaris",
-            "Cutaneous T-cell lymphoma",
-            "Graft-versus-host disease",
-            "Tuberculosis",
-            "Leprosy"
-        ]
-    },
-    {
-        "i": "6056",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nonscarring alopecia",
-            "pericarditis",
-            "chilblain",
-            "seizures",
-            "panniculitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Dermatomyositis",
-            "Sarcoidosis",
-            "Sj\u00f6grens syndrome",
-            "Vasculitis",
-            "Rheumatoid arthritis",
-            "Systemic sclerosis",
-            "Mixed connective tissue disease",
-            "Lyme disease",
-            "Cryoglobulinemia"
-        ]
-    },
-    {
-        "i": "6057",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nasal ulcers",
-            "pleural effusion",
-            "nonscarring alopecia",
-            "pericarditis",
-            "thrombocytopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Granulomatosis with polyangiitis (Wegeners granulomatosis)",
-            "Churg-Strauss syndrome",
-            "Behcets disease",
-            "Microscopic polyangiitis",
-            "Lymphoma",
-            "Tuberculosis",
-            "Sarcoidosis",
-            "Paraneoplastic syndromes",
-            "Antiphospholipid syndrome"
-        ]
-    },
-    {
-        "i": "6058",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "thrombocytopenia",
-            "pericardial effusion",
-            "nonscarring alopecia",
-            "bullous rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Antiphospholipid syndrome",
-            "Acute myeloid leukemia",
-            "Aplastic anemia",
-            "Paroxysmal nocturnal hemoglobinuria",
-            "Viral infection (e.g.",
-            "CMV",
-            "EBV)",
-            "Autoimmune hemolytic anemia",
-            "Idiopathic thrombocytopenic purpura",
-            "Thrombotic thrombocytopenic purpura",
-            "Disseminated intravascular coagulation"
-        ]
-    },
-    {
-        "i": "6059",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "bullous rash",
-            "pleural effusion",
-            "oral ulcers",
-            "thrombocytopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Bullous pemphigoid",
-            "Paraneoplastic pemphigus",
-            "Behcet disease",
-            "Drug-induced lupus erythematosus",
-            "Mixed connective tissue disease (MCTD)",
-            "Pemphigus vulgaris",
-            "Vasculitis (e.g.",
-            "Granulomatosis with polyangiitis",
-            "Microscopic polyangiitis)",
-            "Viral infections (e.g.",
-            "herpes simplex virus",
-            "cytomegalovirus",
-            "Epstein-Barr virus)",
-            "Hematologic malignancies (e.g.",
-            "leukemia",
-            "lymphoma)"
-        ]
-    },
-    {
-        "i": "6060",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "seizures",
-            "hemolytic anemia",
-            "arthropathy",
-            "nasal ulcers",
-            "pericardial effusion"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Granulomatosis with polyangiitis (formerly Wegeners granulomatosis)",
-            "Behcets disease",
-            "Cryoglobulinemia",
-            "Sarcoidosis",
-            "Paraneoplastic syndromes",
-            "Antiphospholipid syndrome",
-            "Polyarteritis nodosa",
-            "Multicentric Castleman disease",
-            "Schnitzler syndrome"
-        ]
-    },
-    {
-        "i": "6061",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "hemolytic anemia",
-            "myelitis",
-            "nonscarring alopecia",
-            "arthropathy",
-            "nasal ulcers"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Behcet disease",
-            "Paraneoplastic syndrome",
-            "Sarcoidosis",
-            "Vitamin B12 deficiency",
-            "Celiac disease",
-            "Vasculitis",
-            "Multiple sclerosis",
-            "Syphilis",
-            "Acute HIV infection"
-        ]
-    },
-    {
-        "i": "6062",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "myelitis",
-            "proteinuria",
-            "hemolytic anemia",
-            "mononeuritis multiplex",
-            "verrucous rash"
-        ],
-        "diagnoses": [
-            "Polyarteritis nodosa",
-            "Systemic lupus erythematosus",
-            "Cryoglobulinemia",
-            "Churg-Strauss syndrome",
-            "Sj\u00f6gren syndrome",
-            "Paraneoplastic syndrome",
-            "Beh\u00e7et disease",
-            "Sarcoidosis",
-            "Wegener granulomatosis",
-            "Mixed connective tissue disease"
-        ]
-    },
-    {
-        "i": "6063",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "arthropathy",
-            "nonscarring alopecia",
-            "proteinuria",
-            "panniculitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Dermatomyositis",
-            "Systemic sclerosis",
-            "Mixed connective tissue disease",
-            "Rheumatoid arthritis",
-            "Sj\u00f6grens syndrome",
-            "Vasculitis",
-            "Sarcoidosis",
-            "Erythema nodosum",
-            "Hypothyroidism"
-        ]
-    },
-    {
-        "i": "6064",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "panniculitis",
-            "peripheral neuropathy",
-            "nasal ulcers",
-            "proteinuria",
-            "synovitis"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Granulomatosis with polyangiitis (GPA)",
-            "Eosinophilic granulomatosis with polyangiitis (EGPA)",
-            "Polyarteritis nodosa (PAN)",
-            "Cryoglobulinemia",
-            "Sarcoidosis",
-            "Leprosy",
-            "Rheumatoid arthritis (RA)",
-            "Behcets disease",
-            "IgA vasculitis (Henoch-Sch\u00f6nlein purpura)"
-        ]
-    },
-    {
-        "i": "6065",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "photosensitive rash",
-            "lichen planus",
-            "toxic epidermal necrolysis",
-            "nonscarring alopecia",
-            "lymphopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Drug-induced hypersensitivity syndrome (DIHS) / Drug reaction with eosinophilia and systemic symptoms (DRESS)",
-            "Dermatomyositis",
-            "Cutaneous T-cell lymphoma (e.g.",
-            "mycosis fungoides",
-            "S\u00e9zary syndrome)",
-            "Immunodeficiency disorders (e.g.",
-            "HIV/AIDS)",
-            "Stevens-Johnson syndrome / Toxic epidermal necrolysis spectrum",
-            "Paraneoplastic syndromes associated with underlying malignancy",
-            "Chronic cutaneous lupus erythematosus (e.g.",
-            "discoid lupus erythematosus)",
-            "Graft-versus-host disease (in the context of hematopoietic stem cell transplantation)",
-            "Autoimmune polyendocrine syndromes (e.g.",
-            "APS type 1",
-            "APS type 2)"
-        ]
-    },
-    {
-        "i": "6066",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nasal ulcers",
-            "peripheral neuropathy",
-            "nonscarring alopecia",
-            "synovitis",
-            "discoid rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Sarcoidosis",
-            "Vasculitis",
-            "Sj\u00f6gren syndrome",
-            "Leprosy",
-            "Relapsing polychondritis",
-            "Crohn disease",
-            "Beh\u00e7et syndrome",
-            "Vitamin B12 deficiency",
-            "Rheumatoid arthritis"
-        ]
-    },
-    {
-        "i": "6067",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "hemolytic anemia",
-            "lymphopenia",
-            "pleural effusion",
-            "discoid rash",
-            "delirium"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Acute lymphoblastic leukemia (ALL)",
-            "Chronic lymphocytic leukemia (CLL)",
-            "Rheumatoid arthritis",
-            "Sjogrens syndrome",
-            "Tuberculosis",
-            "Lymphoma",
-            "Sarcoidosis",
-            "Viral infections (e.g.",
-            "HIV",
-            "EBV",
-            "CMV)",
-            "Autoimmune hemolytic anemia"
-        ]
-    },
-    {
-        "i": "6068",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "nonscarring alopecia",
-            "thrombocytopenia",
-            "lichen planus",
-            "delirium",
-            "lymphopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "HIV/AIDS",
-            "Autoimmune hepatitis",
-            "Drug-induced lupus erythematosus",
-            "Dermatomyositis",
-            "Sarcoidosis",
-            "Sj\u00f6gren syndrome",
-            "Aplastic anemia",
-            "Lymphoma",
-            "Viral hepatitis"
-        ]
-    },
-    {
-        "i": "6069",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "thrombocytopenia",
-            "psychosis",
-            "arthropathy",
-            "lymphopenia",
-            "nasal ulcers"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Granulomatosis with polyangiitis (Wegeners granulomatosis)",
-            "Behcets disease",
-            "Hematologic malignancy (e.g.",
-            "leukemia",
-            "lymphoma)",
-            "HIV/AIDS",
-            "Antiphospholipid syndrome",
-            "Thrombotic thrombocytopenic purpura (TTP)",
-            "Vitamin B12 deficiency",
-            "Idiopathic thrombocytopenic purpura (ITP)",
-            "Drug-induced lupus erythematosus"
-        ]
-    },
-    {
-        "i": "6070",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "thrombocytopenia",
-            "leukopenia",
-            "peripheral neuropathy",
-            "malar rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "Rheumatoid arthritis",
-            "Sj\u00f6grens syndrome",
-            "Vitamin B12 deficiency",
-            "Lyme disease",
-            "HIV/AIDS",
-            "Aplastic anemia",
-            "Multiple sclerosis",
-            "Guillain-Barr\u00e9 syndrome",
-            "Leukemia"
-        ]
-    },
-    {
-        "i": "6071",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "proteinuria",
-            "thrombocytopenia",
-            "lymphopenia",
-            "leukopenia"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus (SLE)",
-            "HIV/AIDS",
-            "Viral infections (e.g.",
-            "CMV",
-            "EBV)",
-            "Aplastic anemia",
-            "Myelodysplastic syndrome",
-            "Bone marrow failure syndromes",
-            "Autoimmune disorders (e.g.",
-            "rheumatoid arthritis",
-            "Sj\u00f6grens syndrome)",
-            "Hematological malignancies (e.g.",
-            "leukemia",
-            "lymphoma)",
-            "Medication side effects (e.g.",
-            "chemotherapy",
-            "immunosuppressants)",
-            "Connective tissue disorders (e.g.",
-            "scleroderma",
-            "mixed connective tissue disease)"
-        ]
-    }
+  {
+    "i": "6039",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["hand erythema", "foot erythema", "oropharyngeal erythema", "leukocytosis", "cervical lymphadenopathy"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Streptococcal pharyngitis", "Toxic shock syndrome", "Measles", "Erythema multiforme", "Stevens-Johnson syndrome", "Erythema infectiosum (fifth disease)", "Systemic lupus erythematosus", "Dermatomyositis"]
+  },
+  {
+    "i": "6040",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "lip cracking", "pyuria", "periungal desquamation", "diffuse erythematous rash"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Measles", "Infectious mononucleosis", "Systemic lupus erythematosus (SLE)", "Streptococcal pharyngitis", "Cytomegalovirus (CMV) infection", "Adenovirus infection", "Stevens-Johnson syndrome", "Acute retroviral syndrome (HIV seroconversion illness)"]
+  },
+  {
+    "i": "6041",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["lip cracking", "foot erythema", "conjunctivitis", "tongue erythema"],
+    "diagnoses": ["Kawasaki disease", "Stevens-Johnson syndrome", "Erythema multiforme", "Scarlet fever", "Staphylococcal scalded skin syndrome", "Vitamin B deficiency", "Drug reaction", "Erythroderma", "Toxic shock syndrome", "Systemic lupus erythematosus"]
+  },
+  {
+    "i": "6042",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "erythema multiforme", "lip cracking", "oropharyngeal erythema"],
+    "diagnoses": ["Stevens-Johnson syndrome", "Mycoplasma pneumoniae infection", "Infectious mononucleosis", "Erythema multiforme", "Scarlet fever", "Kawasaki disease", "Measles", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Herpes simplex virus infection", "Systemic lupus erythematosus"]
+  },
+  {
+    "i": "6043",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["diffuse erythematous rash", "pyuria", "leukocytosis"],
+    "diagnoses": ["Acute interstitial nephritis", "Kawasaki disease", "Scarlet fever", "Urinary tract infection", "Sepsis", "Streptococcal toxic shock syndrome", "Drug reaction with eosinophilia and systemic symptoms (DRESS)", "Staphylococcal scalded skin syndrome", "Systemic lupus erythematosus", "Acute poststreptococcal glomerulonephritis"]
+  },
+  {
+    "i": "6044",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["lip cracking", "conjunctivitis", "oropharyngeal erythema", "fever", "pyuria"],
+    "diagnoses": ["Kawasaki disease", "Measles", "Stevens-Johnson syndrome", "Toxic shock syndrome", "Erythema multiforme", "Scarlet fever", "Epstein-Barr virus infection", "Adenovirus infection", "Urinary tract infection", "Viral conjunctivitis"]
+  },
+  {
+    "i": "6045",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "pyuria", "lip cracking", "periungal desquamation", "leukocytosis"],
+    "diagnoses": ["Kawasaki disease", "Urinary tract infection", "Sepsis", "Vasculitis", "Stevens-Johnson syndrome", "Scarlet fever", "Streptococcal infection", "Meningococcemia", "Staphylococcal scalded skin syndrome", "Acute rheumatic fever"]
+  },
+  {
+    "i": "6046",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "pyuria", "cervical lymphadenopathy"],
+    "diagnoses": ["Urinary tract infection", "Pyelonephritis", "Cervical lymphadenitis", "Infectious mononucleosis", "Cytomegalovirus infection", "HIV infection", "Toxoplasmosis", "Cat-scratch disease", "Tuberculosis", "Lymphoma"]
+  },
+  {
+    "i": "6047",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["hand edema", "conjunctivitis", "fever", "periungal desquamation"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Staphylococcal scalded skin syndrome", "Cellulitis", "Stevens-Johnson syndrome", "Erythema multiforme", "Measles", "Toxic shock syndrome", "Atopic dermatitis with secondary infection", "Drug reaction"]
+  },
+  {
+    "i": "6048",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["pyuria", "foot edema", "fever", "lip erythema"],
+    "diagnoses": ["Poststreptococcal glomerulonephritis", "Systemic lupus erythematosus", "Kawasaki disease", "Acute interstitial nephritis", "Sepsis", "Nephrotic syndrome", "Infective endocarditis", "Henoch-Schonlein purpura", "Rheumatic fever", "Polyarteritis nodosa"]
+  },
+  {
+    "i": "6049",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "pyuria", "conjunctivitis", "foot erythema", "oropharyngeal erythema"],
+    "diagnoses": ["Kawasaki disease", "Streptococcal pharyngitis", "Scarlet fever", "Adenovirus infection", "Stevens-Johnson syndrome", "Urinary tract infection", "Erythema multiforme", "Measles", "Leptospirosis", "Scombroid food poisoning"]
+  },
+  {
+    "i": "6050",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["conjunctivitis", "pyuria", "thrombocytosis", "cervical lymphadenopathy"],
+    "diagnoses": ["Urinary tract infection", "Acute bacterial conjunctivitis", "Kawasaki disease", "Reactive lymphadenopathy", "Epstein-Barr virus infection", "Adenovirus infection", "Cytomegalovirus infection", "Toxoplasmosis", "Leptospirosis", "Systemic lupus erythematosus"]
+  },
+  {
+    "i": "6051",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "cervical lymphadenopathy", "diffuse erythematous rash", "conjunctivitis"],
+    "diagnoses": ["Measles", "Rubella", "Roseola infantum", "Scarlet fever", "Infectious mononucleosis", "Kawasaki disease", "Adenovirus infection", "Acute HIV infection", "Erythema infectiosum (Fifth disease)", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome"]
+  },
+  {
+    "i": "6055",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "hand erythema", "hand edema", "foot edema", "fever"],
+    "diagnoses": ["Kawasaki disease", "Acute rheumatic fever", "Systemic lupus erythematosus (SLE)", "Juvenile idiopathic arthritis", "Scarlet fever", "Lymphoma", "Mononucleosis", "Measles", "Rubella", "Lyme disease"]
+  },
+  {
+    "i": "6057",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["periungal desquamation", "foot erythema", "fever", "cervical lymphadenopathy", "thrombocytosis"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Stevens-Johnson syndrome/Toxic epidermal necrolysis", "Staphylococcal scalded skin syndrome", "Erythema multiforme", "Measles", "Parvovirus B19 infection", "Systemic juvenile idiopathic arthritis", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Streptococcal toxic shock syndrome"]
+  },
+  {
+    "i": "6058",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["foot edema", "pyuria", "fever", "cervical lymphadenopathy"],
+    "diagnoses": ["Systemic lupus erythematosus", "Nephrotic syndrome", "Lymphoma", "Acute pyelonephritis", "Congestive heart failure", "Cirrhosis with ascites", "Deep vein thrombosis", "Tuberculosis", "Streptococcal infection", "Filariasis"]
+  },
+  {
+    "i": "6060",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["pyuria", "maculopapular rash", "conjunctivitis", "erythema multiforme"],
+    "diagnoses": ["Stevens-Johnson syndrome", "Toxic epidermal necrolysis", "Kawasaki disease", "Measles", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Erythema multiforme major", "Viral exanthem with secondary bacterial infection", "Mycoplasma pneumoniae infection", "Urinary tract infection with systemic reaction", "Behcets disease"]
+  },
+  {
+    "i": "6061",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "leukocytosis", "fever", "thrombocytosis", "pyuria"],
+    "diagnoses": ["Acute bacterial lymphadenitis", "Lymphoma (Hodgkins or Non-Hodgkins)", "Mononucleosis", "Cat scratch disease", "Tuberculosis", "Toxoplasmosis", "Acute pyelonephritis", "Systemic lupus erythematosus (SLE)", "Sarcoidosis", "Kawasaki disease"]
+  },
+  {
+    "i": "6062",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["hand edema", "diffuse erythematous rash", "erythema multiforme", "fever"],
+    "diagnoses": ["Stevens-Johnson syndrome", "Toxic epidermal necrolysis", "Kawasaki disease", "Erythema multiforme major", "Viral exanthem", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Staphylococcal scalded skin syndrome", "Cellulitis", "Vasculitis", "Acute cutaneous lupus erythematosus"]
+  },
+  {
+    "i": "6065",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "thrombocytosis", "fever", "leukocytosis"],
+    "diagnoses": ["Lymphoma", "Leukemia", "Infectious mononucleosis", "Tuberculosis", "HIV/AIDS", "Systemic lupus erythematosus", "Sarcoidosis", "Toxoplasmosis", "Cytomegalovirus infection", "Hypereosinophilic syndrome"]
+  },
+  {
+    "i": "6066",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "pyuria", "lip cracking", "tongue erythema", "conjunctivitis"],
+    "diagnoses": ["Kawasaki disease", "Streptococcal infection", "Staphylococcal infection", "Viral infection", "Stevens-Johnson syndrome", "Urinary tract infection", "Pyelonephritis", "Erythema multiforme", "Scarlet fever", "Measles"]
+  },
+  {
+    "i": "6067",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["cervical lymphadenopathy", "conjunctivitis"],
+    "diagnoses": ["Infectious mononucleosis", "Measles", "Rubella", "Adenovirus infection", "Cytomegalovirus infection", "Toxoplasmosis", "Kawasaki disease", "Acute bacterial conjunctivitis", "Cat-scratch disease", "HIV infection"]
+  },
+  {
+    "i": "6068",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["diffuse erythematous rash", "erythema multiforme", "anemia", "lip erythema", "tongue erythema"],
+    "diagnoses": ["Stevens-Johnson syndrome", "Toxic epidermal necrolysis", "Erythema multiforme major", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Kawasaki disease", "Scarlet fever", "Staphylococcal scalded skin syndrome", "Viral exanthem", "Acute cutaneous lupus erythematosus", "Paraneoplastic pemphigus"]
+  },
+  {
+    "i": "6069",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["tongue erythema", "conjunctivitis", "oropharyngeal erythema", "periungal desquamation"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Stevens-Johnson syndrome", "Erythema multiforme", "Measles", "Toxic shock syndrome", "Staphylococcal scalded skin syndrome", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Erythema infectiosum (fifth disease)", "Systemic lupus erythematosus"]
+  },
+  {
+    "i": "6070",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["oropharyngeal erythema", "conjunctivitis", "periungal desquamation", "pyuria", "fever"],
+    "diagnoses": ["Kawasaki disease", "Scarlet fever", "Streptococcal pharyngitis", "Adenovirus infection", "Stevens-Johnson syndrome", "Measles", "Leptospirosis", "Erythema multiforme", "Urinary tract infection", "Viral exanthem"]
+  },
+  {
+    "i": "6071",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["conjunctivitis", "pyuria", "cervical lymphadenopathy", "fever", "hand erythema"],
+    "diagnoses": ["Kawasaki disease", "Adenoviral conjunctivitis", "Measles", "Epstein-Barr virus (EBV) infection", "Systemic lupus erythematosus (SLE)", "Urinary tract infection (UTI)", "Juvenile idiopathic arthritis (JIA)", "Bacterial conjunctivitis", "Scarlet fever", "Reactive arthritis"]
+  },
+  {
+    "i": "6040",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["proteinuria", "atrophic scarring", "discoid rash", "pericardial effusion", "nephritis"],
+    "diagnoses": ["Systemic lupus erythematosus", "Lupus nephritis", "Discoid lupus erythematosus", "Mixed connective tissue disease", "Scleroderma renal crisis", "Subacute cutaneous lupus erythematosus", "Rheumatoid vasculitis", "Sjogren syndrome", "Goodpasture syndrome", "ANCA-associated vasculitis"]
+  },
+  {
+    "i": "6041",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["thrombocytopenia", "atrophic scarring", "nephritis"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Thrombotic thrombocytopenic purpura (TTP)", "Scleroderma", "Antiphospholipid syndrome (APS)", "Hemolytic uremic syndrome (HUS)", "Idiopathic thrombocytopenic purpura (ITP)", "Goodpasture syndrome", "Cryoglobulinemia", "Sarcoidosis", "Sjögrens syndrome"]
+  },
+  {
+    "i": "6043",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["fever", "nephritis", "atrophic scarring", "acute pericarditis", "arthropathy"],
+    "diagnoses": ["Systemic Lupus Erythematosus", "Rheumatic Fever", "Vasculitis", "Sarcoidosis", "Behcets Disease", "Familial Mediterranean Fever", "Granulomatosis with Polyangiitis (Wegeners)", "Polyarteritis Nodosa", "Cryoglobulinemia", "IgA Vasculitis (Henoch-Schonlein Purpura)"]
+  },
+  {
+    "i": "6045",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["arthropathy", "seizure", "nephritis", "pleural effusion"],
+    "diagnoses": ["Systemic lupus erythematosus", "Rheumatoid arthritis", "Goodpasture syndrome", "Granulomatosis with polyangiitis (Wegeners)", "Polyarteritis nodosa", "Sarcoidosis", "Multiple myeloma", "Lymphoma", "Tuberculosis", "Amyloidosis"]
+  },
+  {
+    "i": "6046",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["fever", "discoid rash", "pleural effusion"],
+    "diagnoses": ["Systemic lupus erythematosus", "Rheumatoid arthritis", "Tuberculosis", "Sarcoidosis", "Lymphoma", "Dermatomyositis", "Subacute cutaneous lupus erythematosus", "Pneumonia with atypical manifestations", "Acute HIV infection", "Drug-induced lupus erythematosus"]
+  },
+  {
+    "i": "6048",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["erythematous-violaceous", "maculopapular rash", "fever", "delirium", "arthropathy"],
+    "diagnoses": ["Meningococcemia", "Systemic lupus erythematosus (SLE)", "Rocky Mountain spotted fever", "Disseminated gonococcal infection", "Acute rheumatic fever", "Adult-onset Stills disease", "Secondary syphilis", "Lyme disease", "Ehrlichiosis", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome"]
+  },
+  {
+    "i": "6055",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["psoriasiform rash", "arthropathy", "proteinuria", "nephritis", "psychosis"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Psoriatic arthritis", "Lupus nephritis", "Sarcoidosis", "Reiters syndrome (Reactive arthritis)", "IgA nephropathy", "Goodpasture syndrome", "Scleroderma", "Henoch-Schönlein purpura (IgA vasculitis)", "Granulomatosis with polyangiitis (Wegeners granulomatosis)"]
+  },
+  {
+    "i": "6058",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["fever", "erythematous-violaceous", "leukopenia", "follicular hyperkeratosis"],
+    "diagnoses": ["Acute retroviral syndrome", "Mycosis fungoides", "Cutaneous T-cell lymphoma (CTCL)", "Dengue fever", "Cytomegalovirus (CMV) infection", "Epstein-Barr virus (EBV) infection", "Rubella (German measles)", "Rubeola (Measles)", "Cutaneous leishmaniasis", "Pityriasis rubra pilaris"]
+  },
+  {
+    "i": "6067",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["seizure", "nephritis", "maculopapular rash", "acute pericarditis"],
+    "diagnoses": ["Systemic lupus erythematosus", "Polyarteritis nodosa", "Granulomatosis with polyangiitis (Wegeners)", "Rheumatic fever", "Henoch-Schönlein purpura", "Behçets disease", "Sarcoidosis", "IgA vasculitis", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Acute poststreptococcal glomerulonephritis"]
+  },
+  {
+    "i": "6069",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["proteinuria", "discoid rash", "follicular hyperkeratosis", "alopecia", "acute pericarditis"],
+    "diagnoses": ["Systemic lupus erythematosus", "Dermatomyositis", "Scleroderma", "Mixed connective tissue disease", "Discoid lupus erythematosus", "Keratosis follicularis spinulosa decalvans", "Chronic kidney disease", "Nephrotic syndrome", "Sarcoidosis", "Amyloidosis"]
+  },
+  {
+    "i": "6070",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["psychosis", "proteinuria", "synovitis", "annular rash", "leukopenia"],
+    "diagnoses": ["Systemic lupus erythematosus", "Drug-induced lupus erythematosus", "Granulomatosis with polyangiitis (Wegeners)", "Goodpasture syndrome", "Sarcoidosis", "Behçets disease", "Acute poststreptococcal glomerulonephritis", "IgA vasculitis (Henoch-Schönlein purpura)", "Cryoglobulinemia", "Acute rheumatic fever"]
+  },
+  {
+    "i": "6071",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["psychosis", "pericardial effusion", "autoimmune hemolysis", "fever"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Sarcoidosis", "Lymphoma", "Infectious endocarditis", "Tuberculosis", "HIV/AIDS", "Rheumatoid arthritis", "Antiphospholipid syndrome", "Drug-induced lupus", "Acute rheumatic fever"]
+  },
+  {
+    "i": "6039",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Irritated eyes", "warts", "rashes", "tinnitus", "Depression"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Sarcoidosis", "Lyme disease", "Human papillomavirus (HPV) infection", "Eczema", "Psoriasis", "Allergic reaction", "Menieres disease", "Acoustic neuroma", "Medication side effects"]
+  },
+  {
+    "i": "6040",
+    "criteria": "mcas_alternative",
+    "symptoms": ["chemical sensitivities", "striae", "angioedema", "Depression", "decreased immunoglobulins"],
+    "diagnoses": ["Cushings syndrome", "Systemic lupus erythematosus (SLE)", "Adrenal insufficiency", "Connective tissue disorder", "Immunodeficiency disorder", "Chronic fatigue syndrome", "Mast cell activation syndrome", "Autoimmune disorder", "Ehlers-Danlos syndrome", "Sarcoidosis"]
+  },
+  {
+    "i": "6041",
+    "criteria": "mcas_alternative",
+    "symptoms": ["vulvodynia", "delayed puberty", "episodic weakness", "arteriovenous malformations", "glycemic lability"],
+    "diagnoses": ["Rett syndrome", "Antiphospholipid syndrome", "Neurogenic bladder dysfunction", "Thyrotoxic periodic paralysis", "Systemic lupus erythematosus", "Pudendal neuralgia", "Ehlers-Danlos syndrome", "Multiple sclerosis", "Adrenal insufficiency", "Pelvic congestion syndrome"]
+  },
+  {
+    "i": "6042",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Lymphadenopathy", "dysosmia", "epistaxis", "cough", "decreased libido"],
+    "diagnoses": ["Acute viral upper respiratory tract infection", "Infectious mononucleosis", "Influenza", "Lymphoma", "Acute sinusitis", "Nasopharyngeal carcinoma", "Tuberculosis", "COVID-19", "HIV/AIDS", "Sarcoidosis"]
+  },
+  {
+    "i": "6043",
+    "criteria": "mcas_alternative",
+    "symptoms": ["hyperthyroidism", "glycemic lability", "difficulty focusing vision", "diarrhea", "mood lability"],
+    "diagnoses": ["Graves disease", "Thyrotoxicosis", "Hyperthyroidism due to thyroiditis", "Thyroid storm", "Autoimmune polyglandular syndrome", "Toxic multinodular goiter", "Hyperparathyroidism", "Diabetes mellitus", "Thyroid cancer", "Pheochromocytoma"]
+  },
+  {
+    "i": "6044",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Abnormal electrolytes", "Lymphadenopathy", "irritability", "coryza", "attention deficit"],
+    "diagnoses": ["Acute viral upper respiratory tract infection", "Infectious mononucleosis", "Influenza", "Lymphoma", "Attention deficit hyperactivity disorder (ADHD)", "Acute sinusitis", "Cytomegalovirus (CMV) infection", "HIV infection", "Leukemia", "Hyperthyroidism"]
+  },
+  {
+    "i": "6045",
+    "criteria": "mcas_alternative",
+    "symptoms": ["memory problems", "increased immunoglobulins", "constipation", "dyspnea with normal pulmonary function tests", "coryza"],
+    "diagnoses": ["Multiple myeloma", "Amyloidosis", "Chronic sinusitis", "Alzheimers disease", "Vascular dementia", "Hypothyroidism", "Vitamin B12 deficiency", "Depression", "Irritable bowel syndrome", "Chronic fatigue syndrome"]
+  },
+  {
+    "i": "6046",
+    "criteria": "mcas_alternative",
+    "symptoms": ["mood lability", "atherosclerosis", "Irritated eyes", "Depression", "cysts"],
+    "diagnoses": ["Bipolar disorder", "Atherosclerotic cardiovascular disease", "Conjunctivitis", "Major depressive disorder", "Polycystic ovary syndrome (PCOS)", "Cyclothymic disorder", "Carotid artery disease", "Blepharitis", "Persistent depressive disorder (dysthymia)", "Sebaceous cysts"]
+  },
+  {
+    "i": "6049",
+    "criteria": "mcas_alternative",
+    "symptoms": ["dyshydrotic eczema", "warts", "angioedema", "hemorrhoids", "tinnitus"],
+    "diagnoses": ["Atopic dermatitis", "Contact dermatitis", "Lichen planus", "Psoriasis", "Systemic lupus erythematosus", "Chronic idiopathic urticaria", "Mastocytosis", "Hypothyroidism", "Menieres disease", "Acoustic neuroma"]
+  },
+  {
+    "i": "6050",
+    "criteria": "mcas_alternative",
+    "symptoms": ["infertility", "onychodystrophy", "Lymphadenopathy", "Depression", "Sinutitis"],
+    "diagnoses": ["Systemic lupus erythematosus", "HIV/AIDS", "Hypothyroidism", "Celiac disease", "Zinc deficiency", "Iron deficiency anemia", "Chronic fatigue syndrome", "Sarcoidosis", "Sjogrens syndrome", "Vitamin B12 deficiency"]
+  },
+  {
+    "i": "6051",
+    "criteria": "mcas_alternative",
+    "symptoms": ["bronchitis", "pseudoseizures", "obstructive sleep apnea", "Polycythemia", "miscarriage"],
+    "diagnoses": ["Chronic obstructive pulmonary disease (COPD)", "Asthma", "Obstructive sleep apnea syndrome", "Polycythemia vera", "Recurrent pregnancy loss", "Psychogenic non-epileptic seizures (PNES)", "Pulmonary hypertension", "Cardiac arrhythmia", "Hypothyroidism", "Anemia"]
+  },
+  {
+    "i": "6053",
+    "criteria": "mcas_alternative",
+    "symptoms": ["attention deficit", "physical sensitivities", "glycemic lability", "tinnitus", "obsessive-compulsive behavior"],
+    "diagnoses": ["Attention-deficit/hyperactivity disorder (ADHD)", "Autism spectrum disorder (ASD)", "Sensory processing disorder", "Reactive hypoglycemia", "Obsessive-compulsive disorder (OCD)", "Anxiety disorders", "Ménières disease", "Migraine", "Temporomandibular joint disorder (TMJ)", "Chronic fatigue syndrome (CFS)"]
+  },
+  {
+    "i": "6054",
+    "criteria": "mcas_alternative",
+    "symptoms": ["laryngitis", "migratory abdominal pain", "plethora", "Dyspepsia", "increased immunoglobulins"],
+    "diagnoses": ["Systemic lupus erythematosus", "Multicentric Castleman disease", "Multiple myeloma", "Waldenström macroglobulinemia", "Chronic lymphocytic leukemia", "Acute intermittent porphyria", "Hypereosinophilic syndrome", "Behçet disease", "Hereditary angioedema", "Chronic hepatitis C"]
+  },
+  {
+    "i": "6055",
+    "criteria": "mcas_alternative",
+    "symptoms": ["decreased libido", "attention deficit", "striae", "migratory edema", "difficulty focusing vision"],
+    "diagnoses": ["Cushing Syndrome", "Hypothyroidism", "Depression", "Chronic fatigue syndrome", "Premenstrual syndrome (PMS)", "Fibromyalgia", "Anemia", "Sleep apnea", "Diabetes mellitus", "Vitamin D deficiency"]
+  },
+  {
+    "i": "6056",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Dyspepsia", "physical sensitivities", "cough", "congestion", "dry eyes"],
+    "diagnoses": ["Gastroesophageal reflux disease (GERD)", "Allergic rhinitis", "Upper respiratory tract infection", "Chronic sinusitis", "Asthma", "Fibromyalgia", "Irritable bowel syndrome (IBS)", "Anxiety disorder", "Chronic fatigue syndrome", "Vitamin D deficiency"]
+  },
+  {
+    "i": "6057",
+    "criteria": "mcas_alternative",
+    "symptoms": ["chest pain", "epistaxis", "otitis media", "Irritated eyes", "anxiety"],
+    "diagnoses": ["Acute sinusitis", "Allergic rhinitis", "Viral upper respiratory infection", "Hypertension", "Acute bronchitis", "Generalized anxiety disorder", "Acute coronary syndrome", "Pneumonia", "Gastroesophageal reflux disease", "Panic disorder"]
+  },
+  {
+    "i": "6058",
+    "criteria": "mcas_alternative",
+    "symptoms": ["increased susceptibility to infection", "periodontal disease", "coryza", "blepharospasm", "tags"],
+    "diagnoses": ["Chronic granulomatous disease", "Chédiak-Higashi syndrome", "Hyperimmunoglobulin E syndrome", "Severe combined immunodeficiency (SCID)", "Common variable immunodeficiency", "Leukocyte adhesion deficiency", "Papillon-Lefèvre syndrome", "Cyclic neutropenia", "Behçet disease", "Sjögren syndrome"]
+  },
+  {
+    "i": "6059",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Irritated eyes", "Presyncope", "chest pain", "wheezing", "anxiety"],
+    "diagnoses": ["Anxiety disorder", "Acute bronchitis", "Anaphylaxis", "Asthma exacerbation", "Panic attack", "Acute coronary syndrome", "Pulmonary embolism", "Pneumonia", "Allergic reaction", "Hypoglycemia"]
+  },
+  {
+    "i": "6061",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Polycythemia", "Oral pain", "osteopenia", "plethora", "dyshydrotic eczema"],
+    "diagnoses": ["Polycythemia vera", "Myeloproliferative neoplasm", "Dehydration", "Vitamin D deficiency", "Hyperparathyroidism", "Oral cancer", "Periodontal disease", "Dental abscess", "Hand eczema", "Atopic dermatitis"]
+  },
+  {
+    "i": "6062",
+    "criteria": "mcas_alternative",
+    "symptoms": ["glycemic lability", "wheezing", "insomnia", "hypertension", "postural orthostatic tachycardia syndrome"],
+    "diagnoses": ["Type 1 diabetes mellitus", "Type 2 diabetes mellitus", "Asthma", "Chronic obstructive pulmonary disease (COPD)", "Obstructive sleep apnea", "Restless leg syndrome", "Anxiety disorders", "Postural orthostatic tachycardia syndrome (POTS)", "Hyperthyroidism", "Pheochromocytoma"]
+  },
+  {
+    "i": "6063",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Headache", "hyperglycemia", "Oitis externa", "blepharospasm", "Lymphadenopathy"],
+    "diagnoses": ["Type 2 diabetes mellitus", "Acute sinusitis", "Acute otitis externa", "Meningitis", "Hypertension", "Migraine", "Brain tumor", "Hyperthyroidism", "Trigeminal neuralgia", "Temporomandibular joint disorder"]
+  },
+  {
+    "i": "6064",
+    "criteria": "mcas_alternative",
+    "symptoms": ["bloating", "glycemic lability", "pneumonia", "bronchitis", "Oitis externa"],
+    "diagnoses": ["Cystic fibrosis", "Primary immunodeficiency disorder", "Chronic obstructive pulmonary disease (COPD)", "Diabetes mellitus", "Gastrointestinal infection", "Irritable bowel syndrome (IBS)", "Asthma", "Celiac disease", "Gastroesophageal reflux disease (GERD)", "Inflammatory bowel disease (IBD)"]
+  },
+  {
+    "i": "6065",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Lymphadenopathy", "leukocytosis", "Bone pain", "decreased immunoglobulins", "monocytosis"],
+    "diagnoses": ["Chronic lymphocytic leukemia (CLL)", "Lymphoma (Hodgkin or Non-Hodgkin)", "Waldenström macroglobulinemia", "Multiple myeloma", "Hairy cell leukemia", "Myelodysplastic syndromes (MDS)", "Acute lymphoblastic leukemia (ALL)", "Acute myeloid leukemia (AML)", "Bone marrow infiltration by solid tumors", "Chronic myelomonocytic leukemia (CMML)"]
+  },
+  {
+    "i": "6066",
+    "criteria": "mcas_alternative",
+    "symptoms": ["difficulty focusing vision", "Oral pain", "decreased appetite", "cough", "malabsorption"],
+    "diagnoses": ["Oral candidiasis", "Vitamin A deficiency", "Viral upper respiratory tract infection", "Oral herpes simplex virus infection", "Bacterial pneumonia", "Influenza", "Acute sinusitis", "Anemia due to chronic disease", "Periodontal disease", "Acute bronchitis"]
+  },
+  {
+    "i": "6067",
+    "criteria": "mcas_alternative",
+    "symptoms": ["word-finding difficulty", "lymphadenitis", "difficulty focusing vision", "blood pressure lability", "Irritated eyes"],
+    "diagnoses": ["Sarcoidosis", "Systemic lupus erythematosus (SLE)", "Lymphoma", "Multiple sclerosis (MS)", "Thyroid disorders (hyperthyroidism or hypothyroidism)", "Sjogrens syndrome", "Lyme disease", "Vasculitis", "Tuberculosis", "HIV/AIDS"]
+  },
+  {
+    "i": "6068",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Oitis externa", "takotsubo cardiomyopathy", "migratory patchy macular erythema", "angioedema", "post-nasal drip"],
+    "diagnoses": ["Vasculitis", "Mast cell activation syndrome", "Hereditary angioedema", "Systemic lupus erythematosus", "Sarcoidosis", "Eosinophilic granulomatosis with polyangiitis (Churg-Strauss syndrome)", "Drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome", "Hyper IgE syndrome", "Cryopyrin-associated periodic syndrome (CAPS)", "Mastocytosis"]
+  },
+  {
+    "i": "6069",
+    "criteria": "mcas_alternative",
+    "symptoms": ["non-restorative sleep", "restless legs", "leukoplakia", "dysgeusia", "hearing loss"],
+    "diagnoses": ["Obstructive Sleep Apnea", "Restless Legs Syndrome", "Oral Leukoplakia", "Vitamin B12 Deficiency", "Sensorineural Hearing Loss", "Periodic Limb Movement Disorder", "Burning Mouth Syndrome", "Oral Candidiasis", "Ménières Disease", "Zinc Deficiency"]
+  },
+  {
+    "i": "6071",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Oral pain", "decreased immunoglobulins", "tags", "hyperferritinemia", "tinnitus"],
+    "diagnoses": ["Hemochromatosis", "Immunodeficiency disorder", "Oral cancer", "Amyloidosis", "Sarcoidosis", "Sjögren syndrome", "Systemic lupus erythematosus (SLE)", "Chronic fatigue syndrome", "Celiac disease", "Vasculitis"]
+  },
+  {
+    "i": "6040",
+    "criteria": "mcas_consortium",
+    "symptoms": ["diarrhea", "conjunctival injections", "syncope", "nasal congestion", "pruritis"],
+    "diagnoses": ["Viral gastroenteritis", "Allergic reaction", "Food poisoning", "Influenza", "Vasovagal syncope", "Medication side effects", "Bacterial conjunctivitis", "Dehydration", "Bacterial gastroenteritis", "Hay fever (allergic rhinitis)"]
+  },
+  {
+    "i": "6041",
+    "criteria": "mcas_consortium",
+    "symptoms": ["pruritis", "syncope", "wheezing", "rhinorrhea"],
+    "diagnoses": ["Allergic reaction", "Anaphylaxis", "Asthma exacerbation", "Atopic dermatitis", "Vasovagal syncope", "Hypersensitivity reaction", "Urticaria", "Hay fever (allergic rhinitis)", "Medication adverse reaction", "Anxiety or panic attack"]
+  },
+  {
+    "i": "6042",
+    "criteria": "mcas_consortium",
+    "symptoms": ["hypoxia", "conjunctival injections", "hypotension", "incontinence", "syncope"],
+    "diagnoses": ["Sepsis", "Anaphylaxis", "Pulmonary embolism", "Cardiogenic shock", "Severe dehydration", "Toxic shock syndrome", "Adrenal crisis", "Severe pneumonia", "Acute heart failure", "Hypovolemic shock"]
+  },
+  {
+    "i": "6043",
+    "criteria": "mcas_consortium",
+    "symptoms": ["vomiting", "flushing", "abdominal cramps", "sneezing", "hypotension"],
+    "diagnoses": ["Anaphylaxis", "Carcinoid syndrome", "Food poisoning", "Vasovagal syncope", "Mastocytosis", "Pheochromocytoma", "Serotonin syndrome", "Hereditary angioedema", "Dumping syndrome", "Acute intermittent porphyria"]
+  },
+  {
+    "i": "6044",
+    "criteria": "mcas_consortium",
+    "symptoms": ["abdominal cramps", "pruritis", "hypotension", "nasal congestion", "wheezing"],
+    "diagnoses": ["Anaphylaxis", "Mastocytosis", "Carcinoid syndrome", "Hereditary angioedema", "Mast cell activation syndrome", "Systemic lupus erythematosus", "Vasculitis", "Sepsis", "Scombroid food poisoning", "Acute intermittent porphyria"]
+  },
+  {
+    "i": "6045",
+    "criteria": "mcas_consortium",
+    "symptoms": ["angioedema", "flushing", "hypotension", "syncope", "diarrhea"],
+    "diagnoses": ["Anaphylaxis", "Carcinoid syndrome", "Mastocytosis", "Pheochromocytoma", "Neuroendocrine tumors", "Hereditary angioedema", "Vasoactive intestinal peptide (VIP)-secreting tumor", "Medullary thyroid carcinoma", "Mast cell activation syndrome", "Idiopathic systemic capillary leak syndrome"]
+  },
+  {
+    "i": "6046",
+    "criteria": "mcas_consortium",
+    "symptoms": ["diarrhea", "syncope", "laryngeal edema", "dyspnea"],
+    "diagnoses": ["Anaphylaxis", "Angioedema", "Acute allergic reaction", "Sepsis", "Dehydration", "Hypotension", "Laryngeal obstruction", "Asthma exacerbation", "Heart failure", "Pulmonary embolism"]
+  },
+  {
+    "i": "6048",
+    "criteria": "mcas_consortium",
+    "symptoms": ["diarrhea", "rhinorrhea", "hypotension", "abdominal cramps"],
+    "diagnoses": ["Viral gastroenteritis", "Food poisoning", "Travelers diarrhea", "Clostridium difficile infection", "Acute appendicitis", "Influenza", "Sepsis", "Inflammatory bowel disease (Crohns disease or ulcerative colitis)", "Salmonella infection", "Campylobacter infection"]
+  },
+  {
+    "i": "6049",
+    "criteria": "mcas_consortium",
+    "symptoms": ["flushing", "vomiting", "sneezing", "nasal congestion"],
+    "diagnoses": ["Carcinoid syndrome", "Anaphylaxis", "Common cold", "Influenza", "Gastroenteritis", "Sinusitis", "Food poisoning", "Medication reaction", "Alcohol flush reaction", "Rhinitis"]
+  },
+  {
+    "i": "6050",
+    "criteria": "mcas_consortium",
+    "symptoms": ["angioedema", "vomiting", "hives"],
+    "diagnoses": ["Anaphylaxis", "Acute allergic reaction", "Angioedema", "Urticaria", "Food allergy", "Drug allergy", "Hereditary angioedema", "Scombroid food poisoning", "Mastocytosis", "Serum sickness"]
+  },
+  {
+    "i": "6051",
+    "criteria": "mcas_consortium",
+    "symptoms": ["angioedema", "sneezing", "dyspnea", "hypotension"],
+    "diagnoses": ["Anaphylaxis", "Angioedema", "Hereditary angioedema", "Acquired angioedema", "ACE inhibitor-induced angioedema", "Allergic reaction", "Drug-induced angioedema", "Idiopathic angioedema", "Exercise-induced anaphylaxis", "Systemic mastocytosis"]
+  },
+  {
+    "i": "6053",
+    "criteria": "mcas_consortium",
+    "symptoms": ["syncope", "diarrhea", "hypoxia", "abdominal cramps"],
+    "diagnoses": ["Gastrointestinal infection", "Dehydration", "Celiac disease", "Inflammatory bowel disease (Crohns disease or ulcerative colitis)", "Food poisoning", "Vasovagal syncope", "Cardiac arrhythmia", "Pulmonary embolism", "Anemia", "Medication side effects"]
+  },
+  {
+    "i": "6054",
+    "criteria": "mcas_consortium",
+    "symptoms": ["angioedema", "incontinence", "hypotension"],
+    "diagnoses": ["Anaphylaxis", "Angiotensin-converting enzyme (ACE) inhibitor-induced angioedema", "Hereditary angioedema", "Autonomic dysfunction", "Spinal cord injury", "Multiple system atrophy", "Sepsis", "Systemic mastocytosis", "Urinary tract infection (UTI) with sepsis", "Acute kidney injury"]
+  },
+  {
+    "i": "6055",
+    "criteria": "mcas_consortium",
+    "symptoms": ["rhinorrhea", "diarrhea", "nasal congestion", "flushing", "hypoxia"],
+    "diagnoses": ["Carcinoid syndrome", "Serotonin syndrome", "Influenza", "Respiratory syncytial virus (RSV) infection", "Viral gastroenteritis", "Food poisoning", "Anaphylaxis", "Mastocytosis", "Pheochromocytoma", "Sepsis"]
+  },
+  {
+    "i": "6056",
+    "criteria": "mcas_consortium",
+    "symptoms": ["vomiting", "diarrhea", "hypotension", "dyspnea", "nasal congestion"],
+    "diagnoses": ["Viral gastroenteritis", "Food poisoning", "Sepsis", "Dehydration", "Anaphylaxis", "Influenza", "Pneumonia", "Clostridium difficile colitis", "Acute pancreatitis", "Diabetic ketoacidosis"]
+  },
+  {
+    "i": "6058",
+    "criteria": "mcas_consortium",
+    "symptoms": ["nasal congestion", "flushing", "angioedema", "wheezing", "abdominal cramps"],
+    "diagnoses": ["Anaphylaxis", "Systemic mastocytosis", "Hereditary angioedema", "Carcinoid syndrome", "Scombroid fish poisoning", "Pheochromocytoma", "Food allergy", "Drug allergy", "Eosinophilic gastroenteritis", "Mast cell activation syndrome"]
+  },
+  {
+    "i": "6059",
+    "criteria": "mcas_consortium",
+    "symptoms": ["sneezing", "flushing", "incontinence", "syncope", "abdominal cramps"],
+    "diagnoses": ["Mast cell activation syndrome", "Carcinoid syndrome", "Pheochromocytoma", "Irritable bowel syndrome", "Generalized anxiety disorder", "Postural orthostatic tachycardia syndrome (POTS)", "Panic disorder", "Multiple system atrophy", "Urinary tract infection", "Vasovagal syncope"]
+  },
+  {
+    "i": "6060",
+    "criteria": "mcas_consortium",
+    "symptoms": ["abdominal cramps", "dyspnea", "incontinence", "rhinorrhea"],
+    "diagnoses": ["Irritable bowel syndrome", "Urinary tract infection", "Gastroenteritis", "Asthma", "Chronic obstructive pulmonary disease (COPD)", "Food allergy or intolerance", "Anxiety disorder", "Pelvic floor dysfunction", "Seasonal allergies (hay fever)", "Inflammatory bowel disease (Crohns or ulcerative colitis)"]
+  },
+  {
+    "i": "6061",
+    "criteria": "mcas_consortium",
+    "symptoms": ["vomiting", "hypotension", "sneezing", "pruritis"],
+    "diagnoses": ["Anaphylaxis", "Sepsis", "Medication reaction or side effect", "Systemic mastocytosis", "Carcinoid syndrome", "Pheochromocytoma", "Mast cell activation syndrome", "Vasovagal syncope", "Dehydration", "Autonomic dysfunction"]
+  },
+  {
+    "i": "6062",
+    "criteria": "mcas_consortium",
+    "symptoms": ["rhinorrhea", "hypotension", "abdominal cramps", "vomiting"],
+    "diagnoses": ["Viral gastroenteritis", "Food poisoning", "Acute pancreatitis", "Appendicitis", "Diabetic ketoacidosis", "Sepsis", "Adrenal crisis", "Anaphylaxis", "Hemorrhagic shock", "Cyclic vomiting syndrome"]
+  },
+  {
+    "i": "6063",
+    "criteria": "mcas_consortium",
+    "symptoms": ["rhinorrhea", "diarrhea", "hypoxia", "hypotension", "vomiting"],
+    "diagnoses": ["Sepsis", "Pneumonia", "Influenza", "COVID-19", "Gastrointestinal infection", "Dehydration", "Anaphylaxis", "Pulmonary embolism", "Diabetic ketoacidosis", "Acute respiratory distress syndrome (ARDS)"]
+  },
+  {
+    "i": "6067",
+    "criteria": "mcas_consortium",
+    "symptoms": ["syncope", "incontinence", "flushing"],
+    "diagnoses": ["Autonomic dysfunction", "Multiple system atrophy", "Carcinoid syndrome", "Pheochromocytoma", "Diabetic autonomic neuropathy", "Spinal cord injury", "Parkinsons disease", "Neurocardiogenic syncope", "Dehydration", "Medullary thyroid cancer"]
+  },
+  {
+    "i": "6068",
+    "criteria": "mcas_consortium",
+    "symptoms": ["syncope", "rhinorrhea", "vomiting", "nasal congestion"],
+    "diagnoses": ["Viral upper respiratory infection", "Vasovagal syncope", "Vestibular neuronitis", "Migraine", "Acute sinusitis", "Orthostatic hypotension", "Labyrinthitis", "Dehydration", "Anxiety disorder", "Anemia"]
+  },
+  {
+    "i": "6069",
+    "criteria": "mcas_consortium",
+    "symptoms": ["flushing", "angioedema", "diarrhea", "incontinence"],
+    "diagnoses": ["Carcinoid syndrome", "Systemic mastocytosis", "VIPoma", "Hereditary angioedema", "Serotonin syndrome", "Anaphylaxis", "Medullary thyroid cancer", "Zollinger-Ellison syndrome", "Pheochromocytoma", "ACE inhibitor-induced angioedema"]
+  },
+  {
+    "i": "6070",
+    "criteria": "mcas_consortium",
+    "symptoms": ["hypotension", "incontinence", "vomiting", "dyspnea"],
+    "diagnoses": ["Urinary tract infection", "Dehydration", "Sepsis", "Congestive heart failure", "Pneumonia", "Chronic kidney disease", "Adrenal insufficiency", "Diabetic ketoacidosis", "Gastrointestinal bleeding", "Acute kidney injury"]
+  },
+  {
+    "i": "6039",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "headache", "diplopia", "phonophobia", "nausea"],
+    "diagnoses": ["Migraine with aura", "Brain tumor", "Tension headache", "Viral meningitis", "Idiopathic intracranial hypertension", "Cluster headache", "Multiple sclerosis", "Vestibular migraine", "Stroke", "Cerebral venous sinus thrombosis"]
+  },
+  {
+    "i": "6040",
+    "criteria": "migraine",
+    "symptoms": ["phonophobia", "aphasia", "ataxia", "dysphagia", "weakness"],
+    "diagnoses": ["Stroke", "Multiple Sclerosis", "Brain Tumor", "Myasthenia Gravis", "Guillain-Barré Syndrome", "Encephalitis", "Parkinsons Disease", "Creutzfeldt-Jakob Disease", "Amyotrophic Lateral Sclerosis (ALS)", "Neurosarcoidosis"]
+  },
+  {
+    "i": "6041",
+    "criteria": "migraine",
+    "symptoms": ["dysphagia", "scintillation", "parasthesia", "headache", "numbness"],
+    "diagnoses": ["Multiple Sclerosis", "Transient Ischemic Attack (TIA)", "Cervical Spondylosis", "Vitamin B12 Deficiency", "Migraine", "Stroke", "Brain Tumor", "Guillain-Barré Syndrome", "Myasthenia Gravis", "Amyotrophic Lateral Sclerosis (ALS)"]
+  },
+  {
+    "i": "6042",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "vomiting", "scotoma"],
+    "diagnoses": ["Migraine with aura", "Brain tumor", "Stroke", "Multiple sclerosis", "Hyponatremia", "Hypokalemia", "Diabetic ketoacidosis", "Addison disease", "Carbon monoxide poisoning", "Wernicke encephalopathy"]
+  },
+  {
+    "i": "6043",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "diplopia", "photophobia", "tinnitus"],
+    "diagnoses": ["Multiple sclerosis", "Myasthenia gravis", "Brain tumor", "Migraines", "Meningitis", "Stroke", "Vestibular neuritis", "Lyme disease", "Intracranial hypertension", "Guillain-Barré syndrome"]
+  },
+  {
+    "i": "6044",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "scintillation", "hearing loss", "dysphagia"],
+    "diagnoses": ["Brain tumor", "Multiple sclerosis", "Stroke", "Myasthenia gravis", "Amyotrophic lateral sclerosis (ALS)", "Brainstem lesion", "Cerebellopontine angle tumor (e.g. acoustic neuroma)", "Guillain-Barre syndrome", "Cervical spondylosis with myelopathy", "Paraneoplastic syndrome"]
+  },
+  {
+    "i": "6045",
+    "criteria": "migraine",
+    "symptoms": ["parasthesia", "weakness", "headache", "phonophobia"],
+    "diagnoses": ["Migraine", "Tension headache", "Multiple sclerosis", "Vitamin B12 deficiency", "Cervical spondylosis", "Guillain-Barré syndrome", "Transient ischemic attack (TIA)", "Brain tumor", "Anxiety disorder", "Hypothyroidism"]
+  },
+  {
+    "i": "6046",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "scintillation", "hearing loss", "parasthesia", "diplopia"],
+    "diagnoses": ["Multiple sclerosis", "Vitamin B12 deficiency", "Transient ischemic attack (TIA)", "Migraine with aura", "Brain tumor", "Stroke", "Lyme disease", "Vestibular neuritis", "Acoustic neuroma", "Menieres disease"]
+  },
+  {
+    "i": "6047",
+    "criteria": "migraine",
+    "symptoms": ["headache", "phonophobia", "nausea", "parasthesia"],
+    "diagnoses": ["Migraine", "Cerebral venous sinus thrombosis", "Vestibular migraine", "Meningitis", "Transient ischemic attack", "Brain tumor", "Stroke", "Multiple sclerosis", "Hyponatremia", "Carbon monoxide poisoning"]
+  },
+  {
+    "i": "6048",
+    "criteria": "migraine",
+    "symptoms": ["ataxia", "weakness", "hearing loss", "parasthesia"],
+    "diagnoses": ["Multiple sclerosis", "Vitamin B12 deficiency", "Brainstem stroke", "Acoustic neuroma", "Cerebellar ataxia", "Vertebrobasilar insufficiency", "Guillain-Barré syndrome", "Thiamine deficiency", "Spinocerebellar ataxia", "Charcot-Marie-Tooth disease"]
+  },
+  {
+    "i": "6049",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "headache", "parasthesia"],
+    "diagnoses": ["Multiple sclerosis", "Vitamin B12 deficiency", "Migraine with aura", "Tension headache", "Cervical spondylosis", "Guillain-Barré syndrome", "Hypoglycemia", "Hypokalemia", "Cerebrovascular accident (stroke)", "Hypothyroidism"]
+  },
+  {
+    "i": "6050",
+    "criteria": "migraine",
+    "symptoms": ["tinnitus", "scintillation", "headache", "vomiting"],
+    "diagnoses": ["Migraine with aura", "Vestibular migraine", "Meniere disease", "Intracranial hypertension", "Acoustic neuroma", "Labyrinthitis", "Multiple sclerosis", "Vertebrobasilar insufficiency", "Meningitis", "Brain tumor"]
+  },
+  {
+    "i": "6051",
+    "criteria": "migraine",
+    "symptoms": ["vertigo", "numbness", "weakness", "dysarthria", "headache"],
+    "diagnoses": ["Stroke or transient ischemic attack (TIA)", "Multiple sclerosis (MS)", "Vestibular neuritis or labyrinthitis", "Migraine with aura", "Brain tumor", "Cervical spondylosis or cervical radiculopathy", "Vitamin B12 deficiency", "Lyme disease", "Acoustic neuroma", "Basilar artery migraine"]
+  },
+  {
+    "i": "6052",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "scintillation", "headache", "vertigo", "vomiting"],
+    "diagnoses": ["Migraine with aura", "Vestibular migraine", "Transient ischemic attack (TIA)", "Benign paroxysmal positional vertigo (BPPV)", "Labyrinthitis or vestibular neuritis", "Menieres disease", "Stroke (cerebrovascular accident)", "Dehydration", "Brain tumor", "Concussion or traumatic brain injury"]
+  },
+  {
+    "i": "6053",
+    "criteria": "migraine",
+    "symptoms": ["phonophobia", "vertigo", "numbness", "scotoma", "ataxia"],
+    "diagnoses": ["Migraine with aura", "Vestibular migraine", "Transient ischemic attack (TIA)", "Multiple sclerosis (MS)", "Vertebrobasilar insufficiency", "Acoustic neuroma", "Menieres disease", "Labyrinthitis", "Stroke (cerebellar or brainstem)", "Vestibular schwannoma"]
+  },
+  {
+    "i": "6054",
+    "criteria": "migraine",
+    "symptoms": ["headache", "weakness", "dysphagia", "scotoma"],
+    "diagnoses": ["Stroke", "Brain tumor", "Multiple sclerosis", "Myasthenia gravis", "Migraine with aura", "Transient ischemic attack (TIA)", "Intracerebral hemorrhage", "Meningitis", "Guillain-Barré syndrome", "Amyotrophic lateral sclerosis (ALS)"]
+  },
+  {
+    "i": "6055",
+    "criteria": "migraine",
+    "symptoms": ["headache", "diplopia", "weakness"],
+    "diagnoses": ["Brain tumor", "Migraine with aura", "Multiple sclerosis (MS)", "Myasthenia gravis", "Stroke", "Meningitis", "Intracranial aneurysm", "Cerebral venous sinus thrombosis", "Wernickes encephalopathy", "Idiopathic intracranial hypertension"]
+  },
+  {
+    "i": "6057",
+    "criteria": "migraine",
+    "symptoms": ["dysarthria", "dysphagia", "vertigo", "headache", "scintillation"],
+    "diagnoses": ["Brainstem stroke", "Multiple sclerosis", "Transient ischemic attack (TIA)", "Vestibular migraine", "Cerebellar tumor", "Wernickes encephalopathy", "Vertebrobasilar insufficiency", "Chiari malformation", "Myasthenia gravis", "Lyme disease"]
+  },
+  {
+    "i": "6058",
+    "criteria": "migraine",
+    "symptoms": ["scintillation", "parasthesia", "aphasia", "vertigo"],
+    "diagnoses": ["Transient ischemic attack (TIA)", "Migraine with aura", "Multiple sclerosis (MS)", "Stroke", "Brain tumor", "Vestibular neuritis", "Menieres disease", "Epilepsy", "Peripheral neuropathy", "Anxiety disorder"]
+  },
+  {
+    "i": "6059",
+    "criteria": "migraine",
+    "symptoms": ["numbness", "weakness", "headache", "dysphagia", "tinnitus"],
+    "diagnoses": ["Multiple sclerosis", "Stroke", "Brain tumor", "Myasthenia gravis", "Vestibular schwannoma (acoustic neuroma)", "Botulism", "Vitamin B12 deficiency", "Cervical spondylosis", "Guillain-Barré syndrome", "Lyme disease"]
+  },
+  {
+    "i": "6060",
+    "criteria": "migraine",
+    "symptoms": ["phonophobia", "headache", "weakness", "aphasia", "dysphagia"],
+    "diagnoses": ["Migraine", "Stroke", "Brain tumor", "Multiple sclerosis", "Myasthenia gravis", "Meningitis", "Encephalitis", "Guillain-Barré syndrome", "Amyotrophic lateral sclerosis (ALS)", "Cerebral palsy"]
+  },
+  {
+    "i": "6061",
+    "criteria": "migraine",
+    "symptoms": ["photophobia", "dysphagia", "vomiting", "phonophobia", "parasthesia"],
+    "diagnoses": ["Migraine", "Meningitis", "Brain tumor", "Multiple sclerosis", "Stroke", "Cervical spondylosis", "Esophageal stricture", "Gastroesophageal reflux disease (GERD)", "Myasthenia gravis", "Peripheral neuropathy"]
+  },
+  {
+    "i": "6062",
+    "criteria": "migraine",
+    "symptoms": ["nausea", "headache", "scintillation"],
+    "diagnoses": ["Migraine with aura", "Tension headache", "Viral gastroenteritis", "Dehydration", "Vestibular migraine", "Meningitis", "Concussion", "Intracranial hemorrhage", "Hypertensive emergency", "Carbon monoxide poisoning"]
+  },
+  {
+    "i": "6064",
+    "criteria": "migraine",
+    "symptoms": ["scintillation", "aphasia", "numbness", "weakness"],
+    "diagnoses": ["Transient ischemic attack (TIA)", "Migraine with aura", "Stroke", "Multiple sclerosis", "Brain tumor", "Complex migraine", "Hypoglycemia", "Seizure disorder", "Hyponatremia (low blood sodium)", "Cerebral vasculitis"]
+  },
+  {
+    "i": "6065",
+    "criteria": "migraine",
+    "symptoms": ["nausea", "scotoma", "aphasia", "weakness", "headache"],
+    "diagnoses": ["Migraine with aura", "Transient ischemic attack (TIA)", "Stroke", "Brain tumor", "Multiple sclerosis", "Encephalitis", "Meningitis", "Epilepsy", "Hypertensive emergency", "Carbon monoxide poisoning"]
+  },
+  {
+    "i": "6066",
+    "criteria": "migraine",
+    "symptoms": ["dysphagia", "aphasia", "diplopia"],
+    "diagnoses": ["Stroke", "Brain tumor", "Multiple sclerosis", "Myasthenia gravis", "Guillain-Barré syndrome", "Amyotrophic lateral sclerosis (ALS)", "Parkinsons disease", "Botulism", "Lyme disease", "Wernickes encephalopathy"]
+  },
+  {
+    "i": "6067",
+    "criteria": "migraine",
+    "symptoms": ["headache", "ataxia", "scintillation", "hearing loss"],
+    "diagnoses": ["Stroke", "Brain tumor", "Multiple sclerosis", "Meningitis", "Vestibular neuritis", "Labyrinthitis", "Menieres disease", "Migraine with aura", "Vertebrobasilar insufficiency", "Acoustic neuroma"]
+  },
+  {
+    "i": "6068",
+    "criteria": "migraine",
+    "symptoms": ["scintillation", "numbness", "aphasia", "tinnitus", "photophobia"],
+    "diagnoses": ["Migraine with aura", "Transient ischemic attack (TIA)", "Multiple sclerosis (MS)", "Stroke", "Seizure disorder", "Brain tumor", "Vestibular migraine", "Menieres disease", "Hypoglycemia", "Hyponatremia"]
+  },
+  {
+    "i": "6069",
+    "criteria": "migraine",
+    "symptoms": ["parasthesia", "headache", "scintillation", "phonophobia"],
+    "diagnoses": ["Migraine with aura", "Transient ischemic attack (TIA)", "Occipital neuralgia", "Multiple sclerosis (MS)", "Seizure disorder", "Cervical radiculopathy", "Brain tumor", "Stroke", "Hypoparathyroidism", "Lyme disease"]
+  },
+  {
+    "i": "6070",
+    "criteria": "migraine",
+    "symptoms": ["scintillation", "parasthesia", "weakness", "numbness"],
+    "diagnoses": ["Migraine with aura", "Transient ischemic attack (TIA)", "Multiple sclerosis (MS)", "Stroke", "Cervical radiculopathy", "Peripheral neuropathy", "Brain tumor", "Seizure disorder", "Vitamin B12 deficiency", "Hypokalemia"]
+  },
+  {
+    "i": "6071",
+    "criteria": "migraine",
+    "symptoms": ["dysphagia", "numbness", "phonophobia", "aphasia"],
+    "diagnoses": ["Stroke", "Multiple sclerosis", "Migraine", "Brain tumor", "Myasthenia gravis", "Amyotrophic lateral sclerosis (ALS)", "Parkinsons disease", "Guillain-Barré syndrome", "Transient ischemic attack (TIA)", "Cervical spondylosis"]
+  },
+  {
+    "i": "6040",
+    "criteria": "slicc_sle",
+    "symptoms": ["nonscarring alopecia", "telangiectasias", "leukopenia", "pericarditis", "hemolytic anemia"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Dermatomyositis", "Mixed connective tissue disease (MCTD)", "Systemic sclerosis (scleroderma)", "Antiphospholipid syndrome (APS)", "Sjögrens syndrome", "Rheumatoid arthritis", "Autoimmune hepatitis", "Sarcoidosis", "Drug-induced lupus erythematosus (DILE)"]
+  },
+  {
+    "i": "6041",
+    "criteria": "slicc_sle",
+    "symptoms": ["pericarditis", "oral ulcers", "hemolytic anemia", "telangiectasias", "nonscarring alopecia"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Behcets disease", "Dermatomyositis", "Scleroderma", "Vasculitis", "Sarcoidosis", "Antiphospholipid syndrome", "Paraneoplastic syndrome", "Atopic dermatitis", "Stevens-Johnson syndrome"]
+  },
+  {
+    "i": "6043",
+    "criteria": "slicc_sle",
+    "symptoms": ["lymphopenia", "hemolytic anemia", "proteinuria", "oral ulcers"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Thrombotic thrombocytopenic purpura (TTP)", "Autoimmune lymphoproliferative syndrome (ALPS)", "HIV/AIDS", "Aplastic anemia", "Sjögrens syndrome", "Celiac disease", "Behçets disease", "Chronic lymphocytic leukemia (CLL)", "Sarcoidosis"]
+  },
+  {
+    "i": "6044",
+    "criteria": "slicc_sle",
+    "symptoms": ["hemolytic anemia", "nonscarring alopecia", "chilblain", "leukopenia"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Antiphospholipid syndrome", "Autoimmune hemolytic anemia", "Idiopathic thrombocytopenic purpura (ITP)", "Hypothyroidism", "Raynauds phenomenon", "Alopecia areata", "Drug-induced lupus erythematosus", "Vitamin B12 deficiency", "Celiac disease"]
+  },
+  {
+    "i": "6045",
+    "criteria": "slicc_sle",
+    "symptoms": ["pericarditis", "nasal ulcers", "telangiectasias", "thrombocytopenia", "postinflammatory dyspigmentation"],
+    "diagnoses": ["Systemic lupus erythematosus", "Vasculitis", "Granulomatosis with polyangiitis (Wegeners)", "Behcets disease", "Cryoglobulinemia", "Churg-Strauss syndrome", "Microscopic polyangiitis", "Antiphospholipid syndrome", "Sarcoidosis", "Hypocomplementemic urticarial vasculitis"]
+  },
+  {
+    "i": "6046",
+    "criteria": "slicc_sle",
+    "symptoms": ["leukopenia", "verrucous rash", "peripheral neuropathy", "pericarditis", "nonscarring alopecia"],
+    "diagnoses": ["Systemic lupus erythematosus", "HIV/AIDS", "Syphilis", "Sarcoidosis", "Rheumatoid arthritis", "Sjögrens syndrome", "Dermatomyositis", "Lymphoma", "Tuberculosis", "Vitamin B12 deficiency"]
+  },
+  {
+    "i": "6047",
+    "criteria": "slicc_sle",
+    "symptoms": ["chilblain", "nonscarring alopecia", "oral ulcers", "proteinuria"],
+    "diagnoses": ["Systemic lupus erythematosus", "Chilblain lupus erythematosus", "Behcets disease", "Dermatomyositis", "Scleroderma", "Systemic sclerosis", "Sjögrens syndrome", "Cryoglobulinemia", "Cutaneous small vessel vasculitis", "Mixed connective tissue disease"]
+  },
+  {
+    "i": "6048",
+    "criteria": "slicc_sle",
+    "symptoms": ["proteinuria", "synovitis", "lymphopenia", "hemolytic anemia", "discoid rash"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Rheumatoid arthritis", "Sjögrens syndrome", "Mixed connective tissue disease", "Vasculitis", "Cryoglobulinemia", "Sarcoidosis", "Lymphoma", "Multiple myeloma", "Reactive arthritis"]
+  },
+  {
+    "i": "6049",
+    "criteria": "slicc_sle",
+    "symptoms": ["nonscarring alopecia", "bullous rash", "arthropathy", "thrombocytopenia", "pericardial effusion"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Dermatomyositis", "Rheumatoid arthritis", "Scleroderma", "Sjögrens syndrome", "Mixed connective tissue disease", "Vasculitis", "Idiopathic thrombocytopenic purpura (ITP)", "Paraneoplastic syndromes", "Acute leukemia"]
+  },
+  {
+    "i": "6050",
+    "criteria": "slicc_sle",
+    "symptoms": ["hemolytic anemia", "thrombocytopenia", "lymphopenia"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Antiphospholipid syndrome (APS)", "Thrombotic thrombocytopenic purpura (TTP)", "Autoimmune lymphoproliferative syndrome (ALPS)", "Hemophagocytic lymphohistiocytosis (HLH)", "Paroxysmal nocturnal hemoglobinuria (PNH)", "Aplastic anemia", "HIV/AIDS", "Myelodysplastic syndromes (MDS)", "Chronic lymphocytic leukemia (CLL)"]
+  },
+  {
+    "i": "6051",
+    "criteria": "slicc_sle",
+    "symptoms": ["proteinuria", "synovitis", "panniculitis", "pleural effusion"],
+    "diagnoses": ["Systemic Lupus Erythematosus", "Rheumatoid Arthritis", "Sarcoidosis", "Sjögrens Syndrome", "Mixed Connective Tissue Disease", "Systemic Sclerosis (Scleroderma)", "Granulomatosis with Polyangiitis (Wegeners)", "Polyarteritis Nodosa", "Dermatomyositis", "Systemic Vasculitis"]
+  },
+  {
+    "i": "6052",
+    "criteria": "slicc_sle",
+    "symptoms": ["annular polycyclic rash", "chilblain", "synovitis", "toxic epidermal necrolysis", "nonscarring alopecia"],
+    "diagnoses": ["Systemic lupus erythematosus", "Sarcoidosis", "Behcets disease", "Stevens-Johnson syndrome", "Dermatomyositis", "Cutaneous vasculitis", "Rheumatoid arthritis", "Lyme disease", "Chilblain lupus erythematosus", "Subacute cutaneous lupus erythematosus"]
+  },
+  {
+    "i": "6055",
+    "criteria": "slicc_sle",
+    "symptoms": ["lichen planus", "lymphopenia", "cranial neuropathy", "nonscarring alopecia", "leukopenia"],
+    "diagnoses": ["Lupus erythematosus", "Human immunodeficiency virus (HIV) infection", "Sarcoidosis", "Dermatomyositis", "Sjögren syndrome", "Lichen planopilaris", "Cutaneous T-cell lymphoma", "Graft-versus-host disease", "Tuberculosis", "Leprosy"]
+  },
+  {
+    "i": "6056",
+    "criteria": "slicc_sle",
+    "symptoms": ["nonscarring alopecia", "pericarditis", "chilblain", "seizures", "panniculitis"],
+    "diagnoses": ["Systemic lupus erythematosus", "Dermatomyositis", "Sarcoidosis", "Sjögrens syndrome", "Vasculitis", "Rheumatoid arthritis", "Systemic sclerosis", "Mixed connective tissue disease", "Lyme disease", "Cryoglobulinemia"]
+  },
+  {
+    "i": "6057",
+    "criteria": "slicc_sle",
+    "symptoms": ["nasal ulcers", "pleural effusion", "nonscarring alopecia", "pericarditis", "thrombocytopenia"],
+    "diagnoses": ["Systemic lupus erythematosus", "Granulomatosis with polyangiitis (Wegeners granulomatosis)", "Churg-Strauss syndrome", "Behcets disease", "Microscopic polyangiitis", "Lymphoma", "Tuberculosis", "Sarcoidosis", "Paraneoplastic syndromes", "Antiphospholipid syndrome"]
+  },
+  {
+    "i": "6060",
+    "criteria": "slicc_sle",
+    "symptoms": ["seizures", "hemolytic anemia", "arthropathy", "nasal ulcers", "pericardial effusion"],
+    "diagnoses": ["Systemic lupus erythematosus", "Granulomatosis with polyangiitis (formerly Wegeners granulomatosis)", "Behcets disease", "Cryoglobulinemia", "Sarcoidosis", "Paraneoplastic syndromes", "Antiphospholipid syndrome", "Polyarteritis nodosa", "Multicentric Castleman disease", "Schnitzler syndrome"]
+  },
+  {
+    "i": "6061",
+    "criteria": "slicc_sle",
+    "symptoms": ["hemolytic anemia", "myelitis", "nonscarring alopecia", "arthropathy", "nasal ulcers"],
+    "diagnoses": ["Systemic lupus erythematosus", "Behcet disease", "Paraneoplastic syndrome", "Sarcoidosis", "Vitamin B12 deficiency", "Celiac disease", "Vasculitis", "Multiple sclerosis", "Syphilis", "Acute HIV infection"]
+  },
+  {
+    "i": "6062",
+    "criteria": "slicc_sle",
+    "symptoms": ["myelitis", "proteinuria", "hemolytic anemia", "mononeuritis multiplex", "verrucous rash"],
+    "diagnoses": ["Polyarteritis nodosa", "Systemic lupus erythematosus", "Cryoglobulinemia", "Churg-Strauss syndrome", "Sjögren syndrome", "Paraneoplastic syndrome", "Behçet disease", "Sarcoidosis", "Wegener granulomatosis", "Mixed connective tissue disease"]
+  },
+  {
+    "i": "6063",
+    "criteria": "slicc_sle",
+    "symptoms": ["arthropathy", "nonscarring alopecia", "proteinuria", "panniculitis"],
+    "diagnoses": ["Systemic lupus erythematosus", "Dermatomyositis", "Systemic sclerosis", "Mixed connective tissue disease", "Rheumatoid arthritis", "Sjögrens syndrome", "Vasculitis", "Sarcoidosis", "Erythema nodosum", "Hypothyroidism"]
+  },
+  {
+    "i": "6064",
+    "criteria": "slicc_sle",
+    "symptoms": ["panniculitis", "peripheral neuropathy", "nasal ulcers", "proteinuria", "synovitis"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Granulomatosis with polyangiitis (GPA)", "Eosinophilic granulomatosis with polyangiitis (EGPA)", "Polyarteritis nodosa (PAN)", "Cryoglobulinemia", "Sarcoidosis", "Leprosy", "Rheumatoid arthritis (RA)", "Behcets disease", "IgA vasculitis (Henoch-Schönlein purpura)"]
+  },
+  {
+    "i": "6066",
+    "criteria": "slicc_sle",
+    "symptoms": ["nasal ulcers", "peripheral neuropathy", "nonscarring alopecia", "synovitis", "discoid rash"],
+    "diagnoses": ["Systemic lupus erythematosus", "Sarcoidosis", "Vasculitis", "Sjögren syndrome", "Leprosy", "Relapsing polychondritis", "Crohn disease", "Behçet syndrome", "Vitamin B12 deficiency", "Rheumatoid arthritis"]
+  },
+  {
+    "i": "6068",
+    "criteria": "slicc_sle",
+    "symptoms": ["nonscarring alopecia", "thrombocytopenia", "lichen planus", "delirium", "lymphopenia"],
+    "diagnoses": ["Systemic lupus erythematosus", "HIV/AIDS", "Autoimmune hepatitis", "Drug-induced lupus erythematosus", "Dermatomyositis", "Sarcoidosis", "Sjögren syndrome", "Aplastic anemia", "Lymphoma", "Viral hepatitis"]
+  },
+  {
+    "i": "6070",
+    "criteria": "slicc_sle",
+    "symptoms": ["thrombocytopenia", "leukopenia", "peripheral neuropathy", "malar rash"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Rheumatoid arthritis", "Sjögrens syndrome", "Vitamin B12 deficiency", "Lyme disease", "HIV/AIDS", "Aplastic anemia", "Multiple sclerosis", "Guillain-Barré syndrome", "Leukemia"]
+  }
 ]

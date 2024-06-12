@@ -1,144 +1,32 @@
 [
-    {
-        "i": "1",
-        "criteria": "aha_kawasaki",
-        "symptoms": [
-            "erythema multiforme",
-            "pyuria",
-            "lip erythema",
-            "cervical lymphadenopathy",
-            "foot erythema"
-        ],
-        "diagnoses": [
-            "Stevens-Johnson syndrome",
-            "Urinary tract infection",
-            "Erythema multiforme",
-            "Kawasaki disease",
-            "Lupus erythematosus",
-            "Viral infection",
-            "Drug reaction",
-            "Beh\u00e7ets disease",
-            "Toxic shock syndrome",
-            "Scarlet fever"
-        ]
-    },
-    {
-        "i": "1",
-        "criteria": "eular_acr_sle",
-        "symptoms": [
-            "arthropathy",
-            "delirium",
-            "pericardial effusion",
-            "fever",
-            "discoid rash"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Rheumatoid arthritis",
-            "Bacterial endocarditis",
-            "Viral infection (e.g.",
-            "parvovirus B19",
-            "hepatitis B",
-            "hepatitis C",
-            "HIV)",
-            "Lyme disease",
-            "Dermatomyositis",
-            "Drug-induced lupus",
-            "Malignancy (e.g.",
-            "leukemia",
-            "lymphoma)",
-            "Sarcoidosis",
-            "Adult-onset Stills disease"
-        ]
-    },
-    {
-        "i": "1",
-        "criteria": "mcas_alternative",
-        "symptoms": [
-            "angioedema",
-            "Abnormal electrolytes",
-            "hearing loss",
-            "gastroparesis",
-            "blood pressure lability"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "Sarcoidosis",
-            "Amyloidosis",
-            "Porphyria",
-            "Mastocytosis",
-            "Pancreatic cancer",
-            "Multiple myeloma",
-            "Hereditary angioedema",
-            "Autonomic neuropathy",
-            "Adrenal insufficiency"
-        ]
-    },
-    {
-        "i": "1",
-        "criteria": "mcas_consortium",
-        "symptoms": [
-            "syncope",
-            "angioedema",
-            "abdominal cramps",
-            "vomiting"
-        ],
-        "diagnoses": [
-            "Hereditary angioedema",
-            "Food allergy reaction",
-            "Anaphylaxis",
-            "Acquired angioedema (ACE inhibitor-induced)",
-            "Mast cell activation syndrome",
-            "Carcinoid syndrome",
-            "Vasovagal syncope",
-            "Postural orthostatic tachycardia syndrome (POTS)",
-            "Zollinger-Ellison syndrome",
-            "Systemic mastocytosis"
-        ]
-    },
-    {
-        "i": "1",
-        "criteria": "migraine",
-        "symptoms": [
-            "weakness",
-            "headache",
-            "tinnitus",
-            "parasthesia",
-            "scotoma"
-        ],
-        "diagnoses": [
-            "Migraine with aura",
-            "Multiple sclerosis (MS)",
-            "Transient ischemic attack (TIA)",
-            "Vestibular neuritis",
-            "Stroke",
-            "M\u00e9ni\u00e8res disease",
-            "Brain tumor",
-            "Viral meningitis",
-            "Vertebrobasilar insufficiency",
-            "Lyme disease"
-        ]
-    },
-    {
-        "i": "1",
-        "criteria": "slicc_sle",
-        "symptoms": [
-            "leukopenia",
-            "nonscarring alopecia",
-            "lymphopenia",
-            "nasal ulcers"
-        ],
-        "diagnoses": [
-            "Systemic lupus erythematosus",
-            "HIV/AIDS",
-            "Aplastic anemia",
-            "Chronic radiation syndrome",
-            "Myelodysplastic syndrome",
-            "Hypersplenism",
-            "Granulomatosis with polyangiitis",
-            "Cyclic neutropenia",
-            "Drug-induced pancytopenia",
-            "Leishmaniasis"
-        ]
-    }
+  {
+    "i": "1",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["erythema multiforme", "pyuria", "lip erythema", "cervical lymphadenopathy", "foot erythema"],
+    "diagnoses": ["Stevens-Johnson syndrome", "Urinary tract infection", "Erythema multiforme", "Kawasaki disease", "Lupus erythematosus", "Viral infection", "Drug reaction", "Behçets disease", "Toxic shock syndrome", "Scarlet fever"]
+  },
+  {
+    "i": "1",
+    "criteria": "mcas_alternative",
+    "symptoms": ["angioedema", "Abnormal electrolytes", "hearing loss", "gastroparesis", "blood pressure lability"],
+    "diagnoses": ["Systemic lupus erythematosus", "Sarcoidosis", "Amyloidosis", "Porphyria", "Mastocytosis", "Pancreatic cancer", "Multiple myeloma", "Hereditary angioedema", "Autonomic neuropathy", "Adrenal insufficiency"]
+  },
+  {
+    "i": "1",
+    "criteria": "mcas_consortium",
+    "symptoms": ["syncope", "angioedema", "abdominal cramps", "vomiting"],
+    "diagnoses": ["Hereditary angioedema", "Food allergy reaction", "Anaphylaxis", "Acquired angioedema (ACE inhibitor-induced)", "Mast cell activation syndrome", "Carcinoid syndrome", "Vasovagal syncope", "Postural orthostatic tachycardia syndrome (POTS)", "Zollinger-Ellison syndrome", "Systemic mastocytosis"]
+  },
+  {
+    "i": "1",
+    "criteria": "migraine",
+    "symptoms": ["weakness", "headache", "tinnitus", "parasthesia", "scotoma"],
+    "diagnoses": ["Migraine with aura", "Multiple sclerosis (MS)", "Transient ischemic attack (TIA)", "Vestibular neuritis", "Stroke", "Ménières disease", "Brain tumor", "Viral meningitis", "Vertebrobasilar insufficiency", "Lyme disease"]
+  },
+  {
+    "i": "1",
+    "criteria": "slicc_sle",
+    "symptoms": ["leukopenia", "nonscarring alopecia", "lymphopenia", "nasal ulcers"],
+    "diagnoses": ["Systemic lupus erythematosus", "HIV/AIDS", "Aplastic anemia", "Chronic radiation syndrome", "Myelodysplastic syndrome", "Hypersplenism", "Granulomatosis with polyangiitis", "Cyclic neutropenia", "Drug-induced pancytopenia", "Leishmaniasis"]
+  }
 ]

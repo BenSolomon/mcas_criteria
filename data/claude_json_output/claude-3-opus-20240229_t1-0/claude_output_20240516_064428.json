@@ -1,0 +1,56 @@
+[
+  {
+    "i": "10000",
+    "criteria": "aha_kawasaki",
+    "symptoms": ["fever", "oropharyngeal erythema", "lip erythema", "cervical lymphadenopathy"],
+    "diagnoses": ["Infectious mononucleosis", "Streptococcal pharyngitis", "Scarlet fever", "Measles", "Kawasaki disease", "Adenovirus infection", "Stevens-Johnson syndrome", "Erythema multiforme", "Rubella", "Acute retroviral syndrome (HIV)"]
+  },
+  {
+    "i": "9999",
+    "criteria": "eular_acr_sle",
+    "symptoms": ["malar rash", "delirium", "synovitis", "fever", "pericardial effusion"],
+    "diagnoses": ["Systemic lupus erythematosus (SLE)", "Rheumatoid arthritis", "Bacterial endocarditis", "Acute rheumatic fever", "Viral meningitis/encephalitis", "Sarcoidosis", "Adult-onset Stills disease", "Drug-induced lupus", "Lyme disease", "Mixed connective tissue disease"]
+  },
+  {
+    "i": "9999",
+    "criteria": "mcas_alternative",
+    "symptoms": ["Lymphadenopathy", "Fatigue", "hyperglycemia", "obsessive-compulsive behavior", "laryngitis"],
+    "diagnoses": ["Diabetes mellitus", "HIV/AIDS", "Lymphoma", "Chronic fatigue syndrome", "Obsessive-compulsive disorder (OCD)", "Tuberculosis", "Mononucleosis", "Sarcoidosis", "Hyperthyroidism", "Laryngeal cancer"]
+  },
+  {
+    "i": "10000",
+    "criteria": "mcas_alternative",
+    "symptoms": ["hemorrhoids", "tags", "tinnitus", "Polycythemia", "joint pain"],
+    "diagnoses": ["Hemorrhoids with skin tags", "Tinnitus", "Polycythemia vera", "Osteoarthritis", "Rheumatoid arthritis", "Anemia", "Hypothyroidism", "Vitamin B12 deficiency", "Lyme disease", "Fibromyalgia"]
+  },
+  {
+    "i": "9999",
+    "criteria": "mcas_consortium",
+    "symptoms": ["syncope", "conjunctival injections", "hives", "hypoxia"],
+    "diagnoses": ["Anaphylaxis", "Systemic mastocytosis", "Hereditary angioedema", "Severe allergic reaction", "Sepsis", "Pulmonary embolism", "Acute heart failure", "Severe asthma exacerbation", "Carcinoid syndrome", "Pheochromocytoma"]
+  },
+  {
+    "i": "10000",
+    "criteria": "mcas_consortium",
+    "symptoms": ["sneezing", "diarrhea", "incontinence", "hypotension", "pruritis"],
+    "diagnoses": ["Anaphylaxis", "Mastocytosis", "Carcinoid syndrome", "Systemic lupus erythematosus (SLE)", "Autonomic neuropathy", "Zollinger-Ellison syndrome", "VIPoma (Vasoactive Intestinal Peptide-secreting tumor)", "Serotonin syndrome", "Multiple system atrophy (MSA)", "Acute intermittent porphyria"]
+  },
+  {
+    "i": "9999",
+    "criteria": "migraine",
+    "symptoms": ["vomiting", "weakness", "dysphagia", "parasthesia"],
+    "diagnoses": ["Guillain-Barré syndrome", "Multiple sclerosis", "Myasthenia gravis", "Esophageal motility disorders", "Botulism", "Brain tumor", "Stroke", "Hypokalemia", "Diabetic neuropathy", "Vitamin B12 deficiency"]
+  },
+  {
+    "i": "10000",
+    "criteria": "migraine",
+    "symptoms": ["phonophobia", "scintillation"],
+    "diagnoses": ["Migraine", "Tension headache", "Cluster headache", "Menieres disease", "Vestibular migraine", "Anxiety disorder", "Hyperosmia", "Sensory processing disorder", "Epilepsy", "Meningioma"]
+  },
+  {
+    "i": "9999",
+    "criteria": "slicc_sle",
+    "symptoms": ["leukopenia", "nonscarring alopecia", "proteinuria", "arthropathy", "telangiectasias"],
+    "diagnoses": ["Systemic lupus erythematosus", "Dermatomyositis", "Scleroderma", "Mixed connective tissue disease", "Sjögrens syndrome", "Rheumatoid arthritis", "Vasculitis", "Systemic sclerosis", "Chronic cutaneous lupus erythematosus", "Drug-induced lupus erythematosus"]
+  }
+]
