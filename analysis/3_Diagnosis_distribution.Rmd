@@ -922,7 +922,7 @@ plt_similarity <- multi_diagnosis_similarity_heatmap(
   method = "bray",
   show_dend = T,
   dendrogram_weight = unit(2.5, "mm"),
-  legend_label = "Bray-Curtis similarity",
+  legend_label = "Average\nBray-Curtis similarity",
   legend_direction = "horizontal",
   label_size = 6,
   title_size = 9,

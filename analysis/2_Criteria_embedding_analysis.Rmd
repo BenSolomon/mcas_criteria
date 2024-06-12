@@ -381,7 +381,7 @@ centroid_heatmap <-
     heatmap_param <- list(
       matrix = data,
       col = viridis::viridis(100),
-      name = "Cosine similarity",
+      name = "Average\ncosine similarity",
       rect_gp = grid::gpar(col = "black", lwd = 1),
       row_names_gp = grid::gpar(fontsize = label_size),
       heatmap_legend_param = legend_param,

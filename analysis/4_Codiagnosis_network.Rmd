@@ -625,7 +625,7 @@ plt_heatmap_icd <-
   custom_heatmap(
     average_cosine_matrix,
     symmetric = F,
-    legend_title = "Cosine similarity",
+    legend_title = "Average\ncosine similarity",
     grid_lines = T,
     dendrograms = T,
     legend_orientation = "horizontal",
