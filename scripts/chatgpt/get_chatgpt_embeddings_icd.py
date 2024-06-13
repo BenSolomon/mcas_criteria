@@ -9,17 +9,14 @@ client = openai.OpenAI(
     api_key=openai_config.api_key
 )
 
+# model = "text-embedding-3-large"
+model = "text-embedding-3-small"
+
 parser = argparse.ArgumentParser()
 parser.add_argument("letter", help="starting letter of ICD code", type=str)
 args = parser.parse_args()
 
-# print(args.letter)
-
-# model = "text-embedding-3-large"
-model = "text-embedding-3-small"
-
 def get_embeddings(text_string, model_id = "text-embedding-3-small"):
-    # model_id = "text-embedding-ada-002"
     embedding = client.embeddings.create(input=text_string, model=model_id)
     embedding =  embedding.data[0].embedding
     embedding = list(zip(range(0,len(embedding)), embedding))
@@ -28,9 +25,6 @@ def get_embeddings(text_string, model_id = "text-embedding-3-small"):
 
 df = pd.read_csv("/labs/khatrilab/solomonb/mcas/data/compiled_icd10_codes.csv")
 df = df[df['code'].str.startswith(args.letter)]
-# df = df.head(5)
-
-# print(df)
 
 df["embeddings"] = df["diagnosis"].map(lambda x: get_embeddings(x, model_id = model))
 

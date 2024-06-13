@@ -5,11 +5,15 @@ import pandas as pd
 import json
 import anthropic_config
 import math
+import re
 
 # Set Anthropic api key
 client = anthropic.Anthropic(
     api_key=anthropic_config.api_key
 )
+
+llm_model = "claude-3-opus-20240229"
+# llm_model = "claude-3-haiku-20240307"
 
 # Create Claude query from 
 def build_query(symptom_string):
@@ -19,17 +23,10 @@ def build_query(symptom_string):
 # Function that corrects quotes, double-quotes, apostrophes, and escape characters
 # To convert claude output string to string suitable for json conversion
 def format_claude_json(string):
-    # print(string)
-    string_list = string[string.find('[')+1:string.find(']')].split(',')
+    string_list = re.split('",|\',', string[string.find('[')+1:string.find(']')])
     string_list = [x.replace("\\'","").replace('"','').replace("'",'').strip() for x in string_list]
     string_dict = {'diagnoses':string_list}
-    # print(string_dict)
     return(string_dict)
-    # string_list = [f'"{x}"' for x in string_list]
-    # string = ', '.join(string_list)
-    # string = f'{{"diagnoses":[{string}]}}'
-    # print(string)
-    # return(string)
 
 # Submit Claude query
 def diagnosis_query(query, claude_model = "claude-3-haiku-20240307", temp = 1.0):
@@ -68,10 +65,6 @@ def diagnosis_query(query, claude_model = "claude-3-haiku-20240307", temp = 1.0)
     
     # Combine output data into dict
     if output is not None:
-        # print(output)
-        # output = output.replace("\\'", "!!").replace("'",'"').replace("!!", "'") # Ensures double-quotes for json
-        # print(output)
-        # output = json.loads(output)  
         output = {
             'json':output,
             'header':header,
@@ -164,7 +157,6 @@ def claude_pipeline(iteration_path, output_dir, batch_size = 1000, claude_versio
     )
     
     # Calculate batch ids
-    # batch_size = 1000 # Set total number of Claude iterations to submit per save file
     criteria_number = len(df_iteration['criteria'].unique()) # Determine total number of criteria sets
     samples_per_criteria = batch_size / criteria_number # Determine number of iterations per criteria set to achieve batch size
     samples_per_criteria = int(samples_per_criteria) if samples_per_criteria >= 1 else 1 # Set minumum number iterations per criteria set
@@ -193,8 +185,6 @@ def claude_pipeline(iteration_path, output_dir, batch_size = 1000, claude_versio
                 symptoms = row['symptoms'],
                 claude_version = claude_version),
                 axis = 1)
-            
-        # print(list(output))
 
         json_path = output_dir+f"/claude_output_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         print(json_path)
@@ -209,6 +199,6 @@ claude_pipeline(
         output_dir="/labs/khatrilab/solomonb/mcas/data/claude_json_output",
         batch_size = 200, 
         temp=1.0,
-        claude_version = "claude-3-opus-20240229"
-        # maximum_batches = 60
+        claude_version = llm_model
+        # maximum_batches = 10 # Uncomment for testing
 )

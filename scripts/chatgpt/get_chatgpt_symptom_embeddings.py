@@ -8,9 +8,8 @@ client = openai.OpenAI(
     api_key=openai_config.api_key
 )
 
-
-model = "text-embedding-3-large"
-# model = "text-embedding-3-small"
+# model = "text-embedding-3-large"
+model = "text-embedding-3-small"
 
 def get_embeddings(text_string, model_id = "text-embedding-3-small"):
     embedding = client.embeddings.create(input=text_string, model=model_id)

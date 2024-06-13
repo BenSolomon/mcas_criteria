@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-# import google.generativeai as genai
 import vertexai
 from vertexai import generative_models
 import pandas as pd
@@ -11,24 +10,19 @@ from time import sleep
 import re
 
 # Set Gemini api key
-# genai.configure(api_key=gemini_config.api_key)
-vertexai.init(project=gemini_config.project_id, location="us-west4")
+vertexai.init(project=gemini_config.project_id, location="us-central1")
 
 # Create Gemini query from 
 def build_query(symptom_string):
     out_query = f"For educational purposes, return a json list of format {{'diagnoses':[diagnosis list]}} with the top 10 diagnoses for the following combination of symptoms: {symptom_string}"
-    # out_query = out_query + '  Do not use markdown'
     return out_query
 
 # Function that corrects quotes, double-quotes, apostrophes, and escape characters
 # To convert gemini output string to string suitable for json conversion
 def format_gemini_json(string):
-    # print(string)
-    # string_list = string[string.find('[')+1:string.find(']')].split('"",')
     string_list = re.split('",|\',', string[string.find('[')+1:string.find(']')])
     string_list = [x.replace("\\'","").replace('"','').replace("'",'').strip() for x in string_list]
     string_dict = {'diagnoses':string_list}
-    # print(string_dict)
     return(string_dict)
 
 
@@ -40,8 +34,7 @@ def diagnosis_query(query, gemini_model = "gemini-1.0-pro", temp = 1.0):
     )
     generation_config = {
         "max_output_tokens": 2048,
-        "temperature": temp,
-        'response_mime_type':"application/json"
+        "temperature": temp
     }
     safety_settings = {
         generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
@@ -49,60 +42,6 @@ def diagnosis_query(query, gemini_model = "gemini-1.0-pro", temp = 1.0):
         generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
         generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_ONLY_HIGH,
     }
-
-
-    # generation_config = generative_models.GenerationConfig(
-    #     temperature=temp,
-    #     # "top_p": 1,
-    #     # "top_k": 0,
-    #     max_output_tokens=2048,
-    #     response_mime_type="application/json",
-    # )
-    
-    # # safety_settings = [
-    # #   {
-    # #     "category": "HARM_CATEGORY_HARASSMENT",
-    # #     "threshold": "BLOCK_NONE",
-    # #   },
-    # #   {
-    # #     "category": "HARM_CATEGORY_HATE_SPEECH",
-    # #     "threshold": "BLOCK_NONE",
-    # #   },
-    # #   {
-    # #     "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-    # #     "threshold": "BLOCK_NONE",
-    # #   },
-    # #   {
-    # #     "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-    # #     "threshold": "BLOCK_NONE",
-    # #   },
-    # # ]
-
-    # safety_config = [
-    #     generative_models.SafetySetting(
-    #         category=generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-    #         threshold=generative_models.HarmBlockThreshold.BLOCK_NONE,
-    #     ),
-    #     generative_models.SafetySetting(
-    #         category=generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT,
-    #         threshold=generative_models.HarmBlockThreshold.BLOCK_NONE,
-    #     ),
-    #     generative_models.SafetySetting(
-    #         category=generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-    #         threshold=generative_models.HarmBlockThreshold.BLOCK_NONE,
-    #     ),
-    #     generative_models.SafetySetting(
-    #         category=generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-    #         threshold=generative_models.HarmBlockThreshold.BLOCK_NONE,
-    #     ),
-    # ]
-
-
-
-
-    # model = generative_models.GenerativeModel(
-    #   model_name=gemini_model
-    # )
 
     try:
       message = model.generate_content(
@@ -113,18 +52,11 @@ def diagnosis_query(query, gemini_model = "gemini-1.0-pro", temp = 1.0):
       output = message.text
       output = format_gemini_json(output)
 
-        # Error handling
+    # Error handling
     except Exception as e:
         print(f"Error: {e}\n{query=}")
         output = {"diagnoses":"error"}
     
-    # # Combine output data into dict
-    # if output is not None:
-    #     output = {
-    #         'json':output,
-    #         'header':header,
-    #         'response':response
-    #     }
     return output
 
 # Create json object with query parameters and query output
@@ -133,8 +65,6 @@ def gemini_wrapper(i, criteria, symptoms, gemini_version="gemini-1.0-pro", temp 
     inputs=locals()
     query = build_query(symptoms)
     query_output = diagnosis_query(query, gemini_version, temp = temp)
-    # print(query_output)
-    # json_output = query_output['json']
     output = {'i':i, 'criteria':criteria, 'symptoms':[s.strip() for s in symptoms.split(",")]}
     if output_query:
         output.update({'query':query})
@@ -144,8 +74,6 @@ def gemini_wrapper(i, criteria, symptoms, gemini_version="gemini-1.0-pro", temp 
     # Create log of all query information
     log = {
         'inputs':inputs,
-        # 'header':query_output['header'],
-        # 'response':query_output['response'],
         'output':query_output
     }
     print(log)
@@ -216,7 +144,6 @@ def gemini_pipeline(iteration_path, output_dir, batch_size = 1000, gemini_versio
     )
     
     # Calculate batch ids
-    # batch_size = 1000 # Set total number of Gemini iterations to submit per save file
     criteria_number = len(df_iteration['criteria'].unique()) # Determine total number of criteria sets
     samples_per_criteria = batch_size / criteria_number # Determine number of iterations per criteria set to achieve batch size
     samples_per_criteria = int(samples_per_criteria) if samples_per_criteria >= 1 else 1 # Set minumum number iterations per criteria set
@@ -250,8 +177,6 @@ def gemini_pipeline(iteration_path, output_dir, batch_size = 1000, gemini_versio
                 )
             output.append(result)
             
-        # print(list(output))
-
         json_path = output_dir+f"/gemini_output_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         print(json_path)
 
@@ -265,10 +190,7 @@ gemini_pipeline(
         output_dir="/labs/khatrilab/solomonb/mcas/data/gemini_json_output",
         batch_size = 200, 
         temp=1.0,
-        # gemini_version = "gemini-1.5-pro-latest",
-        gemini_version = "gemini-1.5-pro-001"
-        # gemini_version = "gemini-1.5-flash-preview-0514",
-        # gemini_version = "gemini-1.0-pro-002",
-        # sleep_time = 0.1
-        # maximum_batches = 10
+        gemini_version = "gemini-1.0-pro-002",
+        sleep_time = 0.1 # Sleep time needed for API limits, depends on user
+        # maximum_batches = 10 # Uncomment for testing
 )

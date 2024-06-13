@@ -4,11 +4,15 @@ import openai
 import pandas as pd
 import json
 import openai_config
+import math
 
 # Set OpenAI api key
 client = openai.OpenAI(
     api_key=openai_config.api_key
 )
+
+# llm_model="gpt-3.5-turbo-1106"
+llm_model="gpt-4-turbo-preview"
 
 # Create ChatGPT query from 
 def build_query(symptom_string):
@@ -64,10 +68,21 @@ def read_json_dir(json_dir):
     output = pd.concat(data_list, ignore_index=True)
     return output
 
+# Needed for remove_complete_iterations lambda function to specifically deal with nan
+def count_diagnoses(x):
+    if type(x) == float:
+        return 0
+    else: 
+        return len(x)
+
 # Remove succesfully completed iterations to ChatGPT and remove them from 
 # dataframe of all iterations, leaving only unprocessed iterations
 def remove_complete_iterations(iteration_path, json_dir, minimum_diagnoses = 5):
     iteration_df=pd.read_csv(iteration_path)
+    
+    ###### Limit to first 10,000 iterations due to GPT4 rates
+    iteration_df = iteration_df.query('i <= 10000')
+    
     print(f"Total iteration samples: {iteration_df.shape[0]}")
     # If there are no json files in the output path, return full iteration df
     if len(os.listdir(json_dir))==0:
@@ -76,7 +91,7 @@ def remove_complete_iterations(iteration_path, json_dir, minimum_diagnoses = 5):
     # If there are json outputs, remove complete samples from full iteration df
     else:
         json_df=read_json_dir(json_dir)
-        json_df['n_diagnoses'] =json_df.apply(lambda x: len(x['diagnoses']), axis = 1)
+        json_df['n_diagnoses'] =json_df.apply(lambda x: count_diagnoses(x['diagnoses']), axis = 1)
         json_df['complete'] =json_df.apply(lambda x: x['n_diagnoses'] >= minimum_diagnoses, axis = 1)
         print(f"Completed iteration samples: {json_df.shape[0]}")
 
@@ -138,6 +153,6 @@ def chatgpt_pipeline(iteration_path, output_dir, batch_size = 1000, gpt_version 
 chatgpt_pipeline(
         iteration_path="/labs/khatrilab/solomonb/mcas/data/criteria_query_iterations.csv",
         output_dir="/labs/khatrilab/solomonb/mcas/data/chatgpt_json_output",
-        batch_size = 1000, 
-        gpt_version = "gpt-3.5-turbo-1106"
+        batch_size = 200, 
+        gpt_version = llm_model
 )

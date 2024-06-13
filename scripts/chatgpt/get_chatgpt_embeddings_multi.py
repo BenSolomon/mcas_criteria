@@ -11,14 +11,8 @@ client = openai.OpenAI(
     api_key=openai_config.api_key
 )
 
-
-# model = "text-embedding-3-large"
+# embedding_model = "text-embedding-3-large"
 embedding_model = "text-embedding-3-small"
-# diagnosis_data = "claude3_haiku_t1.0"
-# diagnosis_data = "claude3_opus_t1.0"
-# diagnosis_data = "gemini1.0_pro_t1.0"
-# diagnosis_data = "gpt3.5"
-# diagnosis_data = "gpt4.0"
 
 def get_embeddings(text_string, model_id = "text-embedding-3-small"):
     embedding = client.embeddings.create(input=text_string, model=model_id)
@@ -31,9 +25,6 @@ def get_embeddings_pipeline(model, diagnosis_data):
   print(f'READING DIAGNOSES - {diagnosis_data} - {datetime.now()}')
   sys.stdout.flush()
   df = pd.read_csv(f'/labs/khatrilab/solomonb/mcas/data/unique_diagnoses/unique_diagnoses_{diagnosis_data}.csv.gz')
-  # df = df.head(10)
-  # time.sleep(5)
-  
   
   print(f'GETTING EMBEDDINGS - {diagnosis_data} - {datetime.now()}')
   sys.stdout.flush()
@@ -50,11 +41,10 @@ def get_embeddings_pipeline(model, diagnosis_data):
   sys.stdout.flush()
   df.to_csv(f'/labs/khatrilab/solomonb/mcas/data/chatgpt_embeddings/{model}/{diagnosis_data}_diagnoses_chatgpt_embeddings.csv.gz', compression='gzip', index=False)
   
-
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-3.5-turbo-1106")
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-4-turbo-preview")
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-haiku-20240307_t1-0")
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-opus-20240229_t1-0")
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.0-pro-002_t1-0")
-# get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.5-flash-preview-0514_t1-0")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-3.5-turbo-1106")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gpt-4-turbo-preview")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-haiku-20240307_t1-0")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "claude-3-opus-20240229_t1-0")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.0-pro-002_t1-0")
+get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.5-flash-preview-0514_t1-0")
 get_embeddings_pipeline(model = embedding_model, diagnosis_data = "gemini-1.5-pro-001_t1-0")
