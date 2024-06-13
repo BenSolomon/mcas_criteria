@@ -3,3 +3,4 @@ data/diversity_analysis/diagnosis_precision_gpt4.csv.gz filter=lfs diff=lfs merg
 *gz filter=lfs diff=lfs merge=lfs -text
 .RDS filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
+*.RDS filter=lfs diff=lfs merge=lfs -text
