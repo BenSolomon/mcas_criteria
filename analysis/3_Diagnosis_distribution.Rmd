@@ -243,35 +243,36 @@ rank_table %>%
 
 ```{r, fig.width=4, fig.height=3.5}
 multi_shannon_plot(
-  distribution_vis = "points",
-  wrap_width = 45,
-  n_diag = 25,
   df_gpt3.5,
   df_gpt4.0,
   df_claude3_haiku_t1.0,
   df_claude3_opus_t1.0,
   df_gemini1.0_pro_t1.0,
-  df_gemini1.5_pro_t1.0
+  df_gemini1.5_pro_t1.0,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25
 )
 ```
 
 
 ```{r, fig.width=4, fig.height=3.5}
 plt_div_icd <- multi_shannon_plot(
-  distribution_vis = "points",
-  wrap_width = 45,
-  n_diag = 25,
   df_gpt3.5_icd,
   df_gpt4.0_icd,
   df_claude3_haiku_t1.0_icd,
   df_claude3_opus_t1.0_icd,
   df_gemini1.0_pro_t1.0_icd,
-  df_gemini1.5_pro_t1.0_icd
+  df_gemini1.5_pro_t1.0_icd,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25,
+  only_mcas_p = T
 )
 
 plt_div_icd
 plt_div_icd$data %>% summarise(shannon=mean(shannon),.by="criteria")
-extract_ggpubr_pvalues(plt_div_icd)  
+# extract_ggpubr_pvalues(plt_div_icd)  
 ```
 
 # Similarity
@@ -476,6 +477,27 @@ extract_ggpubr_pvalues(plt_precision_icd)
 ```
 
 
+```{r, fig.width=4, fig.height=3.5}
+# Limit P-values displayed
+df_precision <- read_csv(here("data/diversity_analysis/compiled_icd_diagnosis_precision.csv")) %>% 
+  precision_dist_to_sim() %>% 
+  format_criteria() %>% 
+  format_models() %>%
+  filter(model != "Gemini 1.5 Flash")
+
+ggplot(df_precision, aes(x = criteria, y = mean))+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle= 45, hjust = 1))+
+  labs(x="", y = "Average Bray-Curtis Similarity")+
+  mcas_only_pwc(df_precision, variable = "mean") +
+  labs(color=NULL)+
+  scale_color_brewer(palette = "Dark2") +
+  plot_selector("points")
+
+```
+
+
+
 # iNEXT
 
 ```{r, fig.width=12, fig.height=4}
@@ -589,15 +611,15 @@ plt_cumulative <- multi_cumulative_frequency_plot(
   labs(y = "Combined frequency\nof top 50 diagnoses", x = NULL)
 
 plt_shannon <- multi_shannon_plot(
-  distribution_vis = "points",
-  wrap_width = 45,
-  n_diag = 25,
   df_gpt3.5_icd,
   df_gpt4.0_icd,
   df_claude3_haiku_t1.0_icd,
   df_claude3_opus_t1.0_icd,
   df_gemini1.0_pro_t1.0_icd,
-  df_gemini1.5_pro_t1.0_icd
+  df_gemini1.5_pro_t1.0_icd,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25
 ) +
   apply_text_formatting +
   theme(legend.position = "bottom", legend.direction = "horizontal") +
@@ -729,15 +751,15 @@ plt_cumulative <- multi_cumulative_frequency_plot(
   labs(y = "Combined frequency\nof top 50 diagnoses", x = NULL)
 
 plt_shannon <- multi_shannon_plot(
-  distribution_vis = "points",
-  wrap_width = 45,
-  n_diag = 25,
   df_gpt3.5_icd,
   df_gpt4.0_icd,
   df_claude3_haiku_t1.0_icd,
   df_claude3_opus_t1.0_icd,
   df_gemini1.0_pro_t1.0_icd,
-  df_gemini1.5_pro_t1.0_icd
+  df_gemini1.5_pro_t1.0_icd,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25
 ) +
   apply_text_formatting +
   theme(legend.position = "bottom", legend.direction = "horizontal") +
@@ -884,15 +906,16 @@ plt_cumulative <- multi_cumulative_frequency_plot(
   labs(y = "Combined frequency\nof top 50 diagnoses", x = NULL)
 
 plt_shannon <- multi_shannon_plot(
-  distribution_vis = "points",
-  wrap_width = 45,
-  n_diag = 25,
   df_gpt3.5_icd,
   df_gpt4.0_icd,
   df_claude3_haiku_t1.0_icd,
   df_claude3_opus_t1.0_icd,
   df_gemini1.0_pro_t1.0_icd,
-  df_gemini1.5_pro_t1.0_icd
+  df_gemini1.5_pro_t1.0_icd,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25,
+  only_mcas_p = T
 ) +
   apply_text_formatting +
   theme(
@@ -901,19 +924,15 @@ plt_shannon <- multi_shannon_plot(
     axis.text.x = element_text(angle=90,hjust=1)) +
   guides(color = guide_legend(ncol = 2))
 
-plt_precision <- read_csv(here("data/diversity_analysis/compiled_icd_diagnosis_precision.csv")) %>% 
-  precision_dist_to_sim() %>% 
-  format_criteria() %>% 
-  format_models() %>%
-  filter(model != "Gemini 1.5 Flash") %>% 
-  ggplot(aes(x = criteria, y = mean))+
+plt_precision <- ggplot(df_precision, aes(x = criteria, y = mean))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle= 90, hjust = 1))+
-  labs(x="", y = "Mean Bray-Curtis Similarity") +
-  ggpubr::geom_pwc(aes(group = criteria), method = "wilcox.test", p.adjust.method = "BH", hide.ns = T, label = "p.adj.signif", bracket.nudge.y = 0.3, vjust = 0.6, step.increase = 0.14, tip.length = 0.02) +
+  theme(axis.text.x = element_text(angle= 45, hjust = 1))+
+  labs(x="", y = "Average\nBray-Curtis Similarity")+
+  mcas_only_pwc(df_precision, variable = "mean") +
   labs(color=NULL)+
   scale_color_brewer(palette = "Dark2") +
-  plot_selector("points") +
+  plot_selector("points")+
+  theme(axis.text.x = element_text(angle= 90, hjust = 1))+
   apply_text_formatting +
   theme(legend.position = "bottom", legend.direction = "horizontal") +
   guides(color = guide_legend(ncol = 2))
@@ -934,7 +953,7 @@ plt_similarity <- multi_diagnosis_similarity_heatmap(
   df_gemini1.5_pro_t1.0_icd
 )
 
-full_plt <- plot_grid(
+unlabeled_plt <- plot_grid(
   ###
   plt_diags,
   ###
@@ -955,7 +974,8 @@ full_plt <- plot_grid(
         plt_precision+ theme(legend.position="none"),
         nrow = 1,
         axis = 'tb',
-        align = 'h'
+        align = 'h',
+        rel_widths = c(0.8,1)
       ),
       plot_grid(NULL,get_legend(plt_shannon),nrow=1,rel_widths=c(0.2,1)),
       NULL,
@@ -970,7 +990,13 @@ full_plt <- plot_grid(
   rel_heights = c(1.2, 0.07, 0.65)
 )  
 
-full_plt <- cowplot::ggdraw(full_plt)+cowplot::draw_plot_label(c("A","B","C","D","E"), x=c(0,0,0.35,0.67,0.83), y=c(1,0.38,0.38,0.38,0.38))
+full_plt <-
+  cowplot::ggdraw(unlabeled_plt) + cowplot::draw_plot_label(
+    LETTERS[1:10],
+    x = c(0, 0.49, 0, 0.49, 0, 0.49, 0, 0.35, 0.67, 0.83),
+    y = c(1, 1, 0.825, 0.825, 0.65, 0.65, 0.38, 0.38, 0.38, 0.38)
+  )
+
 full_plt
 ```
 

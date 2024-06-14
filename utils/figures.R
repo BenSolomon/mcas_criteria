@@ -155,8 +155,9 @@ plot_selector <- function(distribution_vis = "range"){
   # frequencies as colored points
   if (distribution_vis == "points"){
     out_plt <- list(
+      # geom_point(size = 0.75, aes(color = model), position = position_dodge(width = 0.25)),
+      ggbeeswarm::geom_beeswarm(aes(color = model), size = 0.75, cex=2),
       stat_summary(fun.y = mean, geom = "crossbar", size = 0.25, width = 0.75),
-      geom_point(size = 0.75, aes(color = model), position = position_dodge(width = 0.25)),
       scale_color_brewer(palette = "Dark2"),
       labs(color = NULL)
     )
@@ -197,6 +198,27 @@ elsevier_fig_dims <- function(){
   ) %>% 
     mutate(inch=round(mm*0.0393701, 1)) %>% 
     select(size, mm, inch, everything())
+}
+
+
+################################################################################
+# Custom ggpubr p-value annotation that only shows comparisons that include MCAS
+
+mcas_only_pwc <- function(data, variable, max_y = NULL) {
+  if (is.null(max_y)) {
+    range <- max(data[[variable]]) - min(data[[variable]])
+    max_y <- max(data[[variable]]) + range
+  }
+  form <- as.formula(str_glue("{variable} ~ criteria"))
+  stats <- data %>% 
+    rstatix::wilcox_test(form, p.adjust.method = "BH") %>% 
+    rstatix::add_significance(p.col = "p.adj") %>% 
+    filter(p.adj < 0.05) %>%
+    filter(grepl("MCAS", group2) | grepl("MCAS", group2)) %>% 
+    mutate(y.position = seq(max(data[[variable]]), max_y, length.out = n()))
+  print(stats)
+  
+  ggpubr::stat_pvalue_manual(stats, label = "p.adj.signif", bracket.nudge.y = 0.1, vjust = 0.6, step.increase = 0, tip.length = 0.02)
 }
 
 #################### EMBEDDING FUNCTIONS #######################################
@@ -531,7 +553,8 @@ calculate_shannon <- function(df){
     vegan::diversity()
 }
 
-multi_shannon_plot <- function(distribution_vis = "range", wrap_width=45, n_diag = 25, ...){
+multi_shannon_plot <- function(..., distribution_vis = "range", wrap_width=45, n_diag = 25,
+                               only_mcas_p=F){
   df_list <- listN(...)
   
   # Input checks
@@ -561,17 +584,22 @@ multi_shannon_plot <- function(distribution_vis = "range", wrap_width=45, n_diag
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
   
   # Statistical testing
-  base_plt <- base_plt +
-    ggpubr::geom_pwc(
-      method = "wilcox.test",
-      p.adjust.method = "BH",
-      hide.ns = T,
-      label = "p.adj.signif",
-      bracket.nudge.y = 0.3,
-      vjust = 0.6,
-      step.increase = 0.14,
-      tip.length = 0.02
-    )
+  if (only_mcas_p==T){
+    base_plt <- base_plt+
+      mcas_only_pwc(df_combined, variable = "shannon")
+  } else {
+    base_plt <- base_plt +
+      ggpubr::geom_pwc(
+        method = "wilcox.test",
+        p.adjust.method = "BH",
+        hide.ns = T,
+        label = "p.adj.signif",
+        bracket.nudge.y = 0.3,
+        vjust = 0.6,
+        step.increase = 0.14,
+        tip.length = 0.02
+      )
+  }
   
   out_plt <- base_plt + plot_selector(distribution_vis)
   

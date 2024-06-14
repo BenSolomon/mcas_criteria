@@ -342,6 +342,7 @@ df_comp <- listN(
   mutate(data = map(data, centrality_wrapper)) %>%
   unnest(data)
 ```
+
 ```{r, fig.width=3.5, fig.height=4}
 cosine_similarity_compare <- function(df, pt_size=1,p_size=3){
   # Format data
