@@ -816,7 +816,7 @@ full_plt
 ```
 
 ### Version 3
-```{r, fig.width=7.5, fig.height=8.5, message = F}
+```{r, fig.width=7.5, fig.height=8.6, message = F}
 n_diagnoses_bar <- 10
 n_diagnoses_abundance <- 50
 n_diagnoses_cumulative <- 50
@@ -954,6 +954,7 @@ plt_similarity <- multi_diagnosis_similarity_heatmap(
 )
 
 unlabeled_plt <- plot_grid(
+  NULL,
   ###
   plt_diags,
   ###
@@ -962,7 +963,7 @@ unlabeled_plt <- plot_grid(
     NULL,
     plot_grid(
     grid::grid.grabExpr(ComplexHeatmap::draw(plt_similarity, heatmap_legend_side = 'bottom')),
-    NULL,ncol=1,rel_heights = c(1,0.1)
+    NULL,ncol=1,rel_heights = c(1,0.03)
     ),
     plot_grid(
     plt_rank,
@@ -987,14 +988,14 @@ unlabeled_plt <- plot_grid(
     vjust = 0.2
     ),
   ncol = 1,
-  rel_heights = c(1.2, 0.07, 0.65)
+  rel_heights = c(0.01,1.2, 0.032, 0.64)
 )  
 
 full_plt <-
   cowplot::ggdraw(unlabeled_plt) + cowplot::draw_plot_label(
     LETTERS[1:10],
-    x = c(0, 0.49, 0, 0.49, 0, 0.49, 0, 0.35, 0.67, 0.83),
-    y = c(1, 1, 0.825, 0.825, 0.65, 0.65, 0.38, 0.38, 0.38, 0.38)
+    x = c(0, 0.49, 0, 0.49, 0, 0.49, 0, 0.34, 0.67, 0.83),
+    y = c(1, 1, 0.820, 0.820, 0.64, 0.64, 0.36, 0.36, 0.36, 0.36)
   )
 
 full_plt
@@ -1003,7 +1004,7 @@ full_plt
 - Add a 2 column legend under D+E
 
 ```{r, eval=F}
-ggsave(plot=full_plt,filename=here("figures/3_diagnosis_diversity.pdf"), width = 7.5, height = 8.5)
+ggsave(plot=full_plt,filename=here("figures/3_diagnosis_diversity.pdf"), width = 7.5, height = 8.6)
 ```
 
 set_table_properties(opts_pdf = list(tabcolsep = 0))

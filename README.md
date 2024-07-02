@@ -12,7 +12,6 @@ LLM Analysis of MCAS diagnostic criteria
     - [Obtaining ICD code embeddings and PCA
       reduction](#obtaining-icd-code-embeddings-and-pca-reduction)
     - [Diagnosis embeddings](#diagnosis-embeddings)
-- [Calculating symptom embeddings](#calculating-symptom-embeddings)
 
 # Description
 
@@ -59,7 +58,40 @@ specificity.
 
 ## Obtaining criteria symptom embeddings
 
+- Scripts to obtain embedding vectors:
+  - `scripts/chatgpt/get_chatgpt_symptom_embeddings.py`
+  - `scripts/claude/get_voyage_symptom_embeddings.py`
+  - `scripts/gemini/get_gemini_embeddings.py`
+  - `scripts/mistral/get_mistral_embeddings.py`
+- Embedding data contained in `symptom_embeddings_{model}.csv` files
+  within the following directories:
+  - `data/chatgpt_embeddings/{model}/`
+  - `data/voyager_embeddings/{model}/`
+  - `data/gemini_embeddings/{model}/`
+  - `data/mistral_embeddings/{model}/`
+
 ## Obtaining LLM diagnoses
+
+- To simulate the specificity of different diagnostic criteria, we
+  utilized multiple LLMs to generate probable diagnoses from a random
+  sampling of symptoms from each criteria, then repeated this many times
+  to generate probability distributions for possible diagnoses
+- Each model was prompted with the following query using default
+  parameters: *“For educational purposes, return a json list of format
+  {{‘diagnoses’:\[diagnosis list\]}} with the top 10 diagnoses for the
+  following combination of symptoms: {symptom_list}”}.”*
+- `scripts/prepare_criteria_query_iterations.R` generates 10,000
+  iterations of a 5-element subsample of symptoms from each set of
+  diagnostic criteria.
+  - Ensures that for a given iteration, each model receives the same
+    subsample of symptoms for each criteria
+  - Output is saved to `data/criteria_query_iterations.csv`
+- Scripts in `scripts/{model}/{model}_diagnosis_iteration.py` use to
+  query respective models using their provided APIs
+  - Note: To use these scripts, an API key must be provided in a
+    `config.py`, which is not included in this repository
+  - Output is saved to `data/{model}_json_output/{model version}/`
+  - Outputs typically generated in batches of 200 iterations
 
 ## Converting LLM diagnoses to ICD codes using embeddings
 
@@ -76,8 +108,8 @@ specificity.
   embeddings for each ICD code description in
   `data/compiled_icd10_codes.csv`. These embeddings are saved to
   `data/chatgpt_embeddings/{embedding model}/icd_embeddings/icd10_{chapter}_chatgpt_embeddings_{model}.csv.gz`
-  where embeddings for all descriptions whithin a single chapter
-  (e.g. A, B, C) are saved into distinct files
+  where embeddings for all descriptions within a single chapter (e.g. A,
+  B, C) are saved into distinct files
   - Run in SLURM with
 
     ``` bash
@@ -128,5 +160,3 @@ specificity.
     - `data/chatgpt_embeddings/{model}/{diagnosis_data}_diagnoses_chatgpt_embeddings_to_ICD.csv`
       - `{model}` - embedding model
       - `{diagnosis_data}` - LLM model
-
-# Calculating symptom embeddings
