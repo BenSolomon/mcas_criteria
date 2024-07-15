@@ -293,15 +293,20 @@ multi_pca_centroid_plot <- function(criteria_key, components = c(1,2), ...){
 rank_abundance_plot <- function(df, n_diagnoses = 50){
   custom_pal <- brewer.pal(7, "Set1")[-6]
   
-  df %>% 
+  df <- df %>% 
     count(criteria, diagnosis, sort = T) %>% 
     group_by(criteria) %>% 
     mutate(freq = n/sum(n)) %>% 
     arrange(desc(freq), .by_group = T) %>% 
     mutate(rank = 1:n()) %>% 
     select(criteria, freq, rank) %>% 
-    mutate(cs = cumsum(freq)) %>% 
-    filter(rank <= n_diagnoses) %>% 
+    mutate(cs = cumsum(freq))
+  
+  if (!is.null(n_diagnoses)){
+    df <- filter(df, rank <= n_diagnoses)
+  }
+  
+  df %>% 
     format_criteria() %>% 
     ggplot(aes(x = rank, y = freq, color = factor(criteria)))+
     geom_line(linewidth=1) +
@@ -316,7 +321,7 @@ rank_abundance_plot <- function(df, n_diagnoses = 50){
 # Extended version of rank_abundance_plot that takes multiple diagnosis data
 # frames from different models and plots the mean ranked frequencies with
 # error bars
-multi_ranked_abundance_plot <- function(...){
+multi_ranked_abundance_plot <- function(..., n_diagnoses = 50){
   df_list <- list(...)
   
   # Input checks
@@ -330,7 +335,7 @@ multi_ranked_abundance_plot <- function(...){
   
   # Combine data frames
   df_combined <- df_list %>% 
-    lapply(., function(x) rank_abundance_plot(x)$data) %>% 
+    lapply(., function(x) rank_abundance_plot(x, n_diagnoses=n_diagnoses)$data) %>% 
     bind_rows()
   
   # Plot
@@ -374,7 +379,7 @@ top_diagnosis_plot <- function(df, n_diagnoses=25){
 # Several visualization options including different error bar approaches, 
 # plotting individual points, etc.
 
-multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, n_diag = 25, ...){
+multi_top_diagnosis_plot <- function(..., distribution_vis = "range", wrap_width=45, n_diag = 25){
   df_list <- listN(...)
   
   # Input checks
@@ -385,7 +390,7 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
   expected_columns <- c("i", "criteria", "diagnosis")
   lapply(df_list, function(x) assertNames(names(x), permutation.of = expected_columns, add = arg_col))
   # Check valid distribution_vis option
-  assertChoice(distribution_vis, c("range", "std_error", "points") , add = arg_col)
+  assertChoice(distribution_vis, c("range", "std_error", "points", "data") , add = arg_col)
   if (arg_col$isEmpty()==F) {map(arg_col$getMessages(),print);reportAssertions(arg_col)}
   
   # Combine data into single data frame
@@ -393,7 +398,8 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
     mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
     bind_rows() %>% 
     count(model, criteria, diagnosis, sort = T) %>% 
-    mutate(freq = n/sum(n), .by = c("model", "criteria"))
+    complete(model, criteria, diagnosis, fill=list(n=0)) %>% 
+    mutate(freq = n/sum(n), .by = c("model", "criteria")) 
   
   # Create a key to reorder diagnoses in each criteria based on mean frequency  
   df_rank_key <- df_combined %>% 
@@ -401,6 +407,10 @@ multi_top_diagnosis_plot <- function(distribution_vis = "range", wrap_width=45, 
     arrange(criteria, desc(freq)) %>% 
     mutate(rank = 1:n(), .by = "criteria") %>% 
     select(-freq)
+  
+  if (distribution_vis == "data"){
+    return(df_combined)
+  }
   
   # Create base plot 
   base_plt <- df_combined %>% 
@@ -508,22 +518,25 @@ diagnosis_rank_table <- function(df, pattern){
 # individual model rankings for reference. Mean + ranks returned as a string
 # intended for visualization with a flextable
 
-multi_diagnosis_rank_table <- function(search_pattern, ...){
-  listN(...) %>% 
-    lapply(., diagnosis_rank_table, pattern = search_pattern) %>%
-    mapply(function(x,y) {mutate(x, model=y)}, ., names(.), SIMPLIFY = F) %>% 
-    bind_rows() %>% 
-    pivot_longer(contains(c("mcas","kawasaki","sle","migraine")), names_to = "criteria", values_to = "rank") %>% 
-    filter(grepl("mcas", criteria)) %>% 
+multi_diagnosis_rank_table <- function(...,search_pattern){
+  df_combined <- multi_top_diagnosis_plot(distribution_vis = "data", ...)
+  
+  df_out <- df_combined %>% 
+    arrange(model, criteria, desc(n)) %>% 
+    mutate(rank = min_rank(desc(n)), .by=c("model", "criteria")) %>% 
+    mutate(rank = ifelse(n==0, NA, rank)) %>% 
     format_models() %>% 
     format_criteria() %>% 
-    pivot_wider(names_from = "model", values_from = "rank",names_prefix = "model_") %>% 
-    rowwise() %>%
-    mutate(mean_rank = round(mean(c_across(contains("model_")), na.rm=T)), 0) %>%
-    mutate(ranks = paste(c_across(contains("model_")), collapse = ", ")) %>%
-    mutate(output = str_glue("{mean_rank}\n[{ranks}]")) %>%
+    summarise(mean_freq = mean(freq), ranks = paste(rank, collapse = ", "), .by = c("criteria", "diagnosis")) %>% 
+    mutate(mean_rank = min_rank(desc(mean_freq)), .by=c("criteria")) %>% 
+    filter(grepl(search_pattern, diagnosis)) %>% 
+    filter(grepl("MCAS", criteria)) %>% 
+    mutate(output = str_glue("{mean_rank}\n[{ranks}]")) %>% 
+    arrange(criteria, mean_rank) %>% 
     select(Diagnosis = diagnosis, criteria, output) %>%
     pivot_wider(names_from = "criteria", values_from = "output")
+  
+  return(df_out)
 }
 ################################################################################
 # Shannon diversity plot. Also prints values
