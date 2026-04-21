@@ -1,0 +1,218 @@
+---
+title: "Effect of Criteria Size on Diversity"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r, message = F}
+library(here)
+library(cowplot)
+source(here("utils/data_processing.R"))
+source(here("utils/figures.R"))
+```
+
+```{r}
+criteria_order <-
+  c(
+    "Migraine - ICHD3",
+    "Kawasaki - AHA",
+    "SLE - EULAR-ACR",
+    "SLE - SLICC",
+    "MCAS - Consortium",
+    "MCAS - Alternative"
+  )
+```
+
+```{r, message = F}
+df_gpt3.5_icd <- read_model("gpt-3.5-turbo-1106", icd = TRUE)
+df_gpt4.0_icd <- read_model("gpt-4-turbo-preview", icd = TRUE)
+df_claude3_haiku_t1.0_icd <- read_model("claude-3-haiku-20240307_t1-0", icd = TRUE)
+df_claude3_opus_t1.0_icd <- read_model("claude-3-opus-20240229_t1-0", icd = TRUE)
+df_gemini1.0_pro_t1.0_icd <- read_model("gemini-1.0-pro-002_t1-0", icd = TRUE)
+df_gemini1.5_pro_t1.0_icd <- read_model("gemini-1.5-pro-001_t1-0", icd = TRUE)
+```
+
+```{r, fig.width=4, fig.height=3.5}
+plt_div_icd <- multi_shannon_plot(
+  df_gpt3.5_icd,
+  df_gpt4.0_icd,
+  df_claude3_haiku_t1.0_icd,
+  df_claude3_opus_t1.0_icd,
+  df_gemini1.0_pro_t1.0_icd,
+  df_gemini1.5_pro_t1.0_icd,
+  distribution_vis = "points",
+  wrap_width = 45,
+  n_diag = 25,
+  only_mcas_p = T
+)
+
+plt_div_icd
+plt_div_icd$data %>% summarise(shannon=mean(shannon),.by="criteria")
+# extract_ggpubr_pvalues(plt_div_icd)  
+```
+
+```{r}
+df_diversity_n_correlation <- data.frame( path = list.files(here("data/disease_criteria"),full.names = T)) %>% 
+  mutate(criteria = gsub("_criteria_symptoms\\.csv", "", basename(path))) %>% 
+  mutate(data = map(path, read_csv)) %>% 
+  unnest(data) %>% 
+  select(-path) %>% 
+  mutate(feature = str_split(feature, pattern = ", ")) %>% 
+  unnest(feature)%>% 
+  count(criteria) %>% 
+  format_criteria() %>% 
+  left_join(plt_div_icd$data, by = "criteria")
+```
+
+```{r}
+correlation_method <- "pearson"
+
+df_diversity_n_correlation %>% 
+  filter(criteria != "MCAS - Alternative") %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria))+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = correlation_method)+
+  facet_wrap(~model, scales = "free")+
+  theme_bw()+
+  ggtitle("Without MCAS - Alternative")
+
+df_diversity_n_correlation %>% 
+  # filter(criteria != "MCAS - Alternative") %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria))+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = correlation_method)+
+  facet_wrap(~model, scales = "free")+
+  theme_bw()+
+  ggtitle("With MCAS - Alternative")
+```
+
+```{r, fig.width=8.5, fig.height=3.5}
+correlation_method <- "pearson"
+
+df_diversity_n_correlation %>% 
+  filter(criteria != "MCAS - Alternative") %>% 
+  mutate(group = "Without MCA - Alternative") %>% 
+  bind_rows(mutate(df_diversity_n_correlation, group = "With MCA - Alternative")) %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria, shape = model), size = 3)+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = correlation_method, geom = "label")+
+  facet_wrap(~group, scales = "free")+
+  theme_bw() +
+  scale_color_brewer(palette = "Dark2") + 
+  labs(color = "Criteria", shape = "Model", x = "Number of symptoms", y = "Shannon diversity")
+```
+
+
+```{r}
+# Calculate full model stats
+full_model <- lm(shannon ~ n, data = df_diversity_n_correlation)
+full_r2 <- summary(full_model)$r.squared
+full_cor <- cor.test(df_diversity_n_correlation$n, df_diversity_n_correlation$shannon)
+full_r <- full_cor$estimate
+full_pval <- full_cor$p.value
+
+df_correlation_change <- tibble(
+  criteria = unique(df_diversity_n_correlation$criteria)
+) %>% 
+  # Create datasets without each of the indicated criteria
+  mutate(data = map(criteria, ~filter(df_diversity_n_correlation, criteria != .))) %>% 
+  # Calculate correlation metrics for each of the filtered datasets
+  mutate(data = map(data, function(df) {
+    cor_without <- cor.test(df$n, df$shannon)
+    list(
+      "r2_without" = summary(lm(shannon ~ n, data = df))$r.squared,
+      "r_without" = cor_without$estimate,
+      "pval_without" = cor_without$p.value
+    )
+  })) %>% 
+  unnest_wider(data) %>% 
+  # Calculate changes from full dataset
+  mutate(
+    r_change = full_r - r_without,
+    r2_pct_contribution = 100*(full_r2 - r2_without) / full_r2
+  ) %>% 
+  # mutate(criteria = factor(criteria, levels = criteria_order)) %>% 
+  arrange(criteria)
+df_correlation_change
+```
+
+
+```{r}
+df_influence <- df_diversity_n_correlation %>% 
+  nest(.by = model) %>% 
+  mutate(data = map(data, function(x){
+    x <- column_to_rownames(x, "criteria")
+    x <- lm(shannon ~ n, data = x)
+    x <- influence.measures(x)
+    x <- as.data.frame(x$infmat)
+    x <- rownames_to_column(x, "criteria")
+    x
+  })) %>% 
+  unnest(data) %>% 
+  select(-model) %>%
+  group_by(criteria) 
+```
+```{r}
+df_influence_summary <- df_influence %>% 
+  group_by(criteria) %>% 
+  summarise_all(mean) %>% 
+  arrange(criteria)
+df_influence_summary
+```
+
+```{r}
+# Using Unicode superscripts (limited to certain digits)
+# Using Unicode superscripts (limited to certain digits)
+format_sci_unicode <- function(x) {
+  if (x == 0) return("0")
+  
+  exponent <- floor(log10(abs(x)))
+  coefficient <- x / 10^exponent
+  coefficient <- round(coefficient, 1)
+  
+  # Unicode superscripts
+  superscripts <- c("⁰" = 0, "¹" = 1, "²" = 2, "³" = 3, "⁴" = 4,
+                   "⁵" = 5, "⁶" = 6, "⁷" = 7, "⁸" = 8, "⁹" = 9,
+                   "⁻" = "-")
+  
+  exp_str <- as.character(exponent)
+  exp_chars <- strsplit(exp_str, "")[[1]]
+  
+  exp_super <- sapply(exp_chars, function(ch) {
+    if (ch == "-") return("⁻")
+    return(names(superscripts)[superscripts == as.numeric(ch)])
+  })
+  
+  paste0(coefficient, "×10", paste(exp_super, collapse = ""))
+}
+
+format_sci_unicode(1.0e-12)
+# [1] "1 × 10⁻¹²"
+
+format_sci_unicode(2.5e6)
+# [1] "2.5 × 10⁶"
+```
+
+```{r}
+df_correlation_change %>% 
+  left_join(df_influence_summary, by = "criteria") %>% 
+  mutate(
+    r2_pct_contribution = round(r2_pct_contribution, 1),
+    pval_without = signif(pval_without, 2),
+    cook.d = round(cook.d, 2)
+  ) %>% 
+  select(
+    Criteria = criteria, 
+    "% of total R²" = r2_pct_contribution, 
+    "P-value when excluded" = pval_without, 
+    "Cook's distance" = cook.d)
+```
+
+
+
+

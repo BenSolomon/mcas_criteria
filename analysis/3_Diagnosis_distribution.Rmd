@@ -233,6 +233,20 @@ rank_table
 ```
 
 ```{r}
+rank_table <-
+  multi_diagnosis_rank_table(
+    search_pattern = "T78\\.2 |D47\\.02 |D89\\.40 |D89\\.41 |D89\\.42 |D89\\.43 |D89\\.44 |D89\\.49 |D89\\.4 ",
+    df_gpt3.5_icd,
+    df_gpt4.0_icd,
+    df_claude3_haiku_t1.0_icd,
+    df_claude3_opus_t1.0_icd,
+    df_gemini1.0_pro_t1.0_icd,
+    df_gemini1.5_pro_t1.0_icd
+  )
+rank_table  
+```
+
+```{r}
 rank_table %>% 
   flextable() %>% 
   width(width = 30) %>% 
@@ -274,6 +288,68 @@ plt_div_icd
 plt_div_icd$data %>% summarise(shannon=mean(shannon),.by="criteria")
 # extract_ggpubr_pvalues(plt_div_icd)  
 ```
+
+### Correlation w/ n_symptoms
+
+```{r}
+df_diversity_n_correlation <- data.frame( path = list.files(here("data/disease_criteria"),full.names = T)) %>% 
+  mutate(criteria = gsub("_criteria_symptoms\\.csv", "", basename(path))) %>% 
+  mutate(data = map(path, read_csv)) %>% 
+  unnest(data) %>% 
+  select(-path) %>% 
+  mutate(feature = str_split(feature, pattern = ", ")) %>% 
+  unnest(feature)%>% 
+  count(criteria) %>% 
+  format_criteria() %>% 
+  left_join(plt_div_icd$data, by = "criteria")
+
+
+df_diversity_n_correlation %>% 
+  filter(criteria != "MCAS - Alternative") %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria))+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = "pearson")+
+  facet_wrap(~model, scales = "free")+
+  theme_bw()
+
+df_diversity_n_correlation %>% 
+  # filter(criteria != "MCAS - Alternative") %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria))+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = "pearson")+
+  facet_wrap(~model, scales = "free")+
+  theme_bw()
+  
+```
+```{r, fig.width=9, fig.height=5}
+df_diversity_n_correlation %>% 
+  filter(criteria != "MCAS - Alternative") %>% 
+  mutate(group = "Without MCA - Alternative") %>% 
+  bind_rows(mutate(df_diversity_n_correlation, group = "With MCA - Alternative")) %>% 
+  ggplot(aes(x = n, y = shannon))+
+  geom_point(aes(color = criteria, shape = model), size = 3)+
+  geom_smooth(method = "lm", group = 1, se = F)+
+  ggpubr::stat_cor(method = "pearson", geom = "label")+
+  facet_wrap(~group, scales = "free")+
+  theme_bw() +
+  scale_color_brewer(palette = "Dark2") + 
+  labs(color = "Criteria", shape = "Model", x = "Number of symptoms", y = "Shannon diversity")
+```
+
+
+
+
+```{r}
+vroom::vroom(here("data/criteria_query_iterations.csv")) %>% 
+  mutate(symptoms = str_split(symptoms, pattern = ", ")) %>% 
+  mutate(symptoms = map(symptoms, sort)) %>% 
+  mutate(symptoms = map_chr(symptoms, ~paste(., collapse = ", "))) %>% 
+  count(criteria, symptoms, sort = T) %>% 
+  filter(grepl("alternative", criteria))
+```
+
 
 # Similarity
 
@@ -1007,6 +1083,7 @@ full_plt
 ggsave(plot=full_plt,filename=here("figures/3_diagnosis_diversity.pdf"), width = 7.5, height = 8.6)
 ```
 
+### Rank table
 set_table_properties(opts_pdf = list(tabcolsep = 0))
 ```{r}
 set_flextable_defaults(fonts_ignore=TRUE)
@@ -1020,7 +1097,21 @@ multi_diagnosis_rank_table(search_pattern = "T78\\.2 |D47\\.02 |D89\\.41 |D89\\.
   padding(padding = 0) %>% 
   align(j = 2:3, align = "center", part = "all") %>% 
   set_table_properties(opts_pdf = list(arraystretch = 1.25)) %>% 
+  # {print(., preview = "pdf");.}
+  {print(., preview = "docx");.}
+```
+```{r}
+set_flextable_defaults(fonts_ignore=TRUE)
+
+multi_diagnosis_rank_table(search_pattern = "T78\\.2 |D47\\.02 |D89\\.40 |D89\\.41 |D89\\.42 |D89\\.43 |D89\\.44 |D89\\.49 |D89\\.4 ",
+                                         df_gpt3.5_icd, df_gpt4.0_icd, df_claude3_haiku_t1.0_icd, df_claude3_opus_t1.0_icd, df_gemini1.0_pro_t1.0_icd, df_gemini1.5_pro_t1.0_icd) %>% 
+  flextable() %>% 
+  width(width = 2) %>% 
+  fontsize(size = 9) %>% 
+  fontsize(size = 10, part = "header") %>% 
+  padding(padding = 0) %>% 
+  align(j = 2:3, align = "center", part = "all") %>% 
+  set_table_properties(opts_pdf = list(arraystretch = 1.25)) %>% 
   {print(., preview = "pdf");.}
 ```
-
 
